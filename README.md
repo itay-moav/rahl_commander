@@ -1,4 +1,4 @@
-rhal_commander
+rahl_commander
 ==============
 
 Rahl Commander, or rcom is a tool to manage DB objects
