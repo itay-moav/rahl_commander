@@ -1,0 +1,73 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Usage: assets [OPTIONS]
+Display information about the user assets stored in Rahl Commander
+FOR BROWSER, Replace [-optionvalue] with [option=value&]
+             Replace [-option] (no value) with [option&]
+
+OPTION	EXPLANATON  EXAMPLE
+
+
+--all					
+	Shows EVERYTHING
+		list --all
+
+	
+-d "data base name"
+	Shows everything in a specific database.
+		list -ddhara		(where dhara is a DB name)
+	
+	
+-s [sp name]
+	Shows only stored procedures. Can work in
+	combination with -d
+		list -s	(Shows all stored procedure in assets/sp)
+		list -s -ddhara	(Shows all stored procedures in assets/sp/dhara)
+		list -stest_sp	(Shows stored procedure "test_sp", 
+							 will look throughout the assets/sp folder for it)
+		list -ddhara -stest_sp
+							(Shows stored procedure "test_sp", 
+							 will look only in assets/sp/dhara folder for it)
+	
+																											 
+-t [trigger name]	- SAME AS -s																											 
+-v [view name]		- SAME AS -s
+-f [function name]	- SAME AS -s
+-r [script name]	- SAME AS -s
+
+-l	Will do the same as -s -t -v or -f but on the DB. It accepts the same 
+	parameters. U can add -s -t -v or -f to narrow the selection down.
+		list -ddhara -stest_sp -l 
+							(Shows stored procedure "test_sp", 
+							 will look in the **db server**, under dhara DB
+							 for test_sp stored procedure)
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	

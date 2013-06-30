@@ -1,0 +1,11 @@
+{
+	"debug":{
+		"on":1,
+		"verbosity":2
+	},
+	"database":{
+		"host":"localhost",
+		"user":"root",
+		"pass":"tantan"
+	}
+}

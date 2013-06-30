@@ -1,0 +1,42 @@
+Purpose of this directory:
+==========================
+
+config/environments
+Providing the environemnt values for each machine u deploy Rahl Commander on. Will enable u to have different settings on different machines, prod/dev/qa.
+Each machine will have a different env file.
+
+config/
+Providing system specific configuration. Those are values which are specific to your product, and should be same through out you deployment environments.
+It is highly not suggested to use one copy of Rahl Commander to more than one project.
+
+==========================================================================================================================================================
+
+
+
+
+
+
+*********************
+config/environments
+*********************
+
+
+
+Machine Name
+============
+Which environment is to be used is decided by an rahl_environment_name file which contains the env name.
+Where u put this file is your choice. By default, it will look for it under /etc/ 
+
+Instructions for default  behavior:
+1. Create file /etc/rahl_environment_name. Make sure it has read persmission to the user who runs Rahl Commander.
+   If u whish to put rahl_environment_name in a different place (strongly suggested outside of this project directories), then modify
+   the right place in application/bootstrap.php
+2. In that file put a string (no spaces or stange characters, please) which identifies you current environment. For example "development_me". 
+   An example file is located in this folder (config/), u can copy it to /etc/rahl_environment_name.
+   As u can see, there are **NO** white chars around the environment name (in the file).
+3. Under /config/environments/ make sure u have a file with the same name as the content of /etc/rahl_environment_name.
+   In our case, it would be called development_me.json (An example file is there).
+4. Copy the example file to be the name you chose for your environment, or, if u use the example file env name, modify it directly.
+   The values in it are pretty self explanatory.
+
+
