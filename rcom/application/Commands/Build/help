@@ -1,0 +1,69 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Usage: assets [OPTIONS]
+build the assets stored in Rahl Commander. Build first DELETES what you
+wish to build.
+
+FOR BROWSER, Replace [-optionvalue] with [option=value&]
+             Replace [-option] (no value) with [option&]
+
+OPTION	EXPLANATON  EXAMPLE
+
+
+--all					
+	Cleans EVERYTHING, Builds EVERYTHING
+		build --all
+
+	
+-d"data base name"
+	Cleans and Builds everything in a specific database.
+		build -ddhara		(where dhara is a DB name)
+	
+	
+-s[sp name]
+	Cleans and builds only stored procedures. Can work in
+	combination with -d
+		build -s	(Cleans and builds all stored procedure in assets/sp)
+		build -s -ddhara	(Cleans and builds all stored procedures in assets/sp/dhara)
+		build -stest_sp	(Cleans and builds stored procedure "test_sp", 
+							 will look throughout the assets/sp folder for it)
+		build -ddhara -stest_sp
+							(Cleans and builds stored procedure "test_sp", 
+							 will look only in assets/sp/dhara folder for it)
+	
+																											 
+-t[trigger name]	- SAME AS -s																											 
+-v[view name]		- SAME AS -s
+-f[function name]	- SAME AS -s
+-r[script name]		- SAME AS -s
+
+--cleanall
+	Removes ALL(currently, triggers,stored procedures, functions and views) objects from the DBs we have under assets.
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
