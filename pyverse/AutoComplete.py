@@ -11,14 +11,13 @@ Created on Sep 25, 2014
 class SpData:
     """Get a hold of the raw data of the class, parse it and provide methods to extract the data in PHP mode TODO later to have language
     translation as a plug-in"""
-    file_name    = ''
-    sp_name        = ''
-    raw_args    = ''
-    body        = ''
-    ArgList        = []
 
     def __init__(self,file_name):
         self.file_name = file_name
+        self.ArgList    = []
+        self.body       = ''
+        self.sp_name    = ''
+        self.raw_args   = ''
 
     def addSPName(self,sp_name):
         """Get the stored procedure name and performes all needed cleanup on the string to be a legal php func name"""
@@ -87,10 +86,10 @@ class ArgError(Exception):
 
 class SpArguments:
     """Represents one argument, has arg name, type, in or out"""
-    type        = '' # either IN or OUT
-    data_type    = '' # varchar, int, boolean etc
-    name        = '' # arg name
-    php_data_type = ''
+#    type        = '' # either IN or OUT
+#    data_type    = '' # varchar, int, boolean etc
+#    name        = '' # arg name
+#    php_data_type = ''
 
     def __init__(self,raw_arg):
         self.type,self.data_type,self.php_data_type,self.name = self.parse(raw_arg)

@@ -79,18 +79,6 @@ for fn in matches:
 	#print phpdoc
 	doc_file.write(str(SP))
 
-	#print the function header
-	# doc_file.write(function_header)
-
-	#print the function argument part
-	# doc_file.write(clean_args)
-
-
-	#print(SP.sp_name)
-	#print(SP.raw_args)
-
-
-
 	sp_file.close()
 	if to_break:
 		break
@@ -99,8 +87,8 @@ for fn in matches:
 	#if fn == 'app_db\Course\Wizard\scheduler_dates.sql':
 	#	to_break = True
 
-# doc_file.write("\n\n}\n")
-# doc_file.close()
+	doc_file.write("\n\n}\n")
+	doc_file.close()
 
 
 input('\n\rEnter your input:')
