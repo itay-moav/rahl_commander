@@ -19,6 +19,7 @@ It defines classes_and_methods
 
 import sys
 import os
+import build_actual
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
@@ -31,17 +32,6 @@ __updated__ = '2014-09-25'
 DEBUG = 0
 TESTRUN = 0
 PROFILE = 0
-
-def get_actions(parser):
-    # Process arguments
-    args = parser.parse_args()
-
-    build_all = args.build_all
-    if build_all:
-        return {'s':'All', 't':'All', 'f':'All', 'c':'All'}
-    else:
-        return {'s':args.stored_proc, 't':args.triggers, 'f':args.functions, 'c':args.scripts}
-
 
 class CLIError(Exception):
     '''Generic exception to raise and log different fatal errors.'''
@@ -83,13 +73,19 @@ USAGE
     try:
         # Setup argument parser
         parser = ArgumentParser(description=program_license, formatter_class=RawDescriptionHelpFormatter)
-        parser.add_argument("--all", dest="build_all", action="store_true", help="Specifying this flag will rebuild the entire project")
-        parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="build all stored procedures, or the folder/*.sql specified")
-        parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="build all triggers, or the folder/*.sql specified")
-        parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="build all functions, or the folder/*.sql specified")
-        parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="run all scripts, or the folder/*.sql specified")
 
-        print(repr(get_actions(parser)))
+        parser.add_argument("--version",action="version",version=program_version_message)
+
+        parser.add_argument("--all", dest="build_all", action="store_true", help="Specifying this flag will rebuild the entire project")
+        parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="build all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="build all views, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="build all triggers, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="build all functions, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
+
+        Builder = build_actual.BuildAction(parser)
+        Builder.process()
+        # print(repr(get_actions(parser)))
 
         '''
         paths = args.paths
