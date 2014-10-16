@@ -1,15 +1,12 @@
 '''
 Created on Oct 9, 2014
 
-@author: SiTEL
+@author: Itay Moav
 '''
-import fnmatch
-import os
-import mysql.connector as My
-
 class BuildAction():
     '''
     Get command line params and build the db objects.
+    Loop on all specified folders and get the files we need to run
     '''
 
     PATH = '\\'
@@ -38,7 +35,7 @@ class BuildAction():
         '''
         For each type, build.
         First decide if build is needed
-        Then on what (all/subfolder/one file only)
+        Then on what (all/subfolder/one file only) is the dest
         '''
         if(self.what_to_build[obj_type]):
             self.loopOnFolders("../assets/" + self.arg_to_foldername[obj_type],dest)
@@ -56,23 +53,47 @@ class BuildAction():
         self.run(sub_folder)
 
     def extractDb(self,sub_folder):
+        '''
+        get the database name from the folder input
+        '''
         t = (sub_folder+'/All').replace('../assets/','').replace('\\','/').split('/')[1]
         return t
 
     def run(self,sub_folder):
+        '''
+        Here we are file level
+        So I just run the sql in each file I find
+        '''
+        # Connect to DB (TODO get DB connection abstracted)
+        cnx = My.connect(user='root', password='',
+                      host='127.0.0.1')
+        cursor = cnx.cursor()
+
+        # Loop on files and run sql
         for root, dirnames, filenames in os.walk(sub_folder):
             for filename in fnmatch.filter(filenames, '*.sql'):
                 db = self.extractDb(root)
-                print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,db))
+                print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,cnx.database))
                 f = open(root + '/' + filename,'r')
-                sql = "using " + db + ";\n" + f.read()
+                sql = f.read()
                 f.close()
                 print(sql)
 
-                cnx = My.connect(user='root', password='',
-                              host='127.0.0.1',
-                              database='lms2prod')
-                cnx.close()
+                if cnx.database != db:
+                    try:
+                        cnx.database = db
+                    except My.Error as err:
+                        if err.errno == My.errorcode.ER_BAD_DB_ERROR:
+                            if "CREATE DATABASE" in sql:
+                                cursor.execute(sql)
+                        else:
+                            print(err)
+
+                    else:
+                        cursor.execute(sql)
+
+        # Close connection
+        cnx.close()
 
 
 

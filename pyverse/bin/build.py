@@ -7,7 +7,7 @@ pyverse.bin.build is a description
 
 It defines classes_and_methods
 
-@author:     user_name
+@author:     Itay Moav
 
 @copyright:  2014 organization_name. All rights reserved.
 
@@ -19,7 +19,7 @@ It defines classes_and_methods
 
 import sys
 import os
-import build_actual
+import RahlIterator
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
@@ -33,6 +33,19 @@ DEBUG = 0
 TESTRUN = 0
 PROFILE = 0
 
+
+
+class BuildDBObj(RahlIterator.RahlIterator):
+
+    def process(self,db,file_content):
+        '''
+        Just run the sqls
+
+        '''
+        self.cursor.execute(file_content)
+
+
+
 class CLIError(Exception):
     '''Generic exception to raise and log different fatal errors.'''
     def __init__(self, msg):
@@ -42,6 +55,8 @@ class CLIError(Exception):
         return self.msg
     def __unicode__(self):
         return self.msg
+
+
 
 def main(argv=None): # IGNORE:C0111
     '''Command line options.'''
@@ -83,8 +98,8 @@ USAGE
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="build all functions, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
 
-        Builder = build_actual.BuildAction(parser)
-        Builder.process()
+        Builder = BuildDBObj(parser)
+        Builder.run()
         # print(repr(get_actions(parser)))
 
         '''
