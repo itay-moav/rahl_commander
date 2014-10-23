@@ -9,7 +9,7 @@ import fnmatch
 import os
 import mysql.connector as My
 
-class RahlIterator():
+class AssetFiles():
     '''
     Get command line params Loop on all specified folders and get the files we need to run
     '''
@@ -22,14 +22,15 @@ class RahlIterator():
     def __init__(self, parser,db=None):
         '''
         Stores a dictionary of what to build
+        @var cnx_proxy boolean : whther we use an injected DB connection or create our own. True == injected
         '''
         # Process arguments
         args = parser.parse_args()
-        build_all = args.build_all
-        if build_all:
-            self.what_to_build = {'s':'All','w':'All', 't':'All', 'f':'All', 'c':'All'}
+        handle_all = args.build_all
+        if handle_all:
+            self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All', 'c':'All'}
         else:
-            self.what_to_build = {'s':args.stored_proc,'w':args.views, 't':args.triggers, 'f':args.functions, 'c':args.scripts}
+            self.what_to_handle = {'s':args.stored_proc,'w':args.views, 't':args.triggers, 'f':args.functions, 'c':args.scripts}
 
         # Connect to DB (TODO get DB connection abstracted)
         if db:
@@ -42,6 +43,7 @@ class RahlIterator():
 
         self.cursor = self.cnx.cursor()
         self.folders = []
+        self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
 
 
 
@@ -75,8 +77,8 @@ class RahlIterator():
         2. Then on what (all/subfolder/one file only) is the dest
         3. Store the folder to iterate over
         '''
-        for db_obj_type,db_obj_type_subfolder in self.what_to_build.items():
-            if(self.what_to_build[db_obj_type]):
+        for db_obj_type,db_obj_type_subfolder in self.what_to_handle.items():
+            if(self.what_to_handle[db_obj_type]):
                 # assets/triggers ... assets/sp ... etc
                 db_object_folder = "../assets/" + self.arg_to_foldername[db_obj_type]
                 if(db_obj_type_subfolder == "All"):
@@ -106,18 +108,19 @@ class RahlIterator():
                     f = open(root + '/' + filename,'r')
                     file_content = f.read()
                     f.close()
+
                     if self.cnx.database != db:
                         try:
                             self.cnx.database = db
                         except My.Error as err:
                             if err.errno == My.errorcode.ER_BAD_DB_ERROR:
                                 if "CREATE DATABASE" in file_content:
-                                    self.process(db,file_content)
-                            else:
-                                print(err)
+                                    pass
 
-                    else:
-                        self.process(db,file_content)
+                            else:
+                                raise err
+
+                    self.process(db,file_content)
 
 
     def extractDb(self,sub_folder):
@@ -131,11 +134,10 @@ class RahlIterator():
 
     def process(self,db,file_content):
         '''
-        Technicly, this is an abstract method which needs overiding
+        Technicaly, this is an abstract method which needs overiding
 
         '''
         raise Exception('Implement this!')
-        self.cursor.execute(file_content)
 
 
 

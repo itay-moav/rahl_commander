@@ -77,7 +77,7 @@ USAGE
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="build all functions, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
 
-        Builder = commands.BuildDBObj(parser)
+        Builder = commands.DropDBObj(parser)
         Builder.run()
         # print(repr(get_actions(parser)))
 
