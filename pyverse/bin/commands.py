@@ -5,6 +5,8 @@ Created on Oct 23, 2014
 '''
 import lib.iterator
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
+
+
 class BuildDBObj(lib.iterator.AssetFiles):
     '''
         Iterator class to build ALL by input params
@@ -56,5 +58,7 @@ class DropDBObj(lib.iterator.AssetFiles):
                     err.errno == MyErrCode.ER_TRG_DOES_NOT_EXIST
                 ):
                 pass
+
+
 
 

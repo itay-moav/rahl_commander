@@ -1,12 +1,6 @@
 #!/usr/local/bin/python3.3
 # encoding: utf-8
 '''
-pyverse.bin.build -- shortdesc
-
-pyverse.bin.build is a description
-
-It defines classes_and_methods
-
 @author:     Itay Moav
 
 @copyright:  2014 organization_name. All rights reserved.
@@ -19,7 +13,7 @@ It defines classes_and_methods
 
 import sys
 import os
-import commands
+import lib.autocompletion
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
@@ -60,28 +54,27 @@ USAGE
     try:
         # Setup argument parser
         parser = ArgumentParser(description=program_license, formatter_class=RawDescriptionHelpFormatter)
-        parser.add_argument("--version",action="version",version=program_version_message)
-        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will drop all db object")
-        parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="drop all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="drop all views, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="drop all triggers, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="drop all functions, or the folder/*.sql specified. Root folder is the database name.")
 
-        Builder = commands.DropDBObj(parser)
+        parser.add_argument("--version",action="version",version=program_version_message)
+
+        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will generate SP auto completion for all databases")
+        parser.add_argument("-d","--database", dest="database", action="store",nargs='?', default=False, const='All', help="Generate php auto complete file for stored procedures, or the folder/*.sql specified. Root folder is the database name.")
+
+        Builder = lib.autocompletion.SP(parser)
         Builder.run()
 
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
         return 0
+
     except Exception as e:
-        if DEBUG or TESTRUN:
-            raise(e)
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
         return 2
 
+
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 1: # no params given, do --help
         sys.argv.append("-h")
     sys.exit(main())

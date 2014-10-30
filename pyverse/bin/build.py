@@ -19,7 +19,6 @@ It defines classes_and_methods
 
 import sys
 import os
-import lib
 import commands
 
 from argparse import ArgumentParser
@@ -29,13 +28,6 @@ __all__ = []
 __version__ = 0.1
 __date__ = '2014-09-25'
 __updated__ = '2014-09-25'
-
-DEBUG = 0
-TESTRUN = 0
-PROFILE = 0
-
-
-
 
 def main(argv=None): # IGNORE:C0111
     '''Command line options.'''
@@ -70,7 +62,7 @@ USAGE
 
         parser.add_argument("--version",action="version",version=program_version_message)
 
-        parser.add_argument("--all", dest="build_all", action="store_true", help="Specifying this flag will rebuild the entire project")
+        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will rebuild the entire project")
         parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="build all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="build all views, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="build all triggers, or the folder/*.sql specified. Root folder is the database name.")
@@ -79,35 +71,11 @@ USAGE
 
         Builder = commands.BuildDBObj(parser)
         Builder.run()
-        # print(repr(get_actions(parser)))
-
-        '''
-        paths = args.paths
-        verbose = args.verbose
-        recurse = args.recurse
-        inpat = args.include
-        expat = args.exclude
-
-
-        if verbose > 0:
-            print("Verbose mode on")
-            if recurse:
-                print("Recursive mode on")
-            else:
-                print("Recursive mode off")
-
-        if inpat and expat and inpat == expat:
-            raise CLIError("include and exclude pattern are equal! Nothing will be processed.")
-
-        for inpath in paths:
-            ### do something with inpath ###
-            print(inpath)
-        return 0
-        '''
 
     except KeyboardInterrupt:
         ### handle keyboard interrupt ###
         return 0
+
     except Exception as e:
         if DEBUG or TESTRUN:
             raise(e)
@@ -116,26 +84,9 @@ USAGE
         sys.stderr.write(indent + "  for help use --help")
         return 2
 
-if __name__ == "__main__":
-    if DEBUG:
-        sys.argv.append("-h")
-        sys.argv.append("-v")
-        sys.argv.append("-r")
-    if TESTRUN:
-        import doctest
-        doctest.testmod()
-    if PROFILE:
-        import cProfile
-        import pstats
-        profile_filename = 'pyverse.bin.build_profile.txt'
-        cProfile.run('main()', profile_filename)
-        statsfile = open("profile_stats.txt", "wb")
-        p = pstats.Stats(profile_filename, stream=statsfile)
-        stats = p.strip_dirs().sort_stats('cumulative')
-        stats.print_stats()
-        statsfile.close()
-        sys.exit(0)
 
-    if len(sys.argv) == 1:
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1: # no params given, do --help
         sys.argv.append("-h")
     sys.exit(main())

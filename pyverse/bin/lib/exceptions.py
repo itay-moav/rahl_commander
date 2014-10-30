@@ -1,7 +1,7 @@
 '''
 Created on Oct 23, 2014
 
-@author: SiTEL
+@author: Itay Moav
 '''
 
 class CLIError(Exception):

@@ -26,7 +26,7 @@ class AssetFiles():
         '''
         # Process arguments
         args = parser.parse_args()
-        handle_all = args.build_all
+        handle_all = args.handle_all
         if handle_all:
             self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All', 'c':'All'}
         else:
@@ -51,7 +51,7 @@ class AssetFiles():
         '''
         main entry point. send to processing each type (trigger,sp,func,view,scripts)
         '''
-        self.preFolderCalc()
+        self.preCalcFolder()
         self.calcFolder()
         self.postCalcFolder()
         self.iterate()
@@ -59,7 +59,7 @@ class AssetFiles():
 
 
 
-    def preFolderCalc(self):
+    def preCalcFolder(self):
         pass
 
 
