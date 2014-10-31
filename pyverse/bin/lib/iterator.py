@@ -94,7 +94,6 @@ class AssetFiles():
         pass
 
 
-
     def iterate(self):
         '''
         Main iteration processor bala bala
@@ -104,23 +103,31 @@ class AssetFiles():
             for root, dirnames, filenames in os.walk(sub_folder):
                 for filename in fnmatch.filter(filenames, '*.sql'):
                     db = self.extractDb(root)
+                    self._current_file = filename
+                    self._current_path = root
                     print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,db))
                     f = open(root + '/' + filename,'r')
                     file_content = f.read()
                     f.close()
-
-                    if self.cnx.database != db:
-                        try:
-                            self.cnx.database = db
-                        except My.Error as err:
-                            if err.errno == My.errorcode.ER_BAD_DB_ERROR:
-                                if "CREATE DATABASE" in file_content:
-                                    pass
-
-                            else:
-                                raise err
-
+                    self.changeDB(db)
                     self.process(db,file_content)
+
+
+    def changeDB(self,db):
+        '''
+            Changes the DB connected too
+        '''
+
+        if self.cnx.database != db:
+            try:
+                self.cnx.database = db
+            except My.Error as err:
+                if err.errno == My.errorcode.ER_BAD_DB_ERROR:
+                    if "CREATE DATABASE" in file_content:
+                        pass
+
+                else:
+                    raise err
 
 
     def extractDb(self,sub_folder):
