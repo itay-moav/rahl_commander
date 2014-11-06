@@ -35,7 +35,7 @@ class SP(lib.iterator.AssetFiles):
 
     def postCalcFolder(self):
         '''Open the output file'''
-        self.doc_file = open("docfile.php","w")
+        self.doc_file = open("../assets/autocompletion/php/SP.php","w")
         self.doc_file.write("""
 class SP{
         /**

@@ -1,8 +1,0 @@
-Purpose of this directory:
-==========================
-
-Here we have the entry points to the applications.
-Every file here is a command line u can use.
-Each by -h it will give it's own specific help, or read below for full commands and options documentations.
-
-
