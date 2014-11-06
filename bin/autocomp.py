@@ -22,7 +22,7 @@ __all__ = []
 __version__ = 0.1
 __date__ = '2014-09-25'
 __updated__ = '2014-09-25'
-
+DEBUG = True
 
 def main(argv=None): # IGNORE:C0111
     '''Command line options.'''
@@ -68,6 +68,8 @@ USAGE
         return 0
 
     except Exception as e:
+        if DEBUG:
+            raise(e)
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

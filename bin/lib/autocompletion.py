@@ -37,6 +37,11 @@ class SP(lib.iterator.AssetFiles):
         '''Open the output file'''
         self.doc_file = open("../assets/autocompletion/php/SP.php","w")
         self.doc_file.write("""
+<?php
+/**
+ * Autocompletion stub
+ * You call (dbname)_(stored_procedure_name)
+ */
 class SP{
         /**
          * @return SP
@@ -47,7 +52,7 @@ class SP{
 """)
 
 
-    def changeDB(self,db):
+    def changeDB(self,db,file_content):
         '''
             Shuting down the change DB used in all other iterators
         '''
@@ -74,7 +79,7 @@ class SP{
                 if "CREATE PROCEDURE" in line and len(line)>(len("CREATE PROCEDURE")+8):
                     start_funcname = line.find("CREATE PROCEDURE")
                     end_funcname_location = line.find('(')
-                    SP.addSPName(line[start_funcname+len("CREATE PROCEDURE")+1:end_funcname_location])
+                    SP.addSPName(line[start_funcname+len("CREATE PROCEDURE")+1:end_funcname_location],db)
                     looking_for_header = False
                     looking_for_header_args = True
 
@@ -128,11 +133,13 @@ class SpDataParser:
         self.file_name = file_name
         self.ArgList    = []
         self.body       = ''
+        self.db_name    = ''
         self.sp_name    = ''
         self.raw_args   = ''
 
-    def addSPName(self,sp_name):
+    def addSPName(self,sp_name,db_name):
         """Get the stored procedure name and performes all needed cleanup on the string to be a legal php func name"""
+        self.db_name = db_name
         self.sp_name = sp_name.replace('`','')
 
     def addRawArgStr(self,arg_str):
@@ -151,6 +158,7 @@ class SpDataParser:
     def comments(self):
         """formats the comment secion of the function, phpdoc wize"""
         comments = "\t   /**\n"
+        comments += "\t\t* Database: " + self.db_name + "\n"
         comments += "\t\t* " + self.sp_name + "\n"
         comments += "\t\t* File: " + self.file_name + "\n\t\t*\n"
         comments += self._paramsComments()
@@ -190,7 +198,7 @@ class SpDataParser:
     def __str__(self):
         """run al the cleanups and formatting, returns the methid as PHP code"""
         self.prepareArgs()
-        return "\n\n" + self.comments() + "\t\tpublic function " + self.sp_name + self.getArgsAsPHP() + "{\n\t\t\t/*\n" + self.body.replace('END','') + "\n\t\t\t*/\n\t\t}\n"
+        return "\n\n" + self.comments() + "\t\tpublic function {}_{}{}".format(self.db_name,self.sp_name,self.getArgsAsPHP()) + "{\n\t\t\t/*\n" + self.body.replace('END','') + "\n\t\t\t*/\n\t\t}\n"
 
 
 

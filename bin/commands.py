@@ -22,7 +22,6 @@ class BuildDBObj(lib.iterator.AssetFiles):
     def process(self,db,file_content):
         '''
             Just run the sqls
-
         '''
         self.cursor.execute(file_content)
 
@@ -46,18 +45,21 @@ class DropDBObj(lib.iterator.AssetFiles):
             if "CREATE " in line:
                 sql_elm_info = line.split(' ')
                 break
-        name = sql_elm_info[2].split('(')[0].replace('`','')
-        command = "DROP {type} {name} ".format(type=sql_elm_info[1],name=name)
 
-        try:
-            self.cursor.execute(command)
+        # Maybe file is empty? TODO should I log / report this?
+        if(sql_elm_info):
+            name = sql_elm_info[2].split('(')[0].replace('`','')
+            command = "DROP {type} {name} ".format(type=sql_elm_info[1],name=name)
 
-        except MyExcp as err:
-            if (
-                    err.errno == MyErrCode.ER_SP_DOES_NOT_EXIST or
-                    err.errno == MyErrCode.ER_TRG_DOES_NOT_EXIST
-                ):
-                pass
+            try:
+                self.cursor.execute(command)
+
+            except MyExcp as err:
+                if (
+                        err.errno == MyErrCode.ER_SP_DOES_NOT_EXIST or
+                        err.errno == MyErrCode.ER_TRG_DOES_NOT_EXIST
+                    ):
+                    pass
 
 
 
