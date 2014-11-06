@@ -4,13 +4,15 @@ rahl_commander
 Rahl Commander, or rcom is a tool to manage DB objects
 
 Rahl commander is meant to be used as a command line tool
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 Dependencies:
 Python 3.3 + mysql.connector
 
 Currenlty supports:
 Mysql >= 5.1
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 Installation+ setup on Windows (quick version)
 1. Checkout/export the project where ever you want. Lets call the directory DIRECTORY
 
@@ -22,7 +24,8 @@ Installation+ setup on Windows (quick version)
     3.1 drop : drops the elements, use help to see options
     3.1 autocomp : builds an auto completion file for php
 
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 Examples:
 CD to bin
 
