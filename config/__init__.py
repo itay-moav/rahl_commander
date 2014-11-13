@@ -25,3 +25,11 @@ program_license = '''%s
 
 USAGE
 ''' % (program_shortdesc, str(__date__))
+
+
+
+# Mysql config
+mysql = {'host':'localhost','username':'root','password':''}
+
+# Assets CHANGE HERE if u want the assets folder to be somewhere else
+assets_folder = os.path.abspath('../assets')

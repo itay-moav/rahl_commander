@@ -23,20 +23,13 @@ sys.path.insert(0, os.path.abspath('..'))
 import config
 import lib.commands
 
-def main(argv=None): # IGNORE:C0111
+def main():
     '''Command line options.'''
-
-    if argv is None:
-        argv = sys.argv
-    else:
-        sys.argv.extend(argv)
 
     try:
         # Setup argument parser
         parser = lib.ArgumentParser(description=config.program_license, formatter_class=lib.RawDescriptionHelpFormatter)
-
         parser.add_argument("--version",action="version",version=config.program_version_message)
-
         parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will rebuild the entire project")
         parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="build all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="build all views, or the folder/*.sql specified. Root folder is the database name.")
@@ -61,7 +54,7 @@ def main(argv=None): # IGNORE:C0111
 
 
 
-if __name__ == "__main__":
-    if len(sys.argv) == 1: # no params given, do --help
-        sys.argv.append("-h")
-    sys.exit(main())
+#++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
+if len(sys.argv) == 1: # no params given, do --help
+    sys.argv.append("-h")
+sys.exit(main())

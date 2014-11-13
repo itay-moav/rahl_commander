@@ -14,15 +14,15 @@ class SP{
 
 
 	   /**
-		* Database: aeonflux
+		* Database: Users
 		* check_user_has_role
-		* File: ../assets/sp\aeonflux/check_user_has_role.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\aeonflux/check_user_has_role.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT(11)
 		* @param integer $in_user_id  :IN in_user_id INT(11)
 		* @param integer $in_role_id  :IN in_role_id INT(11)
 		*/
-		public function aeonflux_check_user_has_role($in_organization_id,$in_user_id,$in_role_id){
+		public function Users_check_user_has_role($in_organization_id,$in_user_id,$in_role_id){
 			/*
    SELECT 
    			rbac_group.id
@@ -47,12 +47,12 @@ class SP{
 
 
 	   /**
-		* Database: aeonflux
+		* Database: Users
 		* get_all_terminated_users
-		* File: ../assets/sp\aeonflux/get_all_terminated_users.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\aeonflux/get_all_terminated_users.sql
 		*
 		*/
-		public function aeonflux_get_all_terminated_users(){
+		public function Users_get_all_terminated_users(){
 			/*
 	SELECT
 			COUNT(*) AS `c`
@@ -73,15 +73,15 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* buildUserActivityStream
-		* File: ../assets/sp\lms2prod\activity_stream/buildUserActivityStream.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\activity_stream/buildUserActivityStream.sql
 		*
 		* @param integer $user_id  :IN user_id int(11)
 		* @param integer $organization_id  :IN organization_id int(11)
 		* @param string $output_text  :IN output_text text
 		*/
-		public function lms2prod_buildUserActivityStream($user_id,$organization_id,$output_text){
+		public function Users_buildUserActivityStream($user_id,$organization_id,$output_text){
 			/*
 	REPLACE INTO activity_stream_mv VALUES(user_id, organization_id, output_text);
 
@@ -92,13 +92,13 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* cronMaterializedViewOrganizationUserStream
-		* File: ../assets/sp\lms2prod\activity_stream/cronMaterializedViewOrganizationUserStream.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\activity_stream/cronMaterializedViewOrganizationUserStream.sql
 		*
 		* @param integer $organization_id  :IN organization_id int(11)
 		*/
-		public function lms2prod_cronMaterializedViewOrganizationUserStream($organization_id){
+		public function Users_cronMaterializedViewOrganizationUserStream($organization_id){
 			/*
 	SET @paramsColumn1 = CONCAT('{"organization_id":"', organization_id, '"}');
 	REPLACE INTO cron_materialized_view(class_name,params_hash, params) VALUES('Activity_OrganizationUserStream',MD5( @paramsColumn1),@paramsColumn1);
@@ -109,13 +109,13 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* cronMaterializedViewUserStream
-		* File: ../assets/sp\lms2prod\activity_stream/cronMaterializedViewUserStream.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\activity_stream/cronMaterializedViewUserStream.sql
 		*
 		* @param integer $user_id  :IN user_id int(11)
 		*/
-		public function lms2prod_cronMaterializedViewUserStream($user_id){
+		public function Users_cronMaterializedViewUserStream($user_id){
 			/*
 	SET @paramsColumn = CONCAT('{"rbac_user_id":"', user_id, '"}');
 	REPLACE INTO cron_materialized_view(class_name,params_hash,params) VALUES('Activity_UserStream',MD5(@paramsColumn),@paramsColumn);
@@ -126,13 +126,13 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* commcenter_email_get_pending
-		* File: ../assets/sp\lms2prod\CommCenter\Email/pending_batch.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\CommCenter\Email/pending_batch.sql
 		*
 		* @param integer $in_page_size  :IN in_page_size SMALLINT(3)
 		*/
-		public function lms2prod_commcenter_email_get_pending($in_page_size){
+		public function Users_commcenter_email_get_pending($in_page_size){
 			/*
 
  -- CLEAN sruck processed records 
@@ -185,13 +185,13 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* get_course_wrapper
-		* File: ../assets/sp\lms2prod\Content/get_course_wrapper.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Content/get_course_wrapper.sql
 		*
 		* @param integer $content_container_id  :IN content_container_id INT(11)
 		*/
-		public function lms2prod_get_course_wrapper($content_container_id){
+		public function Users_get_course_wrapper($content_container_id){
 			/*
   SELECT 
 	  	course.id
@@ -213,12 +213,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* upcoming_content_expiration
-		* File: ../assets/sp\lms2prod\Content\Email/upcoming_content_expiration.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Content\Email/upcoming_content_expiration.sql
 		*
 		*/
-		public function lms2prod_upcoming_content_expiration(){
+		public function Users_upcoming_content_expiration(){
 			/*
  	SELECT
 			content_container.id,
@@ -246,12 +246,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* auto_enroll_reminder_dh
-		* File: ../assets/sp\lms2prod\Course\Email/auto_enroll_reminder_dh.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/auto_enroll_reminder_dh.sql
 		*
 		*/
-		public function lms2prod_auto_enroll_reminder_dh(){
+		public function Users_auto_enroll_reminder_dh(){
 			/*
  	SELECT
 			course_enrollment_invoice.registerer_rbac_user_id as rbac_user_id,
@@ -296,12 +296,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* instructor_reminder
-		* File: ../assets/sp\lms2prod\Course\Email/instructor_reminder.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/instructor_reminder.sql
 		*
 		*/
-		public function lms2prod_instructor_reminder(){
+		public function Users_instructor_reminder(){
 			/*
  	SELECT DISTINCT
  			c.id,
@@ -357,12 +357,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* learner_reminder
-		* File: ../assets/sp\lms2prod\Course\Email/learner_reminder.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/learner_reminder.sql
 		*
 		*/
-		public function lms2prod_learner_reminder(){
+		public function Users_learner_reminder(){
 			/*
  	SELECT DISTINCT
 			course_enrollment.student_rbac_user_id AS rbac_user_id,
@@ -419,12 +419,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* pending_approval_ad
-		* File: ../assets/sp\lms2prod\Course\Email/pending_approval_ad.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/pending_approval_ad.sql
 		*
 		*/
-		public function lms2prod_pending_approval_ad(){
+		public function Users_pending_approval_ad(){
 			/*
  	SELECT DISTINCT
  			c.id,
@@ -447,12 +447,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* pending_approval_dh
-		* File: ../assets/sp\lms2prod\Course\Email/pending_approval_dh.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/pending_approval_dh.sql
 		*
 		*/
-		public function lms2prod_pending_approval_dh(){
+		public function Users_pending_approval_dh(){
 			/*
  	SELECT DISTINCT
  			ce.course_id,
@@ -483,12 +483,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* pending_live_approval_ac
-		* File: ../assets/sp\lms2prod\Course\Email/pending_live_approval_ac.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/pending_live_approval_ac.sql
 		*
 		*/
-		public function lms2prod_pending_live_approval_ac(){
+		public function Users_pending_live_approval_ac(){
 			/*
  	SELECT
 						DISTINCT c.id,
@@ -563,12 +563,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* pending_live_approval_ad
-		* File: ../assets/sp\lms2prod\Course\Email/pending_live_approval_ad.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/pending_live_approval_ad.sql
 		*
 		*/
-		public function lms2prod_pending_live_approval_ad(){
+		public function Users_pending_live_approval_ad(){
 			/*
  	SELECT DISTINCT
  		c.id,
@@ -636,12 +636,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* under_minimum_live_approval_ad
-		* File: ../assets/sp\lms2prod\Course\Email/under_minimum_live_approval_ad.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Email/under_minimum_live_approval_ad.sql
 		*
 		*/
-		public function lms2prod_under_minimum_live_approval_ad(){
+		public function Users_under_minimum_live_approval_ad(){
 			/*
  	SELECT DISTINCT 
  			c.id,
@@ -724,9 +724,9 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* course_wizard_scheduler_dates 
-		* File: ../assets/sp\lms2prod\Course\Wizard/scheduler_dates.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Wizard/scheduler_dates.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		* @param integer $in_repeat_1  :IN in_repeat_1 INT
@@ -740,7 +740,7 @@ class SP{
 		* @param integer $in_repeat_9  :IN in_repeat_9 INT
 		* @param integer $in_repeat_10  :IN in_repeat_10 INT
 		*/
-		public function lms2prod_course_wizard_scheduler_dates ($in_course_id,$in_repeat_1,$in_repeat_2,$in_repeat_3,$in_repeat_4,$in_repeat_5,$in_repeat_6,$in_repeat_7,$in_repeat_8,$in_repeat_9,$in_repeat_10){
+		public function Users_course_wizard_scheduler_dates ($in_course_id,$in_repeat_1,$in_repeat_2,$in_repeat_3,$in_repeat_4,$in_repeat_5,$in_repeat_6,$in_repeat_7,$in_repeat_8,$in_repeat_9,$in_repeat_10){
 			/*
 			SELECT
 					event_dates.event_repeat_group_id,
@@ -772,13 +772,13 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* course_wizard_scheduler_topics 
-		* File: ../assets/sp\lms2prod\Course\Wizard/scheduler_topics.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Course\Wizard/scheduler_topics.sql
 		*
 		* @param integer $in_event_date_id  :IN in_event_date_id INT
 		*/
-		public function lms2prod_course_wizard_scheduler_topics ($in_event_date_id){
+		public function Users_course_wizard_scheduler_topics ($in_event_date_id){
 			/*
 			SELECT
 					event_dates_topics.id, 
@@ -833,12 +833,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* cron_failsafe_fix_starttime_status
-		* File: ../assets/sp\lms2prod\Cron/failsafe_fix_starttime_status.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Cron/failsafe_fix_starttime_status.sql
 		*
 		*/
-		public function lms2prod_cron_failsafe_fix_starttime_status(){
+		public function Users_cron_failsafe_fix_starttime_status(){
 			/*
 	UPDATE cron
 			set start_time = IF(
@@ -859,12 +859,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* cron_get_jobs_readyto_run
-		* File: ../assets/sp\lms2prod\Cron/get_jobs_readyto_run.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Cron/get_jobs_readyto_run.sql
 		*
 		*/
-		public function lms2prod_cron_get_jobs_readyto_run(){
+		public function Users_cron_get_jobs_readyto_run(){
 			/*
 	SELECT	*
 		FROM	lms2prod.cron
@@ -915,12 +915,12 @@ class SP{
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* cron_get_stuck_jobs
-		* File: ../assets/sp\lms2prod\Cron/get_stuck_jobs.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Cron/get_stuck_jobs.sql
 		*
 		*/
-		public function lms2prod_cron_get_stuck_jobs(){
+		public function Users_cron_get_stuck_jobs(){
 			/*
 SELECT
 			id
@@ -938,13 +938,13 @@ SELECT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* cron_timeout_async_actions
-		* File: ../assets/sp\lms2prod\Cron/timeout_async_actions.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Cron/timeout_async_actions.sql
 		*
 		* @param integer $roleouts_faild  :OUT roleouts_faild INT(11)
 		*/
-		public function lms2prod_cron_timeout_async_actions($roleouts_faild){
+		public function Users_cron_timeout_async_actions($roleouts_faild){
 			/*
 
 	-- reports main
@@ -1007,12 +1007,12 @@ SELECT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* cron_update_next_schedule
-		* File: ../assets/sp\lms2prod\Cron/update_next_schedule.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Cron/update_next_schedule.sql
 		*
 		*/
-		public function lms2prod_cron_update_next_schedule(){
+		public function Users_cron_update_next_schedule(){
 			/*
 	UPDATE cron
  SET 
@@ -1037,13 +1037,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* curriculum_cache_enrollment_per_repeat 
-		* File: ../assets/sp\lms2prod\Curriculum/cache_enrollment_per_repeat.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Curriculum/cache_enrollment_per_repeat.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		*/
-		public function lms2prod_curriculum_cache_enrollment_per_repeat ($in_course_id){
+		public function Users_curriculum_cache_enrollment_per_repeat ($in_course_id){
 			/*
 
 			CREATE TEMPORARY TABLE lms2prod.this_course_registration
@@ -1070,13 +1070,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* curriculum_get_topics_enrolled 
-		* File: ../assets/sp\lms2prod\Curriculum/get_topic_enrolled.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Curriculum/get_topic_enrolled.sql
 		*
 		* @param integer $in_course_enrollment_id  :IN in_course_enrollment_id INT
 		*/
-		public function lms2prod_curriculum_get_topics_enrolled ($in_course_enrollment_id){
+		public function Users_curriculum_get_topics_enrolled ($in_course_enrollment_id){
 			/*
 
 	SELECT
@@ -1129,13 +1129,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* curriculum_home_dashboard 
-		* File: ../assets/sp\lms2prod\Curriculum/home_dashboard.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Curriculum/home_dashboard.sql
 		*
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		*/
-		public function lms2prod_curriculum_home_dashboard ($in_rbac_user_id){
+		public function Users_curriculum_home_dashboard ($in_rbac_user_id){
 			/*
 		SELECT 
 				course.id				AS 'course_id',
@@ -1200,14 +1200,14 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* curriculum_launcher_external_data_for_transcript
-		* File: ../assets/sp\lms2prod\Curriculum\Launcher\External/data_for_transcript.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Curriculum\Launcher\External/data_for_transcript.sql
 		*
 		* @param integer $in_student_rbac_user_id  :IN in_student_rbac_user_id INT
 		* @param string $in_external_course_id  :IN in_external_course_id VARCHAR(255)
 		*/
-		public function lms2prod_curriculum_launcher_external_data_for_transcript($in_student_rbac_user_id,$in_external_course_id){
+		public function Users_curriculum_launcher_external_data_for_transcript($in_student_rbac_user_id,$in_external_course_id){
 			/*
   SELECT
 		content.id						AS 'content_id',
@@ -1246,13 +1246,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* curriculum_myeducation_enrollment_event 
-		* File: ../assets/sp\lms2prod\Curriculum\MyEducation/EnrollmentEvent.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Curriculum\MyEducation/EnrollmentEvent.sql
 		*
 		* @param integer $in_course_enrollment_id  :IN in_course_enrollment_id INT
 		*/
-		public function lms2prod_curriculum_myeducation_enrollment_event ($in_course_enrollment_id){
+		public function Users_curriculum_myeducation_enrollment_event ($in_course_enrollment_id){
 			/*
 	SELECT
 				DATE_FORMAT(course_enrollment_calendar_tree_mv.start_date,'%c/%e') AS start_date,
@@ -1288,13 +1288,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* curriculum_myeducation_enrollment_posttask 
-		* File: ../assets/sp\lms2prod\Curriculum\MyEducation/EnrollmentPostTask.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Curriculum\MyEducation/EnrollmentPostTask.sql
 		*
 		* @param integer $in_course_enrollment_id  :IN in_course_enrollment_id INT
 		*/
-		public function lms2prod_curriculum_myeducation_enrollment_posttask ($in_course_enrollment_id){
+		public function Users_curriculum_myeducation_enrollment_posttask ($in_course_enrollment_id){
 			/*
 	SELECT
 				COUNT(course_task.id) as post_task,	
@@ -1334,13 +1334,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* curriculum_myeducation_enrollment_pretask 
-		* File: ../assets/sp\lms2prod\Curriculum\MyEducation/EnrollmentPreTask.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Curriculum\MyEducation/EnrollmentPreTask.sql
 		*
 		* @param integer $in_course_enrollment_id  :IN in_course_enrollment_id INT
 		*/
-		public function lms2prod_curriculum_myeducation_enrollment_pretask ($in_course_enrollment_id){
+		public function Users_curriculum_myeducation_enrollment_pretask ($in_course_enrollment_id){
 			/*
 	SELECT
 				COUNT(course_task.id) as pre_task,	
@@ -1386,13 +1386,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* data_pusher_get_activity_coordinators 
-		* File: ../assets/sp\lms2prod\DataPusher/get_activity_coordinator.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\DataPusher/get_activity_coordinator.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		*/
-		public function lms2prod_data_pusher_get_activity_coordinators ($in_course_id){
+		public function Users_data_pusher_get_activity_coordinators ($in_course_id){
 			/*
 
 	SELECT DISTINCT
@@ -1417,13 +1417,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* data_pusher_get_certificates
-		* File: ../assets/sp\lms2prod\DataPusher/get_certificates.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\DataPusher/get_certificates.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		*/
-		public function lms2prod_data_pusher_get_certificates($in_course_id){
+		public function Users_data_pusher_get_certificates($in_course_id){
 			/*
 
 	SELECT
@@ -1451,13 +1451,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* data_pusher_get_curriculum 
-		* File: ../assets/sp\lms2prod\DataPusher/get_curriculum.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\DataPusher/get_curriculum.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		*/
-		public function lms2prod_data_pusher_get_curriculum ($in_course_id){
+		public function Users_data_pusher_get_curriculum ($in_course_id){
 			/*
 
 	SELECT
@@ -1524,13 +1524,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* data_pusher_get_dates_data 
-		* File: ../assets/sp\lms2prod\DataPusher/get_dates_data.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\DataPusher/get_dates_data.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		*/
-		public function lms2prod_data_pusher_get_dates_data ($in_course_id){
+		public function Users_data_pusher_get_dates_data ($in_course_id){
 			/*
 
 	SELECT 	MIN(event_dates.id)				AS 'id',
@@ -1571,13 +1571,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* data_pusher_get_target_audience 
-		* File: ../assets/sp\lms2prod\DataPusher/get_target_audience.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\DataPusher/get_target_audience.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		*/
-		public function lms2prod_data_pusher_get_target_audience ($in_course_id){
+		public function Users_data_pusher_get_target_audience ($in_course_id){
 			/*
 
 	SELECT DISTINCT
@@ -1601,13 +1601,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* expire_auto_enroll 
-		* File: ../assets/sp\lms2prod\enrollment/expire_auto_enroll.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\enrollment/expire_auto_enroll.sql
 		*
 		* @param integer $c_id  :IN c_id INT
 		*/
-		public function lms2prod_expire_auto_enroll ($c_id){
+		public function Users_expire_auto_enroll ($c_id){
 			/*
 	-- UPDATE 
 	--		`course` 
@@ -1631,14 +1631,14 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* update_auto_enroll_end_date 
-		* File: ../assets/sp\lms2prod\enrollment/update_auto_enroll_end_date.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\enrollment/update_auto_enroll_end_date.sql
 		*
 		* @param integer $c_id  :IN c_id INT
 		* @param string $new_end_date  :IN new_end_date TIMESTAMP
 		*/
-		public function lms2prod_update_auto_enroll_end_date ($c_id,$new_end_date){
+		public function Users_update_auto_enroll_end_date ($c_id,$new_end_date){
 			/*
 	-- INSERT INTO cron_events_manager (cron_id,params)
 	-- VALUES (21, CONCAT('{"course_id":"',c_id,'"}'));
@@ -1653,12 +1653,12 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* pending_department_approval_dh
-		* File: ../assets/sp\lms2prod\Manager\Department\Email/pending_department_approval_dh.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Manager\Department\Email/pending_department_approval_dh.sql
 		*
 		*/
-		public function lms2prod_pending_department_approval_dh(){
+		public function Users_pending_department_approval_dh(){
 			/*
  	SELECT
 			organization_department.id AS dep,
@@ -1689,13 +1689,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_admin_statistics_build_all
-		* File: ../assets/sp\lms2prod\Reports\Admin\Statistics/build_all.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\Statistics/build_all.sql
 		*
 		* @param integer $in_type  :IN in_type ENUM('full''day')
 		*/
-		public function lms2prod_reportsBuilder_admin_statistics_build_all($in_type){
+		public function Users_reportsBuilder_admin_statistics_build_all($in_type){
 			/*
 	CALL reportsBuilder_admin_statistics_course_enrollment(in_type);
 	CALL reportsBuilder_admin_statistics_login(in_type);
@@ -1707,13 +1707,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_admin_statistics_course_enrollment
-		* File: ../assets/sp\lms2prod\Reports\Admin\Statistics/course_enrollment.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\Statistics/course_enrollment.sql
 		*
 		* @param integer $in_type  :IN in_type ENUM('full''day')
 		*/
-		public function lms2prod_reportsBuilder_admin_statistics_course_enrollment($in_type){
+		public function Users_reportsBuilder_admin_statistics_course_enrollment($in_type){
 			/*
 	-- PRESTON COMMENTS
 	SET @date := '0000-00-00';
@@ -1780,13 +1780,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_admin_statistics_launcher
-		* File: ../assets/sp\lms2prod\Reports\Admin\Statistics/launcher.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\Statistics/launcher.sql
 		*
 		* @param integer $in_type  :IN in_type ENUM('full''day')
 		*/
-		public function lms2prod_reportsBuilder_admin_statistics_launcher($in_type){
+		public function Users_reportsBuilder_admin_statistics_launcher($in_type){
 			/*
 	-- PRESTON COMMENTS
 	SET @date := '0000-00-00';
@@ -1834,13 +1834,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_admin_statistics_login
-		* File: ../assets/sp\lms2prod\Reports\Admin\Statistics/login.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\Statistics/login.sql
 		*
 		* @param integer $in_type  :IN in_type ENUM('full''day')
 		*/
-		public function lms2prod_reportsBuilder_admin_statistics_login($in_type){
+		public function Users_reportsBuilder_admin_statistics_login($in_type){
 			/*
 	
 	-- PRESTON TO PUT COMMENTS!
@@ -1897,12 +1897,12 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reports_admin_user_org_normalized_usage
-		* File: ../assets/sp\lms2prod\Reports\Admin\users/org_normalized_usage.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\users/org_normalized_usage.sql
 		*
 		*/
-		public function lms2prod_reports_admin_user_org_normalized_usage(){
+		public function Users_reports_admin_user_org_normalized_usage(){
 			/*
 
 	SELECT
@@ -1940,14 +1940,14 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reports_admin_user_usage
-		* File: ../assets/sp\lms2prod\Reports\Admin\users/usage.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\users/usage.sql
 		*
 		* @param integer $in_page  :IN in_page INT
 		* @param integer $in_size  :IN in_size INT
 		*/
-		public function lms2prod_reports_admin_user_usage($in_page,$in_size){
+		public function Users_reports_admin_user_usage($in_page,$in_size){
 			/*
 	SELECT
 			first_name,
@@ -1975,12 +1975,12 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reports_admin_user_enrollments_org_normalized_usage
-		* File: ../assets/sp\lms2prod\Reports\Admin\users\enrollments/org_normalized_usage.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\users\enrollments/org_normalized_usage.sql
 		*
 		*/
-		public function lms2prod_reports_admin_user_enrollments_org_normalized_usage(){
+		public function Users_reports_admin_user_enrollments_org_normalized_usage(){
 			/*
 	CREATE TEMPORARY TABLE tmp_enrollment_org_usage
 	SELECT
@@ -2065,12 +2065,12 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reports_admin_user_enrollments_summaries
-		* File: ../assets/sp\lms2prod\Reports\Admin\users\enrollments/summaries.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Admin\users\enrollments/summaries.sql
 		*
 		*/
-		public function lms2prod_reports_admin_user_enrollments_summaries(){
+		public function Users_reports_admin_user_enrollments_summaries(){
 			/*
 	CREATE TEMPORARY TABLE tmp_admin_enrollment_reports
 	SELECT
@@ -2124,16 +2124,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_content_actual
-		* File: ../assets/sp\lms2prod\Reports\Drilldowns\Content/manage_all_content_actual.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Drilldowns\Content/manage_all_content_actual.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_content_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_content_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -2235,16 +2235,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_content_enrollments
-		* File: ../assets/sp\lms2prod\Reports\Drilldowns\Content/manage_all_enrollments.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Drilldowns\Content/manage_all_enrollments.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_content_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_content_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -2481,16 +2481,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_content_enrollments
-		* File: ../assets/sp\lms2prod\Reports\Educator\Content/all_enrollments.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Content/all_enrollments.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_content_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_content_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -2637,13 +2637,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reports_miniset_live_sessions
-		* File: ../assets/sp\lms2prod\Reports\Educator\Content/live_sessions_miniset.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Content/live_sessions_miniset.sql
 		*
 		* @param integer $in_course_id  :IN in_course_id INT
 		*/
-		public function lms2prod_reports_miniset_live_sessions($in_course_id){
+		public function Users_reports_miniset_live_sessions($in_course_id){
 			/*
  	SELECT
  		DISTINCT
@@ -2674,16 +2674,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_courses
-		* File: ../assets/sp\lms2prod\Reports\Educator\Course/all_courses.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Course/all_courses.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_courses($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_courses($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- CALL DEPENCIES!!!!
@@ -2697,16 +2697,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_courses_actual
-		* File: ../assets/sp\lms2prod\Reports\Educator\Course/all_courses_actual.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Course/all_courses_actual.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_courses_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_courses_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -2879,16 +2879,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_course_content
-		* File: ../assets/sp\lms2prod\Reports\Educator\Course/all_course_content.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Course/all_course_content.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_course_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_course_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -2992,16 +2992,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_enrollments
-		* File: ../assets/sp\lms2prod\Reports\Educator\Course/all_enrollments.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Course/all_enrollments.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -3238,16 +3238,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_content
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_content.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_content.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_educator_specialist_all_content_enroll,reportsBuilder_educator_specialist_all_content_actual' INTO out_drilldowns;
@@ -3259,16 +3259,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_content_actual
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_content_actual.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_content_actual.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_content_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_content_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -3368,16 +3368,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_content_enroll
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_content_enroll.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_content_enroll.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_content_enroll($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_content_enroll($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -3503,16 +3503,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_courses
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_courses.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_courses.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_courses($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_courses($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- SELECT 'reportsBuilder_educator_specialist_all_enrollments,reportsBuilder_educator_specialist_all_content_enrollments,reportsBuilder_educator_specialist_all_course_content,reportsBuilder_manage_all_courses_actual' INTO out_drilldowns;
 	SELECT 'reportsBuilder_educator_specialist_all_enrollments,reportsBuilder_educator_specialist_all_content_enroll,reportsBuilder_educator_specialist_all_courses_actual,reportsBuilder_educator_specialist_all_course_content' INTO out_drilldowns;
@@ -3523,16 +3523,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_courses_actual
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_courses_actual.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_courses_actual.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_courses_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_courses_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 
 	
@@ -3683,16 +3683,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_course_content
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_course_content.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_course_content.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_course_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_course_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -3797,16 +3797,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_enrollments
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_enrollments.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_enrollments.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -3980,16 +3980,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_specialist_all_learners
-		* File: ../assets/sp\lms2prod\Reports\Educator\Specialist/all_learners.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Educator\Specialist/all_learners.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_specialist_all_learners($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_specialist_all_learners($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Delete previeous report for this user/org
@@ -4099,16 +4099,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_content
-		* File: ../assets/sp\lms2prod\Reports\Faculty/all_content.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Faculty/all_content.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_faculty_all_content_enrollments,reportsBuilder_faculty_all_content_actual' INTO out_drilldowns;
@@ -4120,16 +4120,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_faculty_all_content_actual
-		* File: ../assets/sp\lms2prod\Reports\Faculty/all_content_actual.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Faculty/all_content_actual.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_faculty_all_content_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_faculty_all_content_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -4239,16 +4239,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_faculty_all_content_enrollments
-		* File: ../assets/sp\lms2prod\Reports\Faculty/all_enrollments.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Faculty/all_enrollments.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_faculty_all_content_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_faculty_all_content_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -4374,16 +4374,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_presentations
-		* File: ../assets/sp\lms2prod\Reports\Faculty/all_presentations.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Faculty/all_presentations.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_presentations($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_presentations($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_faculty_all_content_actual,reportsBuilder_faculty_all_content_enrollments' INTO out_drilldowns;
@@ -4394,16 +4394,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_quizzes
-		* File: ../assets/sp\lms2prod\Reports\Faculty/all_quizzes.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Faculty/all_quizzes.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_quizzes($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_quizzes($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_faculty_all_content_actual,reportsBuilder_faculty_all_content_enrollments' INTO out_drilldowns;
@@ -4415,16 +4415,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_returndemonstrations
-		* File: ../assets/sp\lms2prod\Reports\Faculty/all_return_demonstrations.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Faculty/all_return_demonstrations.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_returndemonstrations($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_returndemonstrations($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_educator_all_content_actual,reportsBuilder_faculty_all_content_enrollments' INTO out_drilldowns;
@@ -4436,16 +4436,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_educator_all_surveys
-		* File: ../assets/sp\lms2prod\Reports\Faculty/all_surveys.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Faculty/all_surveys.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_educator_all_surveys($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_educator_all_surveys($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_educator_all_content_actual,reportsBuilder_faculty_all_content_enrollments' INTO out_drilldowns;
@@ -4456,16 +4456,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_content
-		* File: ../assets/sp\lms2prod\Reports\Manage\Content/all_content.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Content/all_content.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_manage_all_content_enrollments,reportsBuilder_manage_all_content_actual' INTO out_drilldowns;
@@ -4477,16 +4477,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_presentations
-		* File: ../assets/sp\lms2prod\Reports\Manage\Content/all_presentations_ONHOLD.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Content/all_presentations_ONHOLD.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_presentations($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_presentations($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_manage_all_content_actual,reportsBuilder_manage_all_content_enrollments' INTO out_drilldowns;
@@ -4497,16 +4497,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_quizzes
-		* File: ../assets/sp\lms2prod\Reports\Manage\Content/all_quizzes_ONHOLD.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Content/all_quizzes_ONHOLD.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_quizzes($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_quizzes($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	-- CALL DEPENCIES!!!!
 	SELECT 'reportsBuilder_manage_all_content_actual,reportsBuilder_manage_all_content_enrollments' INTO out_drilldowns;
@@ -4518,16 +4518,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_courses
-		* File: ../assets/sp\lms2prod\Reports\Manage\Course/all_courses.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Course/all_courses.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_courses($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_courses($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	SELECT 'reportsBuilder_manage_all_enrollments,reportsBuilder_manage_all_content_enrollments,reportsBuilder_manage_all_courses_actual,reportsBuilder_manage_all_course_content' INTO out_drilldowns;
 	
@@ -4538,16 +4538,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_courses_actual
-		* File: ../assets/sp\lms2prod\Reports\Manage\Course/all_courses_actual.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Course/all_courses_actual.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_courses_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_courses_actual($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 
 	
@@ -4711,16 +4711,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_course_content
-		* File: ../assets/sp\lms2prod\Reports\Manage\Course/all_course_content.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Course/all_course_content.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_course_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_course_content($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -4827,16 +4827,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_departments
-		* File: ../assets/sp\lms2prod\Reports\Manage\Course/all_departments.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Course/all_departments.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_departments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_departments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Delete previeous report for this user/org
@@ -4929,16 +4929,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_enrollments
-		* File: ../assets/sp\lms2prod\Reports\Manage\Course/all_enrollments.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Course/all_enrollments.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_enrollments($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Lockdown
@@ -5305,16 +5305,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_manage_all_learners
-		* File: ../assets/sp\lms2prod\Reports\Manage\learner/all_learners.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\learner/all_learners.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_manage_all_learners($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_manage_all_learners($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Delete previeous report for this user/org
@@ -5497,16 +5497,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reportsBuilder_Manage_Users_Hrfeedregistration
-		* File: ../assets/sp\lms2prod\Reports\Manage\Users/hr_feed_registration.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Manage\Users/hr_feed_registration.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $out_drilldowns  :OUT out_drilldowns VARCHAR(255)
 		*/
-		public function lms2prod_reportsBuilder_Manage_Users_Hrfeedregistration($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
+		public function Users_reportsBuilder_Manage_Users_Hrfeedregistration($in_organization_id,$in_rbac_user_id,$in_entity_id,$out_drilldowns){
 			/*
 	
 	-- Delete previeous report for this user/org
@@ -5599,16 +5599,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reports_release_semaphore
-		* File: ../assets/sp\lms2prod\Reports\Utilities/release_semaphore.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Utilities/release_semaphore.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $in_sp  :IN in_sp varchar(255)
 		*/
-		public function lms2prod_reports_release_semaphore($in_organization_id,$in_rbac_user_id,$in_entity_id,$in_sp){
+		public function Users_reports_release_semaphore($in_organization_id,$in_rbac_user_id,$in_entity_id,$in_sp){
 			/*
 	
 	-- Delete previeous report for this user/org
@@ -5624,16 +5624,16 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reports_start_semaphore
-		* File: ../assets/sp\lms2prod\Reports\Utilities/start_semaphore.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Reports\Utilities/start_semaphore.sql
 		*
 		* @param integer $in_organization_id  :IN in_organization_id INT
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_entity_id  :IN in_entity_id INT
 		* @param string $in_sp  :IN in_sp varchar(255)
 		*/
-		public function lms2prod_reports_start_semaphore($in_organization_id,$in_rbac_user_id,$in_entity_id,$in_sp){
+		public function Users_reports_start_semaphore($in_organization_id,$in_rbac_user_id,$in_entity_id,$in_sp){
 			/*
 	-- Delete previeous report for this user/org
 	DELETE FROM reports_drilldown_semaphores
@@ -5665,13 +5665,13 @@ start_time =         IF(
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* all_user_orgs_data
-		* File: ../assets/sp\lms2prod\users/all_user_orgs_data.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\users/all_user_orgs_data.sql
 		*
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		*/
-		public function lms2prod_all_user_orgs_data($in_rbac_user_id){
+		public function Users_all_user_orgs_data($in_rbac_user_id){
 			/*
  	SELECT
  			organization.id									AS 'id',
@@ -5776,13 +5776,13 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* all_user_orgs_paths
-		* File: ../assets/sp\lms2prod\users/all_user_orgs_paths.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\users/all_user_orgs_paths.sql
 		*
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		*/
-		public function lms2prod_all_user_orgs_paths($in_rbac_user_id){
+		public function Users_all_user_orgs_paths($in_rbac_user_id){
 			/*
  	SELECT
  			organization.path,
@@ -5825,14 +5825,14 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* user_roles
-		* File: ../assets/sp\lms2prod\users/user_roles.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\users/user_roles.sql
 		*
 		* @param integer $in_rbac_user_id  :IN in_rbac_user_id INT
 		* @param integer $in_org_id  :IN in_org_id INT
 		*/
-		public function lms2prod_user_roles($in_rbac_user_id,$in_org_id){
+		public function Users_user_roles($in_rbac_user_id,$in_org_id){
 			/*
  	SELECT
  			DISTINCT role_id
@@ -5852,15 +5852,15 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* is_user_ra
-		* File: ../assets/sp\lms2prod\Utilities/is_user_ra.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Utilities/is_user_ra.sql
 		*
 		* @param integer $organization_id  :IN organization_id INT
 		* @param integer $rbac_user_id  :IN rbac_user_id INT
 		* @param integer $is_ra  :OUT is_ra SMALLINT
 		*/
-		public function lms2prod_is_user_ra($organization_id,$rbac_user_id,$is_ra){
+		public function Users_is_user_ra($organization_id,$rbac_user_id,$is_ra){
 			/*
 	SELECT
 		COUNT(*) AS 'is_ra'
@@ -5885,14 +5885,14 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reset_master_password
-		* File: ../assets/sp\lms2prod\Utilities/reset_master_password.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Utilities/reset_master_password.sql
 		*
 		* @param string $user_name  :IN user_name VARCHAR(255)
 		* @param string $password  :IN password VARCHAR(255)
 		*/
-		public function lms2prod_reset_master_password($user_name,$password){
+		public function Users_reset_master_password($user_name,$password){
 			/*
 	UPDATE rbac_user
 	SET `password`=SHA1(password)
@@ -5906,14 +5906,14 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* reset_master_password_by_id
-		* File: ../assets/sp\lms2prod\Utilities/reset_master_password_by_id.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Utilities/reset_master_password_by_id.sql
 		*
 		* @param integer $user_id  :IN user_id INT(11)
 		* @param string $password  :IN password VARCHAR(255)
 		*/
-		public function lms2prod_reset_master_password_by_id($user_id,$password){
+		public function Users_reset_master_password_by_id($user_id,$password){
 			/*
 	UPDATE rbac_user
 	SET `password`=SHA1(password)
@@ -5926,12 +5926,12 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* truncate_q
-		* File: ../assets/sp\lms2prod\Utilities/truncate_q.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Utilities/truncate_q.sql
 		*
 		*/
-		public function lms2prod_truncate_q(){
+		public function Users_truncate_q(){
 			/*
 	TRUNCATE TABLE reports_user_standard;
 	TRUNCATE TABLE reports_drilldown_semaphores;
@@ -5943,12 +5943,12 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* truncate_reports
-		* File: ../assets/sp\lms2prod\Utilities/truncate_reports.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Utilities/truncate_reports.sql
 		*
 		*/
-		public function lms2prod_truncate_reports(){
+		public function Users_truncate_reports(){
 			/*
 	CALL truncate_q();
 
@@ -5973,13 +5973,13 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms2prod
+		* Database: Users
 		* un_org_users
-		* File: ../assets/sp\lms2prod\Utilities/un_attached_users.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms2prod\Utilities/un_attached_users.sql
 		*
 		* @param integer $limit_me  :IN limit_me INT
 		*/
-		public function lms2prod_un_org_users($limit_me){
+		public function Users_un_org_users($limit_me){
 			/*
 	SELECT
 			rbac_user.id,
@@ -6009,12 +6009,12 @@ UNION DISTINCT
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* load_que
-		* File: ../assets/sp\lms3feed/load_que.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/load_que.sql
 		*
 		*/
-		public function lms3feed_load_que(){
+		public function Users_load_que(){
 			/*
 TRUNCATE TABLE que;
 INSERT INTO que( source_id, feed_file_info_id, path, feed_file_name, inque, outque, empty, parse_type,
@@ -6033,14 +6033,14 @@ ORDER BY feed_file_info.feed_order ASC , feed_file_info.source_id ASC ;
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* load_users
-		* File: ../assets/sp\lms3feed/load_users.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/load_users.sql
 		*
 		* @param integer $org_id  :IN org_id INT
 		* @param string $empl_id  :IN empl_id VARCHAR(255)
 		*/
-		public function lms3feed_load_users($org_id,$empl_id){
+		public function Users_load_users($org_id,$empl_id){
 			/*
 	SELECT 
 		employee_employment_status,
@@ -6064,13 +6064,13 @@ ORDER BY feed_file_info.feed_order ASC , feed_file_info.source_id ASC ;
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* modified_records_in_department
-		* File: ../assets/sp\lms3feed/modified_records_in_department.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/modified_records_in_department.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_modified_records_in_department($feed_id){
+		public function Users_modified_records_in_department($feed_id){
 			/*
 	SELECT 
 		count(*) as modifiled_counts
@@ -6098,13 +6098,13 @@ ORDER BY feed_file_info.feed_order ASC , feed_file_info.source_id ASC ;
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* modified_records_in_employee
-		* File: ../assets/sp\lms3feed/modified_records_in_employee.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/modified_records_in_employee.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_modified_records_in_employee($feed_id){
+		public function Users_modified_records_in_employee($feed_id){
 			/*
 	SELECT 
 			count(*) as modifiled_counts
@@ -6139,13 +6139,13 @@ ORDER BY feed_file_info.feed_order ASC , feed_file_info.source_id ASC ;
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* modified_records_in_organization
-		* File: ../assets/sp\lms3feed/modified_records_in_organization.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/modified_records_in_organization.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_modified_records_in_organization($feed_id){
+		public function Users_modified_records_in_organization($feed_id){
 			/*
 	SELECT 
 		count(*) as modifiled_counts
@@ -6166,13 +6166,13 @@ client_organization_staging.organization_status <> client_organization.organizat
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* modified_records_in_position
-		* File: ../assets/sp\lms3feed/modified_records_in_position.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/modified_records_in_position.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_modified_records_in_position($feed_id){
+		public function Users_modified_records_in_position($feed_id){
 			/*
 	SELECT 
 		count(*) as modifiled_counts
@@ -6202,12 +6202,12 @@ client_organization_staging.organization_status <> client_organization.organizat
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* refresh_employee_mv_now
-		* File: ../assets/sp\lms3feed/refresh_employee_mv_now.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/refresh_employee_mv_now.sql
 		*
 		*/
-		public function lms3feed_refresh_employee_mv_now(){
+		public function Users_refresh_employee_mv_now(){
 			/*
 	TRUNCATE TABLE employee_mv;
 	
@@ -6283,12 +6283,12 @@ client_organization_staging.organization_status <> client_organization.organizat
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* truncate_clients_tables
-		* File: ../assets/sp\lms3feed/truncate_clients_tables.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/truncate_clients_tables.sql
 		*
 		*/
-		public function lms3feed_truncate_clients_tables(){
+		public function Users_truncate_clients_tables(){
 			/*
 	
 	TRUNCATE TABLE lms3feed.feed_log;
@@ -6304,13 +6304,13 @@ client_organization_staging.organization_status <> client_organization.organizat
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* update_departments_from_staging
-		* File: ../assets/sp\lms3feed/update_departments_from_staging.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/update_departments_from_staging.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_update_departments_from_staging($feed_id){
+		public function Users_update_departments_from_staging($feed_id){
 			/*
 INSERT INTO lms3feed.client_department (
 	sitel_org_id,  
@@ -6356,13 +6356,13 @@ INSERT INTO lms3feed.client_department (
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* update_employees_from_staging
-		* File: ../assets/sp\lms3feed/update_employees_from_staging.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/update_employees_from_staging.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_update_employees_from_staging($feed_id){
+		public function Users_update_employees_from_staging($feed_id){
 			/*
 INSERT INTO lms3feed.client_employee (
 	sitel_org_id,  
@@ -6441,13 +6441,13 @@ INSERT INTO lms3feed.client_employee (
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* update_organizations_from_staging
-		* File: ../assets/sp\lms3feed/update_organizations_from_staging.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/update_organizations_from_staging.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_update_organizations_from_staging($feed_id){
+		public function Users_update_organizations_from_staging($feed_id){
 			/*
 INSERT INTO lms3feed.client_organization (
 	sitel_org_id,  
@@ -6488,13 +6488,13 @@ INSERT INTO lms3feed.client_organization (
 
 
 	   /**
-		* Database: lms3feed
+		* Database: Users
 		* update_positions_from_staging
-		* File: ../assets/sp\lms3feed/update_positions_from_staging.sql
+		* File: C:\Users\SiTEL\Documents\GitHub\rahl_commander\assets/sp\lms3feed/update_positions_from_staging.sql
 		*
 		* @param integer $feed_id  :IN feed_id INT
 		*/
-		public function lms3feed_update_positions_from_staging($feed_id){
+		public function Users_update_positions_from_staging($feed_id){
 			/*
 INSERT INTO lms3feed.client_position (
 	sitel_org_id,  

@@ -8,6 +8,7 @@ Basic iteration functionality on the right folders.
 import fnmatch
 import os
 import mysql.connector as My
+import config
 
 class AssetFiles():
     '''
@@ -22,7 +23,7 @@ class AssetFiles():
     def __init__(self, parser,db=None):
         '''
         Stores a dictionary of what to build
-        @var cnx_proxy boolean : whther we use an injected DB connection or create our own. True == injected
+        @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
         '''
         # Process arguments
         args = parser.parse_args()
@@ -38,7 +39,7 @@ class AssetFiles():
             self.cnx_proxy = True
 
         else:
-            self.cnx = My.connect(user='root', password='',host='127.0.0.1')
+            self.cnx = My.connect(user=config.mysql['username'], password=config.mysql['password'],host=config.mysql['host'])
             self.cnx_proxy = False
 
         self.cursor = self.cnx.cursor()
@@ -80,7 +81,7 @@ class AssetFiles():
         for db_obj_type,db_obj_type_subfolder in self.what_to_handle.items():
             if(self.what_to_handle[db_obj_type]):
                 # assets/triggers ... assets/sp ... etc
-                db_object_folder = "../assets/" + self.arg_to_foldername[db_obj_type]
+                db_object_folder = config.assets_folder + '/' + self.arg_to_foldername[db_obj_type]
                 if(db_obj_type_subfolder == "All"):
                     sub_folder = db_object_folder
                 else:

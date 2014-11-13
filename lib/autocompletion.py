@@ -3,12 +3,11 @@ Created on Oct 23, 2014
 
 @author: Itay Moav
 '''
-
-
-import lib.iterator
 import sys
 import os
 import fnmatch
+import config
+import lib.iterator
 
 
 
@@ -20,7 +19,7 @@ class SP(lib.iterator.AssetFiles):
     def __init__(self, parser,db=None):
         '''
         Stores a dictionary of what to build
-        @var cnx_proxy boolean : whther we use an injected DB connection or create our own. True == injected
+        @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
         '''
         # Process arguments
         args = parser.parse_args()
@@ -35,7 +34,7 @@ class SP(lib.iterator.AssetFiles):
 
     def postCalcFolder(self):
         '''Open the output file'''
-        self.doc_file = open("../assets/autocompletion/php/SP.php","w")
+        self.doc_file = open(config.assets_folder + "/autocompletion/php/SP.php","w")
         self.doc_file.write("""
 <?php
 /**
