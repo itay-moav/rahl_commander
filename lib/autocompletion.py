@@ -31,6 +31,7 @@ class SP(lib.iterator.AssetFiles):
 
         self.folders = []
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
+        self.verbosity = args.verbosity
 
     def postCalcFolder(self):
         '''Open the output file'''

@@ -64,3 +64,18 @@ class DropDBObj(lib.iterator.AssetFiles):
 
 
 
+
+
+class StatDBObj(lib.iterator.AssetFiles):
+    '''
+        Iterator class to check sync stat ALL by input params
+    '''
+
+
+    def process(self,db,file_content):
+        '''
+            Just run the sqls
+        '''
+        print(self._current_file)
+
+

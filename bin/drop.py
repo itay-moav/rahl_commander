@@ -31,6 +31,7 @@ def main():
         parser = lib.ArgumentParser(description=config.program_license, formatter_class=lib.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
         parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will drop all db object")
+        parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true", help="Specifying this flag will echo list of files processed")
         parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="drop all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="drop all views, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="drop all triggers, or the folder/*.sql specified. Root folder is the database name.")

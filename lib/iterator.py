@@ -28,10 +28,24 @@ class AssetFiles():
         # Process arguments
         args = parser.parse_args()
         handle_all = args.handle_all
+        c = 'All'
         if handle_all:
-            self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All', 'c':'All'}
+            self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
+
         else:
-            self.what_to_handle = {'s':args.stored_proc,'w':args.views, 't':args.triggers, 'f':args.functions, 'c':args.scripts}
+            self.what_to_handle = {'s':args.stored_proc,'w':args.views, 't':args.triggers, 'f':args.functions}
+
+        #the scripts (c) option exist in some commands.
+        try:
+            args.scripts
+
+        except AttributeError:
+            pass
+
+        else:
+            if not handle_all:
+                c = args.scripts
+            self.what_to_handle['c'] = c
 
         # Connect to DB (TODO get DB connection abstracted)
         if db:
@@ -44,6 +58,7 @@ class AssetFiles():
 
         self.cursor = self.cnx.cursor()
         self.folders = []
+        self.verbosity = args.verbosity
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
 
 
@@ -106,7 +121,9 @@ class AssetFiles():
                     db = self.extractDb(root)
                     self._current_file = filename
                     self._current_path = root
-                    print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,db))
+                    if(self.verbosity):
+                        print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,db))
+
                     f = open(root + '/' + filename,'r')
                     file_content = f.read()
                     f.close()
