@@ -23,9 +23,12 @@ class StatDBObj:
 
 
     def run(self):
+        ''' Factory method to run the right comparison algorithem'''
+
         #shutdown the verbosity of the default behavior
         self.__StatObj.verbosity = False
 
+        # this will also cause to run ALL if no value is provided in verbosity
         do_all = True
         for check in self.__StatObj.what_to_handle.items():
             if check[1]:
@@ -35,7 +38,48 @@ class StatDBObj:
         if do_all:
             self.__StatObj.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
 
-        self.__StatObj.run()
+
+        try:
+            self.__StatObj.run()
+
+        except GeneralExceptionNoneSync as e:
+            print("Project is not in sync with database. Run the more verbose stat to get more info.")
+
+
+
+
+
+
+
+class GeneralExceptionNoneSync(Exception):
+    pass
+
+
+
+class QuickStatDBObj(lib.iterator.AssetFiles):
+    '''
+        A simple synced / not synced result.
+        Will bail out on the first inconsistency
+
+    '''
+
+
+    def process(self,db,file_content):
+        '''
+            Just compare the sqls in project vs databse.
+        '''
+        # print(self._current_file)
+        ''' Extract the object name from the file content.
+                - Take out new lines, replace with spaces
+                - Find the CREATE command.
+                - Fetch that and the next two tokens (space separated words).
+        '''
+        tokenized_file_content = file_content.split()
+        normalized_file_content = ' '.join(tokenized_file_content)
+        print(normalized_file_content)
+
+
+
 
 
 
@@ -66,20 +110,6 @@ class FullStatDBObj(lib.iterator.AssetFiles):
 
 
 
-class QuickStatDBObj(lib.iterator.AssetFiles):
-    '''
-        A simple synced / not synced result.
-        Will bail out on the first inconsistency
-
-    '''
-
-
-    def process(self,db,file_content):
-        '''
-            Just run the sqls
-        '''
-        raise Exception('gogo')
-        print(self._current_file)
 
 
 
