@@ -66,6 +66,31 @@ class DropDBObj(app.iterator.AssetFiles):
 
 
 
+class CleanCodeObj(app.iterator.AssetFiles):
+    '''
+        Iterator class to fetch sql code without problematic
+        white characters.
+        Will also remove full line comments.
+        Good to use when u want to copy paste the code and run it manually without \t\t\t
+        developers might use in formating the code.
+    '''
+
+
+    def process(self,db,file_content):
+        '''
+            Just run the sqls
+        '''
+        print(self.args)
+        exit()
+        print(self._current_file)
+
+
+
+
+
+
+
+
 class StatDBObj(app.iterator.AssetFiles):
     '''
         Iterator class to check sync stat ALL by input params

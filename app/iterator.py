@@ -47,6 +47,17 @@ class AssetFiles():
                 c = args.scripts
             self.what_to_handle['c'] = c
 
+        self.connect(db)
+        self.folders = []
+        self.verbosity = args.verbosity
+        self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
+        self.args = args # for later use
+
+
+    def connect(self,db):
+        '''
+            overwrite this, if no DB connection is needed
+        '''
         # Connect to DB (TODO get DB connection abstracted)
         if db:
             self.cnx = db
@@ -57,10 +68,6 @@ class AssetFiles():
             self.cnx_proxy = False
 
         self.cursor = self.cnx.cursor()
-        self.folders = []
-        self.verbosity = args.verbosity
-        self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
-
 
 
     def run(self):

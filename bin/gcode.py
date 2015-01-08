@@ -33,20 +33,17 @@ def main():
         # Setup argument parser
         parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
-        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will rebuild the entire project")
+        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will fetch the entire project")
         parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true", help="Specifying this flag will echo list of files processed")
-        parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="build all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="build all views, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="build all triggers, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="build all functions, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="fetch code for all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="fetch code for all views, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="fetch code for all triggers, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="fetch code for all functions, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="fetch code for all scripts, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("--db", dest="code_source", action="store",nargs='?', default='assets', const='db', help="If flag specified, will bring the code from the DB.")
 
-        Builder = app.commands.BuildDBObj(parser)
-        Builder.run()
-
-    except KeyboardInterrupt:
-        ### handle keyboard interrupt ###
-        return 0
+        CodeCleaner = app.commands.CleanCodeObj(parser)
+        CodeCleaner.run()
 
     except Exception as e:
         if config.DEBUG:
