@@ -3,7 +3,7 @@ Created on Nov 20, 2014
 
 @author: Itay Moav
 '''
-import lib.iterator
+import app.iterator
 from distutils.sysconfig import project_base
 
 class StatDBObj:
@@ -56,7 +56,7 @@ class GeneralExceptionNoneSync(Exception):
 
 
 
-class QuickStatDBObj(lib.iterator.AssetFiles):
+class QuickStatDBObj(app.iterator.AssetFiles):
     '''
         A simple synced / not synced result.
         Will bail out on the first inconsistency
@@ -89,7 +89,7 @@ class QuickStatDBObj(lib.iterator.AssetFiles):
 
 
 
-class FullStatDBObj(lib.iterator.AssetFiles):
+class FullStatDBObj(app.iterator.AssetFiles):
     '''
         Do a full status sweep of the project base
         + object in project only

@@ -7,11 +7,11 @@ import sys
 import os
 import fnmatch
 import config
-import lib.iterator
+import app.iterator
 
 
 
-class SP(lib.iterator.AssetFiles):
+class SP(app.iterator.AssetFiles):
     '''
         Iterator class to find SPs and build auto completion for PHP/Eclipse
     '''

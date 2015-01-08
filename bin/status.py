@@ -23,14 +23,14 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath('..'))
 import config
-import lib.status
+import app.status
 
 def main():
     '''Command line options.'''
 
     try:
         # Setup argument parser
-        parser = lib.ArgumentParser(description=config.program_license, formatter_class=lib.RawDescriptionHelpFormatter)
+        parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
         parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will compare entire project")
         parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="compare stored procedures, or the folder/*.sql specified. Root folder is the database name.")
@@ -44,7 +44,7 @@ def main():
                                                                                 (+) object exists only in code
                                                                                 (-) object exists only in db''')
 
-        Stat = lib.status.StatDBObj(parser)
+        Stat = app.status.StatDBObj(parser)
         Stat.run()
 
     except Exception as e:

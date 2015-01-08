@@ -21,14 +21,14 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath('..'))
 import config
-import lib.commands
+import app.commands
 
 def main():
     '''Command line options.'''
 
     try:
         # Setup argument parser
-        parser = lib.ArgumentParser(description=config.program_license, formatter_class=lib.RawDescriptionHelpFormatter)
+        parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
         parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will drop all db object")
         parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true", help="Specifying this flag will echo list of files processed")
@@ -37,7 +37,7 @@ def main():
         parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="drop all triggers, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="drop all functions, or the folder/*.sql specified. Root folder is the database name.")
 
-        Builder = lib.commands.DropDBObj(parser)
+        Builder = app.commands.DropDBObj(parser)
         Builder.run()
 
     except Exception as e:

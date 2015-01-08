@@ -3,11 +3,11 @@ Created on Oct 23, 2014
 
 @author: Itay Moav
 '''
-import lib.iterator
+import app.iterator
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
-class BuildDBObj(lib.iterator.AssetFiles):
+class BuildDBObj(app.iterator.AssetFiles):
     '''
         Iterator class to build ALL by input params
     '''
@@ -28,7 +28,7 @@ class BuildDBObj(lib.iterator.AssetFiles):
 
 
 
-class DropDBObj(lib.iterator.AssetFiles):
+class DropDBObj(app.iterator.AssetFiles):
     '''
         Iterates on all files found, extract the element
         name and type
@@ -66,7 +66,7 @@ class DropDBObj(lib.iterator.AssetFiles):
 
 
 
-class StatDBObj(lib.iterator.AssetFiles):
+class StatDBObj(app.iterator.AssetFiles):
     '''
         Iterator class to check sync stat ALL by input params
     '''
