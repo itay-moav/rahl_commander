@@ -1,5 +1,6 @@
 import sys
 import os
+from config.ignore_list import ignore_files_dirs_with
 
 __all__ = []
 __version__ = 0.2

@@ -124,14 +124,23 @@ class AssetFiles():
         for sub_folder in self.folders:
             # Loop on files and run sql
             for root, dirnames, filenames in os.walk(sub_folder):
+                # This is where I apply the filter of the ignored file list.
+                if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
+                    continue
+
                 for filename in fnmatch.filter(filenames, '*.sql'):
+                    # print(filenames)
+                    # print(dirnames)
+                    # print(root)
                     db = self.extractDb(root)
+                    # print(db+"\n")
+                    # print(config.ignore_files_dirs_with)
                     self._current_file = filename
                     self._current_path = root
                     if(self.verbosity):
                         print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,db))
 
-                    f = open(root + '/' + filename,'r')
+                    f = open(root + '\\' + filename,'r')
                     file_content = f.read()
                     f.close()
                     self.changeDB(db,file_content)
@@ -161,8 +170,8 @@ class AssetFiles():
         '''
         get the database name from the folder input
         '''
-        t = (sub_folder+'/All').replace('../assets/','').replace('\\','/').split('/')[1]
-        return t
+        db_name = sub_folder.split(config.assets_folder)[1].replace('\\','/').split('/')[2]
+        return db_name
 
 
 
