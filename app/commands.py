@@ -75,14 +75,15 @@ class CleanCodeObj(app.iterator.AssetFiles):
         developers might use in formating the code.
     '''
 
-
     def process(self,db,file_content):
         '''
             Just run the sqls
         '''
-        print(self.args)
-        exit()
-        print(self._current_file)
+        print("\n===================================\n")
+        if self.args.dont_clean_code:
+            print(file_content)
+        else:
+            print(file_content.replace('  ',' ').replace("\t",' ').replace("\n",' ').replace("\r",' '))
 
 
 
@@ -101,6 +102,5 @@ class StatDBObj(app.iterator.AssetFiles):
         '''
             Just run the sqls
         '''
-        print(self._current_file)
-
+        pass
 

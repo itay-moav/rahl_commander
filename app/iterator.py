@@ -13,6 +13,7 @@ import config
 class AssetFiles():
     '''
     Get command line params Loop on all specified folders and get the files we need to run
+    No DB usage is epected in inheriting classes
     '''
 
     PATH = '\\'
@@ -20,7 +21,7 @@ class AssetFiles():
 
 
 
-    def __init__(self, parser,db=None):
+    def __init__(self, parser):
         '''
         Stores a dictionary of what to build
         @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
@@ -47,27 +48,10 @@ class AssetFiles():
                 c = args.scripts
             self.what_to_handle['c'] = c
 
-        self.connect(db)
         self.folders = []
         self.verbosity = args.verbosity
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.args = args # for later use
-
-
-    def connect(self,db):
-        '''
-            overwrite this, if no DB connection is needed
-        '''
-        # Connect to DB (TODO get DB connection abstracted)
-        if db:
-            self.cnx = db
-            self.cnx_proxy = True
-
-        else:
-            self.cnx = My.connect(user=config.mysql['username'], password=config.mysql['password'],host=config.mysql['host'])
-            self.cnx_proxy = False
-
-        self.cursor = self.cnx.cursor()
 
 
     def run(self):
@@ -149,21 +133,9 @@ class AssetFiles():
 
     def changeDB(self,db,file_content):
         '''
-            Changes the DB connected too
+            DO NOTHING HERE
         '''
-
-        if self.cnx.database != db:
-            try:
-                self.cnx.database = db
-            except My.Error as err:
-                if err.errno == My.errorcode.ER_BAD_DB_ERROR:
-                    # This mans the DB is going to be created in the script
-                    # TODO make it work only for scripts
-                    if "CREATE DATABASE" in file_content:
-                        pass
-
-                else:
-                    raise err
+        pass
 
 
     def extractDb(self,sub_folder):
@@ -186,10 +158,65 @@ class AssetFiles():
 
     def postIterate(self):
         '''
+            OVERWRITE THIS!
+        '''
+        pass
+
+
+
+
+
+
+class AssetFilesDBConn(AssetFiles):
+
+    def __init__(self, parser,db=None):
+        '''
+        Stores a dictionary of what to build
+        @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
+        '''
+        AssetFiles.__init__(self, parser)
+        self.connect(db)
+
+
+    def connect(self,db):
+        '''
+            overwrite this, if no DB connection is needed
+        '''
+        # Connect to DB (TODO get DB connection abstracted)
+        if db:
+            self.cnx = db
+            self.cnx_proxy = True
+
+        else:
+            self.cnx = My.connect(user=config.mysql['username'], password=config.mysql['password'],host=config.mysql['host'])
+            self.cnx_proxy = False
+
+        self.cursor = self.cnx.cursor()
+
+
+    def changeDB(self,db,file_content):
+        '''
+            Changes the DB connected too
+        '''
+
+        if self.cnx.database != db:
+            try:
+                self.cnx.database = db
+            except My.Error as err:
+                if err.errno == My.errorcode.ER_BAD_DB_ERROR:
+                    # This mans the DB is going to be created in the script
+                    # TODO make it work only for scripts
+                    if "CREATE DATABASE" in file_content:
+                        pass
+
+                else:
+                    raise err
+
+
+    def postIterate(self):
+        '''
         '''
         # Close connection
         if not self.cnx_proxy:
             self.cnx.close()
-
-
 

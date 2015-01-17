@@ -3,8 +3,8 @@
 '''
 pyverse.bin.gcode -- gets a normalized version of the code.
 
-pyverse.bin.gcode -- Normalized version of code is all white spaces are translated to ONE ' ' space.
-                     All comments are removed.
+pyverse.bin.gcode -- Normalized version of code is all white spaces are translated to ' ' space.
+                     All start of line comments are removed.
                      Adds the DELIMITER query at start and end of code.
                      In future version it will also add the databse name to the object name, if missing.
 
@@ -41,6 +41,7 @@ def main():
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="fetch code for all functions, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="fetch code for all scripts, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("--db", dest="code_source", action="store",nargs='?', default='assets', const='db', help="If flag specified, will bring the code from the DB.")
+        parser.add_argument("--original", dest="dont_clean_code", action="store",nargs='?', default=False, const=True, help="If flag specified, will bring the code as is from Assets folder.")
 
         CodeCleaner = app.commands.CleanCodeObj(parser)
         CodeCleaner.run()
