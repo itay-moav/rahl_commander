@@ -12,7 +12,7 @@ It defines classes_and_methods
 
 @author:     Itay Moav
 
-@copyright:  2014 organization_name. All rights reserved.
+@copyright:  2008 All rights reserved.
 
 @license:    license
 

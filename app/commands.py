@@ -4,6 +4,7 @@ Created on Oct 23, 2014
 @author: Itay Moav
 '''
 import app.iterator
+import re
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
@@ -26,7 +27,7 @@ class BuildDBObj(app.iterator.AssetFiles):
         self.cursor.execute(file_content)
 
 
-
+# ============================================================================================================================
 
 class DropDBObj(app.iterator.AssetFiles):
     '''
@@ -63,7 +64,7 @@ class DropDBObj(app.iterator.AssetFiles):
 
 
 
-
+# ============================================================================================================================
 
 
 class CleanCodeObj(app.iterator.AssetFiles):
@@ -77,17 +78,22 @@ class CleanCodeObj(app.iterator.AssetFiles):
 
     def process(self,db,file_content):
         '''
-            Just run the sqls
+           Prints a copy of the procedure which
+           can be copy-pasted into the CLI of MySQL without
+           problematic white spaces like TABS \t
+
+           or print it as is
         '''
         print("\n===================================\n")
         if self.args.dont_clean_code:
             print(file_content)
         else:
-            print(file_content.replace('  ',' ').replace("\t",' ').replace("\n",' ').replace("\r",' '))
+            pattern = re.compile('(--.*\n|\s)') # remove SQL comments and then white spaces. Replace with ' '
+            print(pattern.sub(' ',file_content))
 
 
 
-
+# ============================================================================================================================
 
 
 
@@ -102,5 +108,8 @@ class StatDBObj(app.iterator.AssetFiles):
         '''
             Just run the sqls
         '''
-        pass
+        print("not functional yet")
+        exit()
 
+
+# ============================================================================================================================
