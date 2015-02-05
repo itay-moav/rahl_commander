@@ -40,18 +40,23 @@ RCom will do the following for you:
 <li> <b>ASSETS</b> is the <code>assets</code> folder, right under <b>APPDIR</b>.</li>  
 <li> <b>BIN</b> is the <code>bin</code> folder right under <b>APPDIR</b></li>
 <li> <b>CONFIG</b> is <b>APPDIR</b><code>/config/__init__.py</code></li>
-<li> <b>IGNOREDIR</b> is <b>APPDIR</b><code>/config/ignore_list.py</code>
+<li> <b>IGNOREDIR</b> is <b>APPDIR</b><code>/config/ignore_list.py</code></li>
 </ul>
 
 ## Installation
 (I assume you have Python and the necessary mysql connector).  
 Currently supporting only manual (very simple) installation.  
 
-
-1. Checkout/export the project where ever you want. Lets call the directory DIRECTORY
-
-2. in the assets folder under each object type you wish to maintain, create a folder which is the same name as the
-   as related db name. Under this folder you create your sql code, you can use as many subfolders as you want.
+<ol>
+<li>Checkout/export the project where ever you want. This folder becomes <b>APPDIR</b>.</li>
+<li>Check your <b>ASSETS</b> folder has the following subfolders: <code>autocompletion, functions, scripts, sp, triggers, views</code></li>
+<li>Open <b>CONFIG</b> and make sure the DB credentials are correct</li>
+<li>If not existing, create DB folders. For example, if u have a database named <b>proddb</b> and it has stored procedures and triggers, go to <code><b>ASSETS</b>/sp</code> and create folder <code><b>proddb</b></code>. Then go to folder <code><b>ASSETS</b>/triggers</code> and create folder <code><b>proddb</b></code>.  
+So you end with <code><b>ASSETS</b>/sp/proddb</code> and <code><b>ASSETS</b>/sp/triggers</code>.  
+(Check the <b>examle_assets</b> structure, which is setup for DBs <b>dhara</b> and <b>dhara_views</b>).
+</li>
+</ol>
+<b>You Are Done!</b>
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
