@@ -55,6 +55,7 @@ Currently supporting only manual (very simple) installation.
 So you end with <code><b>ASSETS</b>/sp/proddb</code> and <code><b>ASSETS</b>/sp/triggers</code>.  
 (Check the <b>examle_assets</b> structure, which is setup for DBs <b>dhara</b> and <b>dhara_views</b>).
 </li>
+<li>Run the <code>test.py</code> under the <b>BIN</b> to see all is good.</li>
 </ol>
 <b>You Are Done!</b>
 
