@@ -34,9 +34,19 @@ RCom will do the following for you:
 </ol>
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+## Naming Conventions 
+<ul>
+<li> <b>APPDIR</b> is where you checked out <b>Rahl Commander</b>.</li>
+<li> <b>ASSETS</b> is the <code>assets</code> folder, right under <b>APPDIR</b>.</li>  
+<li> <b>BIN</b> is the <code>bin</code> folder right under <b>APPDIR</b></li>
+<li> <b>CONFIG</b> is <b>APPDIR</b><code>/config/__init__.py</code></li>
+<li> <b>IGNOREDIR</b> is <b>APPDIR</b><code>/config/ignore_list.py</code>
+</ul>
 
 ## Installation
-(I assume you have Python and the necessary mysql connector).
+(I assume you have Python and the necessary mysql connector).  
+Currently supporting only manual (very simple) installation.  
+
 
 1. Checkout/export the project where ever you want. Lets call the directory DIRECTORY
 
