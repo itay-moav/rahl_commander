@@ -7,8 +7,7 @@ import app.iterator
 import re
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
-
-class BuildDBObj(app.iterator.AssetFiles):
+class BuildDBObj(app.iterator.AssetFilesDBConn):
     '''
         Iterator class to build ALL by input params
     '''
@@ -29,7 +28,7 @@ class BuildDBObj(app.iterator.AssetFiles):
 
 # ============================================================================================================================
 
-class DropDBObj(app.iterator.AssetFiles):
+class DropDBObj(app.iterator.AssetFilesDBConn):
     '''
         Iterates on all files found, extract the element
         name and type

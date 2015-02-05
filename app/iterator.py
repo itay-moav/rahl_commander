@@ -142,9 +142,11 @@ class AssetFiles():
         '''
         get the database name from the folder input
         '''
-        db_name = sub_folder.split(config.assets_folder)[1].replace('\\','/').split('/')[2]
-        return db_name
-
+        try:
+            db_name = sub_folder.split(config.assets_folder)[1].replace('\\','/').split('/')[2]
+            return db_name
+        except IndexError:
+            return ''
 
 
     def process(self,db,file_content):
@@ -199,7 +201,7 @@ class AssetFilesDBConn(AssetFiles):
             Changes the DB connected too
         '''
 
-        if self.cnx.database != db:
+        if self.cnx.database != db and db:
             try:
                 self.cnx.database = db
             except My.Error as err:
@@ -208,6 +210,8 @@ class AssetFilesDBConn(AssetFiles):
                     # TODO make it work only for scripts
                     if "CREATE DATABASE" in file_content:
                         pass
+                    else:
+                        raise err
 
                 else:
                     raise err
