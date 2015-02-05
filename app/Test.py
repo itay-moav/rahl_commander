@@ -25,7 +25,20 @@ class Install(app.iterator.AssetFilesDBConn):
         '''
         Main iteration processor bala bala
         '''
+
+        # First check the auto completion folder exists
+        if not os.path.isdir(config.assets_folder + '/autocompletion'):
+            print ("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion'))
+            exit()
+
+        # Check the db objects folder exist
         for sub_folder in self.folders:
+            #check subfolder exists or fail
+            if not os.path.isdir(sub_folder):
+                print ("You are missing [{}] folder. Please create it and run tests again".format(sub_folder))
+                exit()
+
+
             # Loop on files and run sql
             for root, dirnames, filenames in os.walk(sub_folder):
                 # This is where I apply the filter of the ignored file list.
@@ -33,5 +46,10 @@ class Install(app.iterator.AssetFilesDBConn):
                     continue
 
                 db = self.extractDb(root)
-                print("Checking root [{}] and DB  [{}]\n".format(root,db))
-                self.changeDB(db,'')
+                # print("Checking root [{}] and DB  [{}]\n".format(root,db))
+                try:
+                    self.changeDB(db,'')
+
+                except app.iterator.My.errors.ProgrammingError:
+                    print("Missing DB [{}] in root [{}]\n".format(db,root))
+
