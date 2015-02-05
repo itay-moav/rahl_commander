@@ -1,5 +1,5 @@
-rahl_commander
-==============
+RAHL COMMANDER for SQL
+======================
 
 A command line tool to simplify the managment of DB objects and scripts in your project.
 
@@ -30,7 +30,7 @@ RCom will do the following for you:
 <li>Build for you all or some of the objects into the DB of your choice.</li>
 <li>Will generate auto completion files for your IDE (how nice it is to get auto completion for a stored procedure in your PHP, heh?).</li>
 <li>Will give easy cleanup of the DB of all or some objects (Great for use in release scritps).</li>
-<li>Provide a simple cleanup tool of the code. You write a nice Stored Procedure, all indented and commented, but when u copy it and try to run it threough the command line, it craps out, due to white space characters in the wrong place. RCom will generate a clean version for you to copy paste.</li>
+<li>Provide a simple cleanup tool of the code. You write a nice Stored Procedure. All indented and commented. But, when u copy it and try to run it through the command line, it craps out. All due to white space characters in the wrong place.  RCom will generate a clean version for you to copy paste into the command line.</li>
 </ol>
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
