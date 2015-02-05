@@ -25,10 +25,13 @@ and various scripts.
 Rahl Commander (RCom)provides facilities and structure to manage all those pieces of code
 used in your project, but are not part of the main code base.  
 
-RCom will do the following for you:
-1. Build for you all or some of the objects into the DB of your choice.
-2. Will generate auto completion files for your IDE (how nice it is to get auto completion for a stored procedure in your PHP, heh?).
-3. Will give easy cleanup of the DB of all or some objects (Great for use in release scritps).
+RCom will do the following for you:  
+1. Build for you all or some of the objects into the DB of your choice.  
+
+2. Will generate auto completion files for your IDE (how nice it is to get auto completion for a stored procedure in your PHP, heh?).  
+
+3. Will give easy cleanup of the DB of all or some objects (Great for use in release scritps).  
+
 4. Provide a simple cleanup tool of the code. You write a nice Stored Procedure, all indented and commented, but when u copy it and try to run it threough the command line, it craps out, due to white space characters in the wrong place. RCom will generate a clean version for you to copy paste.
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -36,18 +39,10 @@ RCom will do the following for you:
 ## Installation
 (I assume you have Python and the necessary mysql connector).
 
-
-
-Installation+ setup on Windows (quick version)
 1. Checkout/export the project where ever you want. Lets call the directory DIRECTORY
 
 2. in the assets folder under each object type you wish to maintain, create a folder which is the same name as the
    as related db name. Under this folder you create your sql code, you can use as many subfolders as you want.
-
-3. Available command (find them under the bin folder)
-    3.1 build : builds the elements, use help to see options
-    3.1 drop : drops the elements, use help to see options
-    3.1 autocomp : builds an auto completion file for php
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
