@@ -124,7 +124,7 @@ class AssetFiles():
                     if(self.verbosity):
                         print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,db))
 
-                    f = open(root + '\\' + filename,'r')
+                    f = open(root + '/' + filename,'r')
                     file_content = f.read()
                     f.close()
                     self.changeDB(db,file_content)
