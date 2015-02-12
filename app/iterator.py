@@ -206,7 +206,7 @@ class AssetFilesDBConn(AssetFiles):
                 self.cnx.database = db
             except My.Error as err:
                 if err.errno == My.errorcode.ER_BAD_DB_ERROR:
-                    # This mans the DB is going to be created in the script
+                    # This means the DB is going to be created in the script
                     # TODO make it work only for scripts
                     if "CREATE DATABASE" in file_content:
                         pass

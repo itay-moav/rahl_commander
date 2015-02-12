@@ -31,6 +31,11 @@ class Install(app.iterator.AssetFilesDBConn):
             print ("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion'))
             exit()
 
+        if not os.path.isdir(config.assets_folder + '/autocompletion/php'):
+            print ("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion/php'))
+            exit()
+
+
         # Check the db objects folder exist
         for sub_folder in self.folders:
             #check subfolder exists or fail

@@ -1,2 +1,0 @@
-PHP auto completion folder
-==========================
