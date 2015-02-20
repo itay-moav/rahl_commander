@@ -122,7 +122,7 @@ class AssetFiles():
                     self._current_file = filename
                     self._current_path = root
                     if(self.verbosity):
-                        print("doing root [{}] file [{}] in database [{}]\n".format(root,filename,db))
+                        print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,root,filename,db))
 
                     f = open(root + '/' + filename,'r')
                     file_content = f.read()
