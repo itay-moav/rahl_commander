@@ -28,6 +28,10 @@ class SP(app.iterator.AssetFiles):
             self.what_to_handle = {'s':'All'}
         else:
             self.what_to_handle = {'s':args.database}
+        
+        self.assets_path = config.assets_folder
+        if args.assets_path:
+            self.assets_path = args.assets_path
 
         self.folders = []
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
@@ -35,7 +39,7 @@ class SP(app.iterator.AssetFiles):
 
     def postCalcFolder(self):
         '''Open the output file'''
-        self.doc_file = open(config.assets_folder + "/autocompletion/php/SP.php","w")
+        self.doc_file = open(self.assets_path + "/autocompletion/php/SP.php","w")
         self.doc_file.write("""
 <?php
 /**
