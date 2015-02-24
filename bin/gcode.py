@@ -42,6 +42,7 @@ def main():
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="fetch code for all scripts, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("--db", dest="code_source", action="store",nargs='?', default='assets', const='db', help="If flag specified, will bring the code from the DB.")
         parser.add_argument("--original", dest="dont_clean_code", action="store",nargs='?', default=False, const=True, help="If flag specified, will bring the code as is from Assets folder.")
+        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',  help="optional way to specifiy the assets full path (starting from /)")
 
         CodeCleaner = app.commands.CleanCodeObj(parser)
         CodeCleaner.run()
