@@ -37,6 +37,7 @@ def main():
         parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="compare all views, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="compare all triggers, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="compare all functions, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',  help="optional way to specifiy the assets full path (starting from /)")
         parser.add_argument("-v","--verbosity", dest="verbosity", action="store", default=1, nargs='?', choices=['1','2'], help='''
                                                                             1: simple synced or not synced.
                                                                             2: list of files not synced
