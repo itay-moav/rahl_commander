@@ -36,6 +36,7 @@ def main():
         parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="drop all views, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="drop all triggers, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="drop all functions, or the folder/*.sql specified. Root folder is the database name.")
+        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',  help="optional way to specifiy the assets full path (starting from /)")
 
         Builder = app.commands.DropDBObj(parser)
         Builder.run()
