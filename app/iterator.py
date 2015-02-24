@@ -48,6 +48,10 @@ class AssetFiles():
                 c = args.scripts
             self.what_to_handle['c'] = c
 
+        self.assets_path = config.assets_folder
+        if args.assets_path:
+            self.assets_path = args.assets_path
+
         self.folders = []
         self.verbosity = args.verbosity
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
@@ -87,7 +91,7 @@ class AssetFiles():
         for db_obj_type,db_obj_type_subfolder in self.what_to_handle.items():
             if(self.what_to_handle[db_obj_type]):
                 # assets/triggers ... assets/sp ... etc
-                db_object_folder = config.assets_folder + '/' + self.arg_to_foldername[db_obj_type]
+                db_object_folder = self.assets_path + '/' + self.arg_to_foldername[db_obj_type]
                 if(db_obj_type_subfolder == "All"):
                     sub_folder = db_object_folder
                 else:
@@ -143,7 +147,7 @@ class AssetFiles():
         get the database name from the folder input
         '''
         try:
-            db_name = sub_folder.split(config.assets_folder)[1].replace('\\','/').split('/')[2]
+            db_name = sub_folder.split(self.assets_path)[1].replace('\\','/').split('/')[2]
             return db_name
         except IndexError:
             return ''
