@@ -38,6 +38,7 @@ def main():
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="build all functions, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All', help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
         parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',  help="optional way to specifiy the assets full path (starting from /)")
+        parser.add_argument("--server", dest="server_connection", action="store", nargs='?',  help="optional way to specifiy sql connection username:password@server.ip.or.domain")
 
         Builder = app.commands.BuildDBObj(parser)
         Builder.run()

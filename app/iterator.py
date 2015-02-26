@@ -188,13 +188,24 @@ class AssetFilesDBConn(AssetFiles):
         '''
             overwrite this, if no DB connection is needed
         '''
+        # Check whther take config values or override from command line
+        if self.args.server_connection:
+            creds = self.args.server_connection.replace(':','@').split('@')
+            user=creds[0]
+            password=creds[1]
+            host=creds[2]
+        else:
+            user=config.mysql['username']
+            password=config.mysql['password']
+            host=config.mysql['host']
+
         # Connect to DB (TODO get DB connection abstracted)
         if db:
             self.cnx = db
             self.cnx_proxy = True
 
         else:
-            self.cnx = My.connect(user=config.mysql['username'], password=config.mysql['password'],host=config.mysql['host'])
+            self.cnx = My.connect(user=user, password=password,host=host)
             self.cnx_proxy = False
 
         self.cursor = self.cnx.cursor()

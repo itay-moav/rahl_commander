@@ -52,6 +52,10 @@ def main():
         parser.add_argument("--dryrun", dest="dry_run", action="store_true",                                        \
                             default=False, help="Specifying this flag will clean all db object")
 
+        parser.add_argument("--server", dest="server_connection", action="store", nargs='?',                        \
+                            help="optional way to specifiy sql connection username:password@server.ip.or.domain")
+
+
         Builder = app.cleaner.AllDBObj(parser)
         Builder.run()
 

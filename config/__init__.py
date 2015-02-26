@@ -35,5 +35,3 @@ mysql = {'host':'localhost','username':'root','password':''}
 # Assets CHANGE HERE if u want the assets folder to be somewhere else
 assets_folder = os.path.abspath('../assets')
 
-#run in circles to resolve dependencies, kind of like a gcc linker has to do with symbol dependencies.
-dependency_linker_cycles = 3

@@ -6,7 +6,6 @@ Created on Oct 23, 2014
 import app.iterator
 import re
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
-import config
 
 class BuildDBObj(app.iterator.AssetFilesDBConn):
     '''
@@ -19,19 +18,12 @@ class BuildDBObj(app.iterator.AssetFilesDBConn):
             existing seals first to built better ones
         '''
         DropDBObj(self.parser,self.cnx).run()
-        # some sp/functions/triggers/views depends on other elements to be built properly. I will track failed ones and try to re
-        # run them a few times in a cycle, to resolve any dependencies.
-        # number of cycles is configured in the config files.
-        self.failed_dependencies = []
 
     def process(self,db,file_content):
         '''
             Just run the sqls
         '''
-        try:
-            self.cursor.execute(file_content)
-        except:
-            raise
+        self.cursor.execute(file_content)
 
 
 # ============================================================================================================================
