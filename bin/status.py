@@ -21,7 +21,8 @@ for verbosity 2 Will give a list of objects not in sync
 
 import sys
 import os
-sys.path.insert(0, os.path.abspath('..'))
+path, filename = os.path.split(__file__)
+sys.path.insert(0, path+'/..')
 import config
 import app.status
 
