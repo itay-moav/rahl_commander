@@ -51,7 +51,7 @@ def main():
                             default=False, const='All', help="drop all functions, or from just the selected DB. in that case, specify DB name.")
 
         parser.add_argument("--dryrun", dest="dry_run", action="store_true",                                        \
-                            default=False, help="Specifying this flag will clean all db object")
+                            default=False, help="Specifying this flag will generate a list of drop commands, but not execute them.")
 
         parser.add_argument("--server", dest="server_connection", action="store", nargs='?',                        \
                             help="optional way to specifiy sql connection username:password@server.ip.or.domain")
