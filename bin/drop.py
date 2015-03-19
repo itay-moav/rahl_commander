@@ -32,13 +32,22 @@ def main():
         parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
         parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will drop all db object")
-        parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true", help="Specifying this flag will echo list of files processed")
-        parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All', help="drop all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All', help="drop all views, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All', help="drop all triggers, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All', help="drop all functions, or the folder/*.sql specified. Root folder is the database name.")
-        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',  help="optional way to specifiy the assets full path (starting from /)")
-        parser.add_argument("--server", dest="server_connection", action="store", nargs='?',  help="optional way to specifiy sql connection username:password@server.ip.or.domain")
+        parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true", help=config.help_common_language['verbosity'])
+
+        parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All',             \
+                                help="drop all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
+
+        parser.add_argument("-w","--views", dest="views", action="store",nargs='?', default=False, const='All',                         \
+                                help="drop all views, or the folder/*.sql specified. Root folder is the database name.")
+
+        parser.add_argument("-t","--triggers", dest="triggers", action="store",nargs='?',  default=False, const='All',                  \
+                                help="drop all triggers, or the folder/*.sql specified. Root folder is the database name.")
+
+        parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All',                \
+                                help="drop all functions, or the folder/*.sql specified. Root folder is the database name.")
+
+        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',  help=config.help_common_language['assets'])
+        parser.add_argument("--server", dest="server_connection", action="store", nargs='?',  help=config.help_common_language['server_connection'])
 
         Builder = app.commands.DropDBObj(parser)
         Builder.run()

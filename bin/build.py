@@ -47,10 +47,10 @@ def main():
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All',                         \
                             help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
 
-        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',                                                \
+        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?', default=False,                                 \
                             help=config.help_common_language['assets'])
 
-        parser.add_argument("--server", dest="server_connection", action="store", nargs='?',                                                \
+        parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,                                 \
                             help=config.help_common_language['server_connection'])
 
         Builder = app.commands.BuildDBObj(parser)

@@ -117,12 +117,7 @@ class AssetFiles():
                     continue
 
                 for filename in fnmatch.filter(filenames, '*.sql'):
-                    # print(filenames)
-                    # print(dirnames)
-                    # print(root)
                     db = self.extractDb(root)
-                    # print(db+"\n")
-                    # print(config.ignore_files_dirs_with)
                     self._current_file = filename
                     self._current_path = root
                     if(self.verbosity):
@@ -226,7 +221,9 @@ class AssetFilesDBConn(AssetFiles):
                     if "CREATE DATABASE" in file_content:
                         pass
                     else:
-                        raise err
+                        print("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
+                        print("CODE:\n{}".format(file_content))
+                        exit()
 
                 else:
                     raise err
