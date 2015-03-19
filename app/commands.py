@@ -23,6 +23,9 @@ class BuildDBObj(app.iterator.AssetFilesDBConn):
         '''
             Just run the sqls
         '''
+        if self.verbosity == 2:
+            print(file_content)
+
         self.cursor.execute(file_content)
 
 
@@ -50,6 +53,8 @@ class DropDBObj(app.iterator.AssetFilesDBConn):
         if(sql_elm_info):
             name = sql_elm_info[2].split('(')[0].replace('`','')
             command = "DROP {type} {name} ".format(type=sql_elm_info[1],name=name)
+            if self.verbosity == 2:
+                print(command)
 
             try:
                 self.cursor.execute(command)
@@ -60,6 +65,9 @@ class DropDBObj(app.iterator.AssetFilesDBConn):
                         err.errno == MyErrCode.ER_TRG_DOES_NOT_EXIST
                     ):
                     pass
+
+        elif self.verbosity == 2:
+            print('I DO NOTHING!')
 
 
 

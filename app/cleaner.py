@@ -181,5 +181,8 @@ class AllDBObj():
             else:
                 if self.verbosity:
                     print(tmp_command)
+                if self.verbosity == 2:
+                    print (tmp_command)
+
                 self.cursor.execute(tmp_command)
 

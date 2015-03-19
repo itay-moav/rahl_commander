@@ -1,11 +1,12 @@
 import sys
 import os
 from config.ignore_list import ignore_files_dirs_with
+from config.common_language import help_common_language
 
 __all__ = []
-__version__ = 0.2
+__version__ = 1.0
 __date__ = '2014-09-24'
-__updated__ = '2014-11-06'
+__updated__ = '2015-03-17'
 DEBUG = True
 
 program_name = os.path.basename(sys.argv[0])
