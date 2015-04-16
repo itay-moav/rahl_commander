@@ -32,7 +32,7 @@ RCom will do the following for you:
 <li>Will give easy cleanup of the DB of all or some objects (Great for use in release scritps).</li>
 <li>Provide a simple cleanup tool of the code. You write a nice Stored Procedure. All indented and commented. But, when u copy it and try to run it through the command line, it craps out. All due to white space characters in the wrong place.  RCom will generate a clean version for you to copy paste into the command line.</li>
 </ol>
-
+ 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## Naming Conventions 
 <ul>
