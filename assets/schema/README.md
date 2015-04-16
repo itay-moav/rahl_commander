@@ -27,10 +27,23 @@ You can have both main.chkr + tablename.tblchkr files
 Any combination of the above
 
 
-Rule structure in main.chkr
+File structure in main.chkr
+[table in current database]::[target database, can be same database]:[target table name]::[rul1]:[rule2]...[rulen]
+If u ommit the target databse, system will assume current database.
+If u ommit the target table name, System will assume same name
+DO TRY NOT to syncompare a table to itself
+
+[rule] has the following structure: 
+* for table level or field name<>rule
+
+Example:
+(Under the folder dhara)
+first_file_profile::dhara_delta:dhara_first_file_profile::sameall:nodefaults    --- This will compare table first_file_profile in database dhara to table dhara_first_file_profile in database dhara_delta.  
+                                                                                --- It will enforce both tables to be exactly the same, with the exception of there should be no default values in target
+                                                                                --- table (dhara_delta.dhara_first_file_profile)
 
 
-Rule structure in tablename.tblchkr
+File structure in tablename.tblchkr
 
 
 
