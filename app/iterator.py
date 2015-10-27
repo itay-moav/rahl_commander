@@ -110,24 +110,46 @@ class AssetFiles():
         Main iteration processor bala bala
         '''
         for sub_folder in self.folders:
-            # Loop on files and run sql
-            for root, dirnames, filenames in os.walk(sub_folder):
-                # This is where I apply the filter of the ignored file list.
-                if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
-                    continue
+            # If this is actually just a sql file, do it directly. Otherwise do loop next
+            if ".sql" in sub_folder:
+                db = self.extractDb(sub_folder)
+                self._current_file = sub_folder
+                self._current_path = sub_folder
+                if(self.verbosity):
+                    print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,sub_folder,sub_folder,db))
 
-                for filename in fnmatch.filter(filenames, '*.sql'):
-                    db = self.extractDb(root)
-                    self._current_file = filename
-                    self._current_path = root
-                    if(self.verbosity):
-                        print("\n\nhandler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,root,filename,db))
+                f = open(sub_folder,'r')
+                file_content = f.read()
+                f.close()
+                self.changeDB(db,file_content)
+                self.process(db,file_content)
 
-                    f = open(root + '/' + filename,'r')
-                    file_content = f.read()
-                    f.close()
-                    self.changeDB(db,file_content)
-                    self.process(db,file_content)
+                continue
+
+            else:
+                # Loop on files and run sql
+                for root, dirnames, filenames in os.walk(sub_folder):
+                    # This is where I apply the filter of the ignored file list.
+                    if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
+                        continue
+
+                    for filename in fnmatch.filter(filenames, '*.sql'):
+                        # print(filenames)
+                        # print(dirnames)
+                        # print(root)
+                        db = self.extractDb(root)
+                        # print(db+"\n")
+                        # print(config.ignore_files_dirs_with)
+                        self._current_file = filename
+                        self._current_path = root
+                        if(self.verbosity):
+                            print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,root,filename,db))
+
+                        f = open(root + '/' + filename,'r')
+                        file_content = f.read()
+                        f.close()
+                        self.changeDB(db,file_content)
+                        self.process(db,file_content)
 
 
     def changeDB(self,db,file_content):
