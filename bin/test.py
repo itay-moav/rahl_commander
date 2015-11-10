@@ -22,8 +22,7 @@ A test script to verify installation went fine, and ll is ready
 
 import sys
 import os
-path, filename = os.path.split(__file__)
-sys.path.insert(0, path+'/..')
+sys.path.insert(0, os.path.abspath('..'))
 import app.Test
 Test = app.Test.Install(None)
 Test.run()
