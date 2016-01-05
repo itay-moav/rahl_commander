@@ -18,7 +18,8 @@ pyverse.bin.build Use this command to build the various code generate objects in
 
 import sys
 import os
-sys.path.insert(0, os.path.abspath('..'))
+path, filename = os.path.split(__file__)
+sys.path.insert(0, os.path.abspath(path+'/..'))
 import config
 import app.commands
 
