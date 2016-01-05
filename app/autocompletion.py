@@ -6,6 +6,7 @@ Created on Oct 23, 2014
 import sys
 import os
 import fnmatch
+import shutil
 import config
 import app.iterator
 
@@ -115,6 +116,17 @@ class SP{
         '''
         self.doc_file.write("\n\n}\n")
         self.doc_file.close()
+        
+        # Copy the file to the editors autocompletion plugin folder. If it has that path setup
+        if len(config.autocomplete[config.autocomplete['editor']]['plugin_dir']) > 1:
+            plugin_dir = config.autocomplete['editor_workspace'] + "/" + config.autocomplete[config.autocomplete['editor']]['plugin_dir']
+            auto_complete_dir = plugin_dir + "/" + sorted(os.listdir(plugin_dir),reverse=True)[0]
+            print("Copy [" + self.assets_path + "/autocompletion/php/SP.php] TO [" + auto_complete_dir + "/SP.php]")
+            shutil.copyfile(self.assets_path + "/autocompletion/php/SP.php",auto_complete_dir + "/SP.php")
+
+
+
+
 
 
 
@@ -169,7 +181,7 @@ class SpDataParser:
         for Arg in self.ArgList:
             comments += "\t\t* @param " + Arg.php_data_type + " $" + Arg.name + "  :" + ' '.join([Arg.type,Arg.name,Arg.data_type]) + "\n"
 
-        comments += "\t\t*/\n"
+        comments += "\t\t*\n\t\t* @return " + config.autocomplete['return'] + "\n\t\t*/\n"
         return comments
 
     def prepareArgs(self):
