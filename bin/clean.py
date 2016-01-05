@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.3
+#!/usr/local/bin/python3.4
 # encoding: utf-8
 '''
 pyverse.bin.clean -- cleans all objects from selected DB
