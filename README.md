@@ -50,6 +50,7 @@ Currently supporting only manual (very simple) installation.
 <ol>
 <li>Checkout/export the project where ever you want. This folder becomes <b>APPDIR</b>.</li>
 <li>Check your <b>ASSETS</b> folder has the following subfolders: <code>autocompletion, functions, scripts, sp, triggers, views</code></li>
+<li>Copy directory  <b>cp -r example_config config</b>
 <li>Open <b>CONFIG</b> and make sure the DB credentials are correct</li>
 <li>If not existing, create DB folders. For example, if u have a database named <b>proddb</b> and it has stored procedures and triggers, go to <code><b>ASSETS</b>/sp</code> and create folder <code><b>proddb</b></code>. Then go to folder <code><b>ASSETS</b>/triggers</code> and create folder <code><b>proddb</b></code>.  
 So you end with <code><b>ASSETS</b>/sp/proddb</code> and <code><b>ASSETS</b>/sp/triggers</code>.  

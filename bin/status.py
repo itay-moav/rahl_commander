@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.3
+#!/usr/local/bin/python3.4
 # encoding: utf-8
 '''
 Check if the current code base is in sync with the checked database.
