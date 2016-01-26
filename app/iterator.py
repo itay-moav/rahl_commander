@@ -54,6 +54,19 @@ class AssetFiles():
         self.verbosity = args.verbosity
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.args = args # for later use
+        
+        self.validateSelf()
+        
+        
+    def validateSelf(self):
+        '''
+        Verify we have the right values.
+        Validates the existance of the assets path
+        '''
+        if not os.path.isdir(self.assets_path):
+            # error message regardless of verbosity, this is a game stopper
+            raise EnvironmentError("Assets folder [{}] was not found\n\n".format(self.assets_path))
+        
 
 
     def run(self):
