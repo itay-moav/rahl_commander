@@ -1,7 +1,8 @@
 Mysql schema cheking rules 
 ==============================
 
-RCOM gives us the ability to validate certain schema rules on your DB.  
+RCOM gives us the ability to validate certain schema rules on your DB via the `schem` command (u can do schem -h for doc on the command line).
+ 
 Example:
 A database who has a user_profile table, where each user has only one entry.  
 There is also a delta database, that keeps an audit of the data changes in user_profiles.
@@ -20,8 +21,8 @@ Tutorial
 Directory structure and file names:
 Each database will have a directory in the assets folder, under the schema folder.  
 If there are no rules for the DB, no need to create that folder.  
-The system will itterate on a folder and it's contents, So u can either separate each table rules to a separate file, in which case, the file name must be tablename.tblchkr
-Or one file for the entire DB, in which case, the file has to be named main.chkr  
+The system will itterate on a folder and it's contents, So u can either separate each table rules to a separate file, in which case, the file name must be tablename.rchk (Rahl Check Format)
+Or one file for the entire DB, in which case, the file has to be named rahl_main.rchk  
 You can have subfolders for easier organization of rule files, you can have more than one file per table, you can have several main.chkr files (obviously, not under the same folder).
 You can have both main.chkr + tablename.tblchkr files
 Any combination of the above

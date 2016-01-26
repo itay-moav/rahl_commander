@@ -9,6 +9,7 @@ import fnmatch
 import os
 import mysql.connector as My
 import config
+from test.regrtest import printlist
 
 class AssetFiles():
     '''
@@ -17,7 +18,7 @@ class AssetFiles():
     '''
 
     PATH = '\\'
-    arg_to_foldername = {'t':'triggers','f':'functions','c':'scripts','s':'sp','w':'views'}
+    arg_to_foldername = {'t':'triggers','f':'functions','c':'scripts','s':'sp','w':'views','d':'schema'}
 
 
 
@@ -56,6 +57,7 @@ class AssetFiles():
         self.args = args # for later use
         
         self.validateSelf()
+        self.file_postfix = '.sql'
         
         
     def validateSelf(self):
@@ -65,7 +67,7 @@ class AssetFiles():
         '''
         if not os.path.isdir(self.assets_path):
             # error message regardless of verbosity, this is a game stopper
-            raise EnvironmentError("Assets folder [{}] was not found\n\n".format(self.assets_path))
+            raise EnvironmentError("Assets folder [{}] was not found. Go find your assets folder (or fix your config)".format(self.assets_path))
         
 
 
@@ -100,6 +102,7 @@ class AssetFiles():
         3. Store the folder to iterate over
         '''
         for db_obj_type,db_obj_type_subfolder in self.what_to_handle.items():
+            print(self.what_to_handle[db_obj_type])
             if(self.what_to_handle[db_obj_type]):
                 # assets/triggers ... assets/sp ... etc
                 db_object_folder = self.assets_path + '/' + self.arg_to_foldername[db_obj_type]
@@ -109,7 +112,7 @@ class AssetFiles():
                     sub_folder = db_object_folder + '/' + db_obj_type_subfolder
 
                 self.folders.append(sub_folder)
-
+                print(db_object_folder) 
 
 
     def postCalcFolder(self):
@@ -122,7 +125,7 @@ class AssetFiles():
         '''
         for sub_folder in self.folders:
             # If this is actually just a sql file, do it directly. Otherwise do loop next
-            if ".sql" in sub_folder:
+            if self.file_postfix in sub_folder:
                 db = self.extractDb(sub_folder)
                 self._current_file = sub_folder
                 self._current_path = sub_folder
