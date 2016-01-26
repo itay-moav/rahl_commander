@@ -29,14 +29,14 @@ class AssetFiles():
         # Process arguments
         args = parser.parse_args()
         handle_all = args.handle_all
-        c = 'All'
         if handle_all:
             self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
 
         else:
             self.what_to_handle = {'s':args.stored_proc,'w':args.views, 't':args.triggers, 'f':args.functions}
 
-        #the scripts (c) option exist in some commands.
+        # the scripts (c) option exist only in some commands.
+        # since c (scripts) is not a db object, and can be dangerous to run, I enforce this to always be called explicitly 
         try:
             args.scripts
 
@@ -44,9 +44,7 @@ class AssetFiles():
             pass
 
         else:
-            if not handle_all:
-                c = args.scripts
-            self.what_to_handle['c'] = c
+            self.what_to_handle['c'] = args.scripts
 
         self.assets_path = config.assets_folder
         if args.assets_path:

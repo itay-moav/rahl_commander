@@ -30,7 +30,7 @@ def main():
         # Setup argument parser
         parser = app.ArgumentParser(prog='build.py',description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
-        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will rebuild the entire project")
+        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will rebuild all the Stored procedures, Triggers, Functions and Views")
         parser.add_argument("-v", "--verbose", dest="verbosity", action="count", help=config.help_common_language['verbosity'])
         parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All',                 \
                             help="build all stored procedures, or the folder/*.sql specified. Root folder is the database name.")

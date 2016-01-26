@@ -34,7 +34,7 @@ def main():
         # Setup argument parser
         parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
-        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will clean all db object")
+        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will clean all the Stored procedures, Triggers, Functions and Views **in the database**")
         parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true",                               \
                              help="Specifying this flag will echo list of objects being dropped from DB")
 

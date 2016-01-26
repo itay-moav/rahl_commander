@@ -6,8 +6,8 @@ Example:
 A database who has a user_profile table, where each user has only one entry.  
 There is also a delta database, that keeps an audit of the data changes in user_profiles.
 Copy current record from main db, as is, into the delta db, and then modifies the main db user_profiles table.
-Or, an archive database, where, instead of deleting records, you "move" them to a copy of the table in the archive database, where they do not 
-cluttering the main db.
+Or, an archive database, where, instead of deleting records, you "move" them to a copy of the table in the archive database, where they wont 
+clutter the main db.
 
 In all of those cases, the main db tables and the delta or archive db tables must match in all or most field names and datatypes.  
 This can be very tedious to maintain manually. 

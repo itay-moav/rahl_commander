@@ -31,7 +31,7 @@ def main():
         # Setup argument parser
         parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
         parser.add_argument("--version",action="version",version=config.program_version_message)
-        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will drop all db object")
+        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will drop all the Stored procedures, Triggers, Functions and Views **defined in Rahl Commander**")
         parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true", help=config.help_common_language['verbosity'])
 
         parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All',             \
