@@ -20,34 +20,21 @@ Tutorial
 ==============================
 Directory structure and file names:
 Each database will have a directory in the assets folder, under the schema folder.  
-If there are no rules for the DB, no need to create that folder.  
-The system will itterate on a folder and it's contents, So u can either separate each table rules to a separate file, in which case, the file name must be tablename.rchk (Rahl Check Format)
-Or one file for the entire DB, in which case, the file has to be named rahl_main.rchk  
-You can have subfolders for easier organization of rule files, you can have more than one file per table, you can have several main.chkr files (obviously, not under the same folder).
-You can have both main.chkr + tablename.tblchkr files
-Any combination of the above
-
-
-File structure in main.chkr
-[table in current database]::[target database, can be same database]:[target table name]::[rul1]:[rule2]...[rulen]
-If u ommit the target databse, system will assume current database.
-If u ommit the target table name, System will assume same name
-DO TRY NOT to syncompare a table to itself
-
-[rule] has the following structure: 
-* for table level or field name<>rule
-
-Example:
-(Under the folder dhara)
-first_file_profile::dhara_delta:dhara_first_file_profile::sameall:nodefaults    --- This will compare table first_file_profile in database dhara to table dhara_first_file_profile in database dhara_delta.  
-                                                                                --- It will enforce both tables to be exactly the same, with the exception of there should be no default values in target
-                                                                                --- table (dhara_delta.dhara_first_file_profile)
-
-
-File structure in tablename.tblchkr
+If there are no rules for the DB, no need to create that folder. 
 
 
 
+
+
+
+
+
+
+
+
+
+
+?????????????????????????
 Simple table matching: All fields must have the same name, the same order, the same datatype, same default vbalues. Both schema must be 100% same
 
 Table matching, no default values in one table: Schema of both tables must match with the exception of one table should not have any default values for any of it's fields

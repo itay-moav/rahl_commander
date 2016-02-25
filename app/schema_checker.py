@@ -52,5 +52,14 @@ class Checker(app.iterator.AssetFilesDBConn):
             Each file found, a new looper is instantiated for that file to be
             processed.
         '''
-        print("Opening db [{}] file [{}]".format(db,file_content))
+        if(self.verbosity):
+            print("Opening db [{}] file [{}]".format(db,file_content))
+            
+        rules = file_content.split("\n")
+        for rule in rules:
+            rule = rule.strip()
+            if len(rule) == 0 or rule[0] == '#':
+                continue
+            
+            print("[{}]".format(rule))
 

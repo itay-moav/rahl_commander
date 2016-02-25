@@ -1,0 +1,4 @@
+# owner db [dhara] this comes from the folder name. Rules are on the left side. Matched against [dhara_delta]. This comes from the file name. MAtch rules on the right side.
+# below rule means all (*) tables in [dhara] must exists in [dhara_delta_1]. NOTICE! that does not mean [dhara_delta_1] can't have more tables in it (as is the case in the demo, table [dhara_jala_tournament])
+
+*

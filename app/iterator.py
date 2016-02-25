@@ -9,12 +9,11 @@ import fnmatch
 import os
 import mysql.connector as My
 import config
-from test.regrtest import printlist
 
 class AssetFiles():
     '''
     Get command line params Loop on all specified folders and get the files we need to run
-    No DB usage is epected in inheriting classes
+    No DB usage is expected in inheriting classes
     '''
 
     PATH = '\\'
@@ -102,7 +101,6 @@ class AssetFiles():
         3. Store the folder to iterate over
         '''
         for db_obj_type,db_obj_type_subfolder in self.what_to_handle.items():
-            print(self.what_to_handle[db_obj_type])
             if(self.what_to_handle[db_obj_type]):
                 # assets/triggers ... assets/sp ... etc
                 db_object_folder = self.assets_path + '/' + self.arg_to_foldername[db_obj_type]
@@ -112,7 +110,6 @@ class AssetFiles():
                     sub_folder = db_object_folder + '/' + db_obj_type_subfolder
 
                 self.folders.append(sub_folder)
-                print(db_object_folder) 
 
 
     def postCalcFolder(self):
@@ -147,7 +144,7 @@ class AssetFiles():
                     if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
                         continue
 
-                    for filename in fnmatch.filter(filenames, '*.sql'):
+                    for filename in fnmatch.filter(filenames, '*'+self.file_postfix):
                         # print(filenames)
                         # print(dirnames)
                         # print(root)
@@ -246,7 +243,6 @@ class AssetFilesDBConn(AssetFiles):
         '''
             Changes the DB connected too
         '''
-
         if self.cnx.database != db and db:
             try:
                 self.cnx.database = db
