@@ -160,7 +160,7 @@ class AssetFiles():
                         file_content = f.read()
                         f.close()
                         self.changeDB(db,file_content)
-                        self.process(db,file_content)
+                        self.process(db,file_content,dirnames)
 
 
     def changeDB(self,db,file_content):
@@ -181,7 +181,7 @@ class AssetFiles():
             return ''
 
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,current_subdir):
         '''
         Technicaly, this is an abstract method which needs overiding
 
