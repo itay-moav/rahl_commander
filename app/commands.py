@@ -19,7 +19,7 @@ class BuildDBObj(app.iterator.AssetFilesDBConn):
         '''
         DropDBObj(self.parser,self.cnx).run()
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,current_subdir):
         '''
             Just run the sqls
         '''
@@ -38,7 +38,7 @@ class DropDBObj(app.iterator.AssetFilesDBConn):
         drop it
     '''
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,current_subdir):
         '''
             Read the file and extract from the CREATE stmt the type and name
         '''
@@ -83,7 +83,7 @@ class CleanCodeObj(app.iterator.AssetFiles):
         developers might use in formating the code.
     '''
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,current_subdir):
         '''
            Prints a copy of the procedure which
            can be copy-pasted into the CLI of MySQL without
@@ -111,7 +111,7 @@ class StatDBObj(app.iterator.AssetFiles):
     '''
 
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,current_subdir):
         '''
             Just run the sqls
         '''

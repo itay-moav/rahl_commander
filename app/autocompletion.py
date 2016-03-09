@@ -37,6 +37,7 @@ class SP(app.iterator.AssetFiles):
         self.folders = []
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.verbosity = args.verbosity
+        self.file_postfix = '.sql'
 
     def postCalcFolder(self):
         '''Open the output file'''
@@ -64,7 +65,7 @@ class SP{
         pass
 
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,current_subdir):
         '''
             Loops on the file itself and parses it (using a parser
             Into the a buffer, letter to be written into the output file
