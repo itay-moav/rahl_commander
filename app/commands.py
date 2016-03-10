@@ -42,33 +42,30 @@ class DropDBObj(app.iterator.AssetFilesDBConn):
         '''
             Read the file and extract from the CREATE stmt the type and name
         '''
-        lines = file_content.split("\n")
-        sql_elm_info = None
-        for line in lines: # For now, I assume CREATE and all in same line
-            if "CREATE " in line:
-                sql_elm_info = line.split(' ')
-                break
-
-        # Maybe file is empty? TODO should I log / report this?
-        if(sql_elm_info):
-            name = sql_elm_info[2].split('(')[0].replace('`','')
-            command = "DROP {type} {name} ".format(type=sql_elm_info[1],name=name)
+        command = ""
+        db_object_search = re.search("CREATE\W*(\w*)\W*(\w*)",file_content,re.I)
+        try:
+            db_obj_type = db_object_search.group(1)
+            db_obj_name = db_object_search.group(2)
+            command = "DROP {type} {name} ".format(type=db_obj_type,name=db_obj_name)
             if self.verbosity == 2:
                 print(command)
+                
+        except IndexError:
+            print("Error parsing file contents [{}]".format(file_content))
+            raise Exception("Error parsing file contents")
+            
+        
+        try:
+            self.cursor.execute(command)
 
-            try:
-                self.cursor.execute(command)
-
-            except MyExcp as err:
-                if (
-                        err.errno == MyErrCode.ER_SP_DOES_NOT_EXIST or
-                        err.errno == MyErrCode.ER_TRG_DOES_NOT_EXIST
-                    ):
-                    pass
-
-        elif self.verbosity == 2:
-            print('I DO NOTHING!')
-
+        except MyExcp as err:
+            if (
+                    err.errno == MyErrCode.ER_SP_DOES_NOT_EXIST or
+                    err.errno == MyErrCode.ER_TRG_DOES_NOT_EXIST
+                ):
+                pass
+                
 
 
 # ============================================================================================================================
