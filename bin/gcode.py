@@ -22,8 +22,9 @@ It defines classes_and_methods
 
 import sys
 import os
-path, filename = os.path.split(__file__)
-sys.path.insert(0, path+'/..')
+
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
+
 import config
 import app.commands
 
