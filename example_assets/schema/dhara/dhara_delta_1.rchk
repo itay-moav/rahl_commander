@@ -1,4 +1,15 @@
-# owner db [dhara] this comes from the folder name. Rules are on the left side. Matched against [dhara_delta]. This comes from the file name. MAtch rules on the right side.
-# below rule means all (*) tables in [dhara] must exists in [dhara_delta_1]. NOTICE! that does not mean [dhara_delta_1] can't have more tables in it (as is the case in the demo, table [dhara_jala_tournament])
+# You can find the scrip to build the demo DBs under example_assets/scripts/dhara
+#
+# owner db [dhara] this comes from the folder name. Rules are on the left side of the colon (*:).
+# Those rules are Matched against [dhara_delta]. We know the DB name from the file name [dhara_delta_1.rchk]. 
+# The matching rules for [dhara_delta_1] are on the right side ofthe colon (:+) .
+# below rule means:
+# 1. All (*:) tables in [dhara] must exists in [dhara_delta_1]. 
+# 2. All (*:) tables in [dhara] and [dhara_delta_1] must have the same structure.
+# 3. (:+) [dhara_delta_1] Can have extra tables to those in [dhara] as is the case in the demo, with table [delta_monitor]
+# 
+# TRY!    Try to remove one table from [dhara_delta_1], besides [delta_monitor], (`DROP TABLE dhara_delta_1.first_file_members;`) run the schema cheker and see what happens.
 
-*
+
+# BELOW IS THE RULE!
+*:+

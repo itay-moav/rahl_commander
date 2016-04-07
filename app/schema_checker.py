@@ -3,10 +3,11 @@ Created on Oct 23, 2014
 
 @author: Itay Moav
 '''
-import sys
-import os
+# import sys
+# import os
 # import fnmatch
 # import shutil
+
 import config
 import app.iterator
 
@@ -45,7 +46,7 @@ class Checker(app.iterator.AssetFilesDBConn):
         self.connect(db)
         self.file_postfix = ".rchk" # rahl check file
         '''
-        The reporting object are the containers for the SQL we get from a parsed
+        The reporting object are the containers (SchemaChekerRuleContainer) for the SQL we get from a parsed
         rule + a list of checks and/or list of exception on the result of that SQL
         '''
         self.reportingObjects = []
@@ -57,9 +58,16 @@ class Checker(app.iterator.AssetFilesDBConn):
             Each file found, a new looper is instantiated for that file to be
             processed.
         '''
+        print("bababab")
+        print(current_subdir)
+        print("cccc")
+        exit()
+        
         if(self.verbosity):
-            print("Opening db [{}] file [{}]".format(db,file_content))
-            
+            print("\n\nOpening db [{}] file. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n".format(db,file_content))
+           
+        
+         
         rules = file_content.split("\n")
         for rule in rules:
             rule = rule.strip()
@@ -68,10 +76,8 @@ class Checker(app.iterator.AssetFilesDBConn):
             if(self.verbosity):
                 print("Reading Rule [{}]".format(rule))
             
-            # Take the rule, PArse it to get the right reporting class
-            MyRuleParser = RuleParser(rule,left_side_db=db,right_side_db=current_subdir,left_side_table="*",right_side_table="*")
-            MyRuleParser.parseRule()
-            self.reportingObjects.append(MyRuleParser.getReportingObject())
+            # Take the rule, Parse it to get the right reporting class
+            self.reportingObjects.append(RuleParser.factory_rule_container(rule,left_side_db=db,right_side_db=current_subdir))
             
             
             
@@ -80,23 +86,37 @@ class Checker(app.iterator.AssetFilesDBConn):
             
             
 class RuleParser():
+    
+    @staticmethod
+    def factory_rule_container(rule_as_string,left_side_db,right_side_db):
+        '''
+        This object is used ONLY to create the reporting rule.
+        There is no alternate usage of it's API methods.
+        So, we just use a factory here to encapsulate the high level logic
+        '''
+        Parser = RuleParser(rule_as_string,left_side_db,right_side_db)
+        Parser.parseRule()
+        return Parser.getReportingObject()
+        
+        
     '''
     Takes one rule and builds from that (with many many little sweet helper classes)
     a Reporting object (see far below the ReportingObject)
     '''
     
-    def __init__(self,rule_as_string,left_side_db,right_side_db,left_side_table="*",right_side_table="*"):
+    def __init__(self,rule_as_string,left_side_db,right_side_db):
         self.ReportingObject = None
         self.rule_as_string = rule_as_string
         self.left_side_db = left_side_db
         self.right_side_db = right_side_db
-        self.left_side_table = left_side_table
-        self.right_side_table = right_side_table
+        self.left_side_table = '*'
+        self.right_side_table = '*'
 
     def parseRule(self):
         '''
         Main entry point for this class functionality
         - Decide several general things about this rule
+        TODO this (prints) really has to move into a logger, Will try finding an existing one before doing my own ...
         '''
         print("rule [{}]\nleft db [{}] right db [{}]\nleft table [{}] right table [{}]".format(self.rule_as_string,
                                                                                                  self.left_side_db,
