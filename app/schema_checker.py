@@ -52,22 +52,19 @@ class Checker(app.iterator.AssetFilesDBConn):
         self.reportingObjects = []
 
 
-    def process(self,db,file_content,current_subdir):
+    def process(self,db,file_content,filename):
         '''
             Loops on each rule file (*.rchk), parse each rule and run the checks.
             Each file found, a new looper is instantiated for that file to be
             processed.
         '''
-        print("bababab")
-        print(current_subdir)
-        print("cccc")
-        exit()
+        right_side_db = filename.replace('.rchk','')
         
         if(self.verbosity):
-            print("\n\nOpening db [{}] file. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n".format(db,file_content))
+            print("\n\nOpening db [{}] file [{}]. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n".format(db,filename,file_content))
            
         
-         
+        
         rules = file_content.split("\n")
         for rule in rules:
             rule = rule.strip()
@@ -77,7 +74,7 @@ class Checker(app.iterator.AssetFilesDBConn):
                 print("Reading Rule [{}]".format(rule))
             
             # Take the rule, Parse it to get the right reporting class
-            self.reportingObjects.append(RuleParser.factory_rule_container(rule,left_side_db=db,right_side_db=current_subdir))
+            self.reportingObjects.append(RuleParser.factory_rule_container(rule,left_side_db=db,right_side_db=right_side_db))
             
             
             
