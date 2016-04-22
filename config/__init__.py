@@ -19,7 +19,7 @@ program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
 program_license = '''%s
 
   Created by Itay Moav on %s.
-  Copyright 2014 organization_name. All rights reserved.
+  Copyright 2016 organization_name. All rights reserved.
 
   Licensed under the Apache License 2.0
   http://www.apache.org/licenses/LICENSE-2.0
@@ -34,6 +34,6 @@ USAGE
 mysql = {'host':'localhost','username':'root','password':'123456!!'} # '123456!!'
 
 # Assets CHANGE HERE if u want the assets folder to be somewhere else
-assets_folder = '/home/admin/dev/omega_supreme'
+assets_folder = '/home/admin/dev/omega_suprem'
 
 
