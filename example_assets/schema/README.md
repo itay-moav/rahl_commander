@@ -28,7 +28,7 @@ If there are no rules for the DB, no need to create that folder.
 
 
 
-
+- COMMENTS: Line that starts with a # is a comment and will be ignored by the parser.
 
 
 

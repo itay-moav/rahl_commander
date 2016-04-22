@@ -124,8 +124,8 @@ class AssetFiles():
             # If this is actually just a sql file, do it directly. Otherwise do loop next
             if self.file_postfix in sub_folder:
                 db = self.extractDb(sub_folder)
-                self._current_file = sub_folder
-                self._current_path = sub_folder
+                # TOBEDELETED once verified not used self._current_file = sub_folder
+                self._current_path = sub_folder # NOT SURE IT IS USED!
                 if(self.verbosity):
                     print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,sub_folder,sub_folder,db))
 
@@ -133,7 +133,7 @@ class AssetFiles():
                 file_content = f.read()
                 f.close()
                 self.changeDB(db,file_content)
-                self.process(db,file_content)
+                self.process(db,file_content,sub_folder)
 
                 continue
 
@@ -151,7 +151,7 @@ class AssetFiles():
                         db = self.extractDb(root)
                         # print(db+"\n")
                         # print(config.ignore_files_dirs_with)
-                        self._current_file = filename
+                        # TOBEDELETED once verified not used self._current_file = filename
                         self._current_path = root
                         if(self.verbosity):
                             print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,root,filename,db))
@@ -160,7 +160,7 @@ class AssetFiles():
                         file_content = f.read()
                         f.close()
                         self.changeDB(db,file_content)
-                        self.process(db,file_content,dirnames)
+                        self.process(db,file_content,filename)
 
 
     def changeDB(self,db,file_content):

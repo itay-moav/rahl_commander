@@ -64,11 +64,11 @@ class QuickStatDBObj(app.iterator.AssetFiles):
     '''
 
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,filename):
         '''
             Just compare the sqls in project vs databse.
         '''
-        # print(self._current_file)
+        # print(filename)
         ''' Extract the object name from the file content.
                 - Take out new lines, replace with spaces
                 - Find the CREATE command.
@@ -98,12 +98,12 @@ class FullStatDBObj(app.iterator.AssetFiles):
     '''
 
 
-    def process(self,db,file_content):
+    def process(self,db,file_content,filename):
         '''
-            Just run the sqls
+           
         '''
         raise Exception('baba')
-        print(self._current_file)
+        print(filename)
 
 
 
