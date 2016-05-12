@@ -2,8 +2,8 @@
 ## This project
 #################
 
-./config
-./assets
+config/
+assets/
 
 
 #################
