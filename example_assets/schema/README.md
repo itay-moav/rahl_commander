@@ -22,6 +22,27 @@ Directory structure and file names:
 Each database will have a directory in the assets folder, under the schema folder.  
 If there are no rules for the DB, no need to create that folder. 
 
+As in the xamples, we have a folder named [dhara]. This folders holds all the rules that relate to db [dhara] in 
+in respect to other db in the system.
+When we want to tell the system how db [dhara] is related to db [dhara_delta_1], we will create a file
+called [dhara_delta_1.rchk].
+
+Anatomy of a .rchk file
+==============================
+- Lines that start with # are comments and are ignored by the parser.
+- Each rule is made of two parts. The first part relates to the main db (decided by the folder name) and the second part is
+  how the main db relates to the db who's the file name.
+- The first part can have only [*] or [all] which are synonims. Or, a table name.
+- The second part holds the rules on how the primary db relates to the secondary db (decided by the name of the file). For example:
+  all:exists
+  *:exists
+  table_name_1:exists same exclude[field1,field2,field3]
+  *:exists same exclude[field1,field2,field3]
+  
+Folder name is db1, the file name is another_db.rchk and the rule is `*:exists same exclude[field1]`
+It reads as **all tables in [db1] must exists in db [another_db] with the exact same structure, with the exception that tables in
+db [another_db] may have extra field called [field1].
+   
 
 
 
