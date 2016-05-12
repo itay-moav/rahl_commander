@@ -65,7 +65,7 @@ class SP{
         pass
 
 
-    def process(self,db,file_content,current_subdir):
+    def process(self,db,file_content,filename):
         '''
             Loops on the file itself and parses it (using a parser
             Into the a buffer, letter to be written into the output file
@@ -74,7 +74,7 @@ class SP{
         looking_for_header_args   = False
         looking_for_body          = False
         not_yet_started_args      = True #once I start looking into the args string, I no longer start from (, as it can be the ( in INT(11)
-        SP                        = SpDataParser(self._current_path + '/' + self._current_file)
+        SP                        = SpDataParser(self._current_path + '/' + filename)
 
         for line in file_content.splitlines():
             if looking_for_body:
