@@ -30,10 +30,12 @@ program_license = '''%s
 USAGE
 ''' % (program_shortdesc, str(__date__))
 
+
+
 # Mysql config
-mysql = {'host':'localhost','username':'root','password':'123456!!'} # '123456!!'
+mysql = {'host':'localhost','username':'root','password':'ucyaD9DHU0&a'}
 
 # Assets CHANGE HERE if u want the assets folder to be somewhere else
-assets_folder = '/home/admin/dev/omega_supreme'
+assets_folder = os.path.abspath('../example_assets')
 
 

@@ -14,12 +14,10 @@ so all is implicitly for this combo.
 
 autocomplete = {   'language':         'php',      \
                    'editor':           'eclipse',  \
-                   'editor_workspace': '/home/admin/dev',    \
-                   'return':           'Data_MySQL_DB',    \
+                   'editor_workspace': '/path/to/eclipse/workspace/you/want/autocomplete/for LEAVE EMPTY IF NO AUTO COPY IS DESIRED',    \
+                   'return':           'Return_Data_Type',    \
                                                               \
                    'eclipse':          {     \
                        'plugin_dir':  '.metadata/.plugins/org.eclipse.php.core/__language__'    \
                    }    \
-}
-
-
+} 
