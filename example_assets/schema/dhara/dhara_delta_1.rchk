@@ -28,6 +28,9 @@
 #                         all:exists
 #                         all:same
 #
+# NOTICE! The rule [same] does not includes the rule [exists] if you write just [same]. 
+#         It will mean only tables from [dhara] found in [dhara_delta_1] must have same structure.
+#
 # (Yes! you can concate commands) For sake of simplicity, I will use the [*] from now on, but u can always replace it with [all]
 # 
 # TRY!    Try to remove one table from [dhara_delta_1], besides [delta_monitor], (`DROP TABLE dhara_delta_1.first_file_members;`) 

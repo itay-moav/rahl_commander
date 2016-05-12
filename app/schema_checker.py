@@ -10,10 +10,11 @@ Created on Oct 23, 2014
 
 import config
 import app.iterator
+from scipy.io.harwell_boeing._fortran_format_parser import Tokenizer
 
 
 
-class Checker(app.iterator.AssetFilesDBConn):
+class Looper(app.iterator.AssetFilesDBConn):
     '''
         Iterator class to find schema rules and check them on the live DB
     '''
@@ -46,10 +47,10 @@ class Checker(app.iterator.AssetFilesDBConn):
         self.connect(db)
         self.file_postfix = ".rchk" # rahl check file
         '''
-        The reporting object are the containers (SchemaChekerRuleContainer) for the SQL we get from a parsed
-        rule + a list of checks and/or list of exception on the result of that SQL
+        Object that maintaines the list of tables to be checked
+        as read by the current file.
         '''
-        self.reportingObjects = []
+        self.tableRules = AllTableRules(self.cnx)
 
 
     def process(self,db,file_content,filename):
@@ -73,27 +74,31 @@ class Checker(app.iterator.AssetFilesDBConn):
             if(self.verbosity):
                 print("Reading Rule [{}]".format(rule))
             
-            # Take the rule, Parse it to get the right reporting class
-            self.reportingObjects.append(RuleParser.factory_rule_container(rule,left_side_db=db,right_side_db=right_side_db))
+            # Take the rule, Parse it to get the right table to attach to this rule
+            self.tableRules.attach(RuleParser.factory_rule_container(rule,left_side_db=db,right_side_db=right_side_db))
             
-            
-            
-            
+     
+             
+                     
             
             
             
 class RuleParser():
+    '''
+    Parses a specific line in the rule file, and translates 
+    to an Object + meta data (like which tables this rule applies to)
+    + assigns an overwrite type, in case a later rule of the same type comes
+    and it then overwrites this one.
+    '''
     
     @staticmethod
     def factory_rule_container(rule_as_string,left_side_db,right_side_db):
         '''
-        This object is used ONLY to create the reporting rule.
-        There is no alternate usage of it's API methods.
-        So, we just use a factory here to encapsulate the high level logic
+        static method to run this one rule parsing.
         '''
         Parser = RuleParser(rule_as_string,left_side_db,right_side_db)
         Parser.parseRule()
-        return Parser.getReportingObject()
+        return Parser.getRuleObject()
         
         
     '''
@@ -106,20 +111,26 @@ class RuleParser():
         self.rule_as_string = rule_as_string
         self.left_side_db = left_side_db
         self.right_side_db = right_side_db
-        self.left_side_table = '*'
-        self.right_side_table = '*'
+        
 
     def parseRule(self):
         '''
         Main entry point for this class functionality
-        - Decide several general things about this rule
+        - tokenize rule (Tokenaizer)
+        - Decide which tables are affected from this rule and load them to memeory as TableRule object
+        - Attach the right side rule to each TableRule object.
         TODO this (prints) really has to move into a logger, Will try finding an existing one before doing my own ...
         '''
-        print("rule [{}]\nleft db [{}] right db [{}]\nleft table [{}] right table [{}]".format(self.rule_as_string,
+        print("rule [{}]\nleft db [{}] right db [{}]\n".format(self.rule_as_string,
                                                                                                  self.left_side_db,
                                                                                                  self.right_side_db,
-                                                                                                 self.left_side_table,
-                                                                                                 self.right_side_table))
+                                                                                                 ))
         
-    def getReportingObject(self):
-        return self.ReportingObject
+        # Break the rule into related tokens, for example all:exists same exclude_field[f1] the [exclude_field]
+        # is a subpart of the [same] rule, they have to be read together.
+        Tokenized = Tokenizer.break(self.rule_as_string)
+        
+        
+        
+    def getRulebject(self):
+        return self.RuleObject

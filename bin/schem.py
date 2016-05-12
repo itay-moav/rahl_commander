@@ -38,7 +38,7 @@ def main():
         parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,                                 \
                             help=config.help_common_language['server_connection'])
 
-        SchemCheker = app.schema_checker.Checker(parser)
+        SchemCheker = app.schema_checker.Looper(parser)
         SchemCheker.run()
 
     except Exception as e:

@@ -1,0 +1,2 @@
+# Single table rules, like all tables must have a [created_by] field
+table_name:rule field_exists[f1,f2,f3]

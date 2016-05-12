@@ -36,46 +36,25 @@ Anatomy of a .rchk file
 - The second part holds the rules on how the primary db relates to the secondary db (decided by the name of the file). For example:
   all:exists
   *:exists
-  table_name_1:exists same exclude[field1,field2,field3]
-  *:exists same exclude[field1,field2,field3]
-  
-Folder name is db1, the file name is another_db.rchk and the rule is `*:exists same exclude[field1]`
+  table_name_1:exists same exclude_field[field1,field2,field3]
+  *:exists same exclude_field[field1,field2,field3]
+
+Example:  
+Folder name is db1, the file name is another_db.rchk and the rule is `*:exists same exclude_field[field1]`
 It reads as **all tables in [db1] must exists in db [another_db] with the exact same structure, with the exception that tables in
 db [another_db] may have extra field called [field1].
+DO NOTICE! The rule [same] does not includes the rule [exists]. If you write just [same]
+           It will mean only tables from [dhara] **found** in [dhara_delta_1] must have same structure
    
 
+List of commands (for later use)
+===============================
+*:same table_prename[dhara_] table_postname[_delta]
+*:exits same exclude_field[field1,field2] exclude_table[t1,t2]
+#below will overwrite inclusive rules
+table1: exists
+table2: exists same table_prename[dhara_] exclude_field[field2]
 
 
-
-
-
-- COMMENTS: Line that starts with a # is a comment and will be ignored by the parser.
-
-
-
-
-
-?????????????????????????
-Simple table matching: All fields must have the same name, the same order, the same datatype, same default vbalues. Both schema must be 100% same
-
-Table matching, no default values in one table: Schema of both tables must match with the exception of one table should not have any default values for any of it's fields
-                                                This is important for audit tables, where you do not want some default values populating by accident which did not come from parent
-                                                table.
-
-                                              
-Table matching, no indexes or constraints on one table: A unique key which would make sense on a main table, will not work on an audit table,where there are many copies of the same record.
-
-
-Table matching, exclude some fields from the comparison: In an audit table, we might want to add an explanation field, to note the reason why this record was changed.
-                                                         No need for that field to be in the main table, so we need to exclude this field from the comparison
-                                                         
-                                                         
-Table matching, tables have different names.
-
-
-Table matching, Tables are in same database.
-
-
-Table matching, Tables are in different database.
 
 
