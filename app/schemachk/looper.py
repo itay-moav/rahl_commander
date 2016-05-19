@@ -3,14 +3,12 @@ Created on Oct 23, 2014
 
 @author: Itay Moav
 '''
-# import sys
-# import os
-# import fnmatch
-# import shutil
 
 import config
 import app.iterator
-from scipy.io.harwell_boeing._fortran_format_parser import Tokenizer
+from app.schemachk.tables import TableList
+from app.schemachk.tokenizer import TokenMaster
+
 
 
 
@@ -19,7 +17,7 @@ class Looper(app.iterator.AssetFilesDBConn):
         Iterator class to find schema rules and check them on the live DB
     '''
 
-    def __init__(self, parser,db=None):
+    def __init__(self, parser,db=None,file_postfix=".rchk"):
         '''
         Stores a dictionary of what to build
         @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
@@ -45,39 +43,63 @@ class Looper(app.iterator.AssetFilesDBConn):
         
         self.validateSelf()
         self.connect(db)
-        self.file_postfix = ".rchk" # rahl check file
+        self.file_postfix = file_postfix
         '''
-        Object that maintaines the list of tables to be checked
-        as read by the current file.
+        list of Objects that maintaines the list of tables to be checked
+        One object per file found
         '''
-        self.tableRules = AllTableRules(self.cnx)
+        self.store_table_lists = []
+        self.per_db_all_tables = {}
 
 
     def process(self,db,file_content,filename):
         '''
-            Loops on each rule file (*.rchk), parse each rule and run the checks.
-            Each file found, a new looper is instantiated for that file to be
+            Loops on each rule file (*.rchk | .schk), parse each rule and run the checks.
+            Each file found, a new table list is instantiated for that file to be
             processed.
         '''
-        right_side_db = filename.replace('.rchk','')
         
-        if(self.verbosity):
-            print("\n\nOpening db [{}] file [{}]. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n".format(db,filename,file_content))
-           
+        # If I did not load the list of tables for this DB, I load it now.
+        if(not self.per_db_all_tables.has_key(db)):
+            self.per_db_all_tables[db] = {}
+            if(self.verbosity): print("Loading all table names from [{}]".format(db))
+            sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='{}'".format(db)
+            self.cursor.execute(sql)
+            for(table_name) in self.cursor:
+                if(self.verbosity): print(table_name[0])
+                self.per_db_all_tables[db][table_name[0]] = ''
+      
+        
+        # start the overall parsing process
+        right_side_db = ''
+        if(self.file_postfix == '.rchk'):
+            right_side_db = filename.replace('.rchk','')
+        
+        #if(self.verbosity):
+            #print("\n\nOpening db [{}] file [{}]. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n".format(db,filename,file_content))
+        
+        # Table list object for current file -> sending the file name for debug purposes   
+        MyTableList = TableList(filename,self.verbosity,self.per_db_all_tables[db])
         
         
-        rules = file_content.split("\n")
-        for rule in rules:
+        rules_str = file_content.split("\n")
+        for rule in rules_str:
             rule = rule.strip()
             if len(rule) == 0 or rule[0] == '#':
                 continue
             if(self.verbosity):
                 print("Reading Rule [{}]".format(rule))
             
-            # Take the rule, Parse it to get the right table to attach to this rule
-            self.tableRules.attach(RuleParser.factory_rule_container(rule,left_side_db=db,right_side_db=right_side_db))
+            # Parse the read line
+            T = TokenMaster(rule,related_db=right_side_db,file_type=self.file_postfix,log_verbosity=self.verbosity)
+            T.parse()
+            MyTableList.attchRules(T.tables_and_rules())
+         
+        self.store_table_lists.append(MyTableList)
+         
             
-     
+    def getTableLists(self):
+        return self.store_table_lists
              
                      
             
@@ -128,7 +150,7 @@ class RuleParser():
         
         # Break the rule into related tokens, for example all:exists same exclude_field[f1] the [exclude_field]
         # is a subpart of the [same] rule, they have to be read together.
-        Tokenized = Tokenizer.break(self.rule_as_string)
+        #Tokenized = Tokenizer.break(self.rule_as_string)
         
         
         
