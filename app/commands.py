@@ -43,13 +43,17 @@ class DropDBObj(app.iterator.AssetFilesDBConn):
             Read the file and extract from the CREATE stmt the type and name
         '''
         command = ""
-        db_object_search = re.search("CREATE\W*(\w*)\W*(\w*)",file_content,re.I)
+        db_object_search = re.search("CREATE\W*(\w*)\W*(\w*)\W*(\w*)\W*(\w*)",file_content,re.I)
         try:
             db_obj_type = db_object_search.group(1)
             db_obj_name = db_object_search.group(2)
+            if(db_obj_type == "ALGORITHM"):
+                db_obj_type = db_object_search.group(3)
+                db_obj_name = db_object_search.group(4)
+
             command = "DROP {type} {name} ".format(type=db_obj_type,name=db_obj_name)
-            if self.verbosity == 2:
-                print(command)
+            if self.verbosity == True:
+                print(command) #TODO move to proepr logger
                 
         except IndexError:
             print("Error parsing file contents [{}]".format(file_content))

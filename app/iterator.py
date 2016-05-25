@@ -151,7 +151,6 @@ class AssetFiles():
                         db = self.extractDb(root)
                         # print(db+"\n")
                         # print(config.ignore_files_dirs_with)
-                        # TOBEDELETED once verified not used self._current_file = filename
                         self._current_path = root
                         if(self.verbosity):
                             print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,root,filename,db))
