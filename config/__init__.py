@@ -31,9 +31,9 @@ USAGE
 ''' % (program_shortdesc, str(__date__))
 
 # Mysql config
-mysql = {'host':'localhost','username':'root','password':''} # '123456!!'
+mysql = {'host':'localhost','username':'root','password':'123456!!'} # '123456!!'
 
 # Assets CHANGE HERE if u want the assets folder to be somewhere else
-assets_folder = '/home/admin/dev/omega_suprem'
+assets_folder = '/home/admin/dev/omega_supreme'
 
 
