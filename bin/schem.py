@@ -17,7 +17,8 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
 
 import config
-import app.schema_checker
+import app
+import app.schemachk
 
 def main():
     '''Command line options.'''
@@ -38,8 +39,7 @@ def main():
         parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,                                 \
                             help=config.help_common_language['server_connection'])
 
-        SchemCheker = app.schema_checker.Checker(parser)
-        SchemCheker.run()
+        # app.schemachk.run(parser)
 
     except Exception as e:
         if config.DEBUG:
@@ -48,6 +48,7 @@ def main():
         sys.stderr.write(config.program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
         return 2
+    app.schemachk.run(parser)
 
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
