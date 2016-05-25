@@ -3,10 +3,7 @@
 #################
 
 config/
-<<<<<<< HEAD
-=======
 assets/
->>>>>>> c934e0ed80cf049156e099a8cbc9e5bd3000e8ce
 
 #################
 ## Eclipse
@@ -27,16 +24,6 @@ local.properties
 .settings/
 .loadpath
 
-# External tool builders
-.externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
-*.launch
-
-# CDT-specific
-.cproject
-
-# PDT-specific
 .buildpath
 
 
