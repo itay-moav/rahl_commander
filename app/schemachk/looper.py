@@ -58,25 +58,27 @@ class Looper(app.iterator.AssetFilesDBConn):
             Each file found, a new table list is instantiated for that file to be
             processed.
         '''
+        if(self.verbosity):
+            print("\n\nOpening db [{}] file [{}]. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n\n\n".format(db,filename,file_content))
         
+        # INITIALIZE THE LIST OF TABLES
         # If I did not load the list of tables for this DB, I load it now.
         if(not self.per_db_all_tables.has_key(db)):
             self.per_db_all_tables[db] = {}
             if(self.verbosity): print("Loading all table names from [{}]".format(db))
             sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='{}'".format(db)
             self.cursor.execute(sql)
-            for(table_name) in self.cursor:
-                if(self.verbosity): print(table_name[0])
-                self.per_db_all_tables[db][table_name[0]] = ''
-      
+            #for(table_name) in self.cursor:
+            #    self.per_db_all_tables[db][table_name[0]] = ''
+            self.per_db_all_tables[db] = ({res:'' for res, in self.cursor})
+            
         
+        # DECIDE ON FILE TYPE, AND SECONDARY db NAME
         # start the overall parsing process
         right_side_db = ''
         if(self.file_postfix == '.rchk'):
             right_side_db = filename.replace('.rchk','')
         
-        #if(self.verbosity):
-            #print("\n\nOpening db [{}] file [{}]. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n".format(db,filename,file_content))
         
         # Table list object for current file -> sending the file name for debug purposes   
         MyTableList = TableList(filename,self.verbosity,self.per_db_all_tables[db])

@@ -1,14 +1,14 @@
 '''
 Created on May 19, 2016
 
-@author: itaymoav
+@author: Itay Moav
 '''
 from types import DictionaryType
 from SystemEvents.Text_Suite import attachment
 
 class TableList():
     '''
-    Object to hold the list of tables a single confic file (schk | rchk)
+    Object to hold the list of tables a single config file [.schk | .rchk]
     affects, and the rules attached to each table.
     Object give utilities to add/remove/edit list of tables
                              add/edit/remove list of rules attached to table
@@ -25,6 +25,7 @@ class TableList():
         self.list_of_tables = list_of_tables
         if(self.verbosity):
             print("Initiating TableList for file [{}]".format(self.file_name))
+            print(list_of_tables)
         
         
     def attachRules(self,rule):
