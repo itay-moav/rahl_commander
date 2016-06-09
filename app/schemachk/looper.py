@@ -95,7 +95,7 @@ class Looper(app.iterator.AssetFilesDBConn):
             # Parse the read line
             T = TokenMaster(rule,related_db=right_side_db,file_type=self.file_postfix,log_verbosity=self.verbosity)
             T.parse()
-            MyTableList.attchRules(T.tables_and_rules())
+            #MyTableList.attchRules(T.tables_and_rules())
          
         self.store_table_lists.append(MyTableList)
          

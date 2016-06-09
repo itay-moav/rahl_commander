@@ -42,7 +42,7 @@ Anatomy of a .rchk file
 Example:  
 Folder name is db1, the file name is another_db.rchk and the rule is `*:exists same exclude_field[field1]`
 It reads as **all tables in [db1] must exists in db [another_db] with the exact same structure, with the exception that tables in
-db [another_db] may have extra field called [field1].
+db [another_db] may have extra field or miss a field called [field1]. 
 DO NOTICE! The rule [same] does not includes the rule [exists]. If you write just [same]
            It will mean only tables from [dhara] **found** in [dhara_delta_1] must have same structure
    

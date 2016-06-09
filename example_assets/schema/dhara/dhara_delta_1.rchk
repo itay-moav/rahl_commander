@@ -38,4 +38,7 @@
 
 
 # BELOW IS THE RULE!
-*:exists same
+* :exists same
+ people_palace: notexists
+dumbo: notexists
+
