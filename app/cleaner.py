@@ -31,6 +31,8 @@ class AllDBObj():
         else:
             self.what_to_handle = {'s':self.args.stored_proc,'w':self.args.views, 't':self.args.triggers, 'f':self.args.functions}
 
+        # Loads the database names rcom is tracking. This will be used in case of --all, this will also be used in case a specific db 
+        # is targeted to make sure i is a tracked DB.
         meta.TrackedDBs(meta.STORED_PROCEDURES)
         meta.TrackedDBs(meta.TRIGGERS)
         meta.TrackedDBs(meta.FUNCTIONS)
