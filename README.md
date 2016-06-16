@@ -16,6 +16,8 @@ A command line tool to simplify the managment of DB objects and scripts in your 
 ## Currently supports auto completion for
 1. PHP + Eclipse
 
+
+
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ## Description
@@ -68,11 +70,16 @@ CD to bin
 1. build all elements
    build.py --all
 
-2. drop all elements
+2. drop all elements -> THIS WILL DROP JUST THE OBJECTS WHO ARE IN A FILE. IF u need a full clean, run the cleaner tool
    drop.py --all
 
 3. build all stored procedures
    build.py -s
 
 4. drop all triggers in DB dhara
-   drop -t -ddhara
+   drop.py -t -ddhara
+
+5. Clean all objects in all the databases in assets
+   cleaner.py --all
+   
+
