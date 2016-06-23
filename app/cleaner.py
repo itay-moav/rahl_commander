@@ -89,18 +89,21 @@ class AllDBObj():
         Just call each specific cleaner -> very procedural and simple
         '''
         if(len(self.what_to_handle['s']) > 0):
-            print("Start droping Stored Procedures")
+            print("Start dropping Stored Procedures")
             self._cleanSP()
             
-        exit()
-        if self.what_to_handle['f']:
-            self.process(self._load_functions(self.what_to_handle['f']))
+        if(len(self.what_to_handle['f']) > 0):
+            print("Start dropping Functions")
+            self._cleanFunctions()
 
-        if self.what_to_handle['t']:
-            self._load_and_process_triggers(self.what_to_handle['t'])
+        if(len(self.what_to_handle['t']) > 0):
+            print("Start dropping Triggers")
+            self._cleanTriggers()
 
-        if self.what_to_handle['w']:
-            self.process(self._load_and_process_views(self.what_to_handle['w']))
+        if(len(self.what_to_handle['w']) > 0):
+            print("Start dropping Views")
+            self._cleanViews()
+
 
     def _cleanSP(self):
         '''
@@ -111,111 +114,63 @@ class AllDBObj():
         sql += "AND Db IN('" + "','".join(self.what_to_handle['s']) + "')"
         print(sql)
         self.cursor.execute(sql)
-        res = [(Db,Name) for(Db,Name,a,b,c,d,e,f,g,h,j) in self.cursor]
+        res = [(Db,Name) for (Db,Name,*_) in self.cursor]
         for sp in res:
             sql = "DROP PROCEDURE {db}.{name}".format(db=sp[0],name=sp[1])
             print(sql)
             if(self.args.dry_run):
-                print("Dry dropping {db}.{name}".format(db=sp[0],name=sp[1]))
+                print("Dry dropping sp {db}.{name}".format(db=sp[0],name=sp[1]))
             else:
                 self.cursor.execute(sql)
 
-    def _load_stored_procedures(self,target):
+    def _cleanFunctions(self):
         '''
-        @target databases to check, or ALL
+        Load relevant mysql functions and drop them
         '''
-        sql = "SHOW PROCEDURE STATUS WHERE Db NOT IN(" +self.ignore_dbs_str + ") "
-        where = ()
-        if target != 'All':
-            sql += "AND Db = %s"
-            where = (target,)
-        self.cursor.execute(sql,where)
-        return [(Db,Name,'s') for(Db,Name,a,b,c,d,e,f,g,h,j) in self.cursor]
-
-
-    def _load_functions(self,target):
-        '''
-        @target databases to check, or ALL
-        '''
+        # first load functions
         sql = "SHOW FUNCTION STATUS WHERE Db NOT IN(" +self.ignore_dbs_str + ") "
-        where = ()
-        if target != 'All':
-            sql += "AND Db = %s"
-            where = (target,)
-        self.cursor.execute(sql,where)
-        return [(Db,Name,'f') for(Db,Name,a,b,c,d,e,f,g,h,j) in self.cursor]
+        sql += "AND Db IN('" + "','".join(self.what_to_handle['f']) + "')"
+        print(sql)
+        self.cursor.execute(sql)
+        res = [(Db,Name) for (Db,Name,*_) in self.cursor]
+        for mysql_func in res:
+            sql = "DROP FUNCTION {db}.{name}".format(db=mysql_func[0],name=mysql_func[1])
+            print(sql)
+            if(self.args.dry_run):
+                print("Dry dropping function {db}.{name}".format(db=mysql_func[0],name=mysql_func[1]))
+            else:
+                self.cursor.execute(sql)
 
 
-    def _load_and_process_triggers(self,target):
+    def _cleanTriggers(self):
         '''
-        @target databases to check, or ALL
+        Load relevant mysql triggers and drop them
         '''
-        databases = []
-        if target == 'All': # go over all DBs except system ones
-            self.cursor.execute('SHOW DATABASES')
-            databases =  [dbs[0] for dbs in self.cursor if dbs not in self.ignore_dbs]
-
-        else:
-            databases.append(target)
-
-        for database_name in databases:
+        # iterate on each db to get the list of triggers
+        for database_name in self.what_to_handle['t']:
             self.cnx.database = database_name
             self.cursor.execute("SHOW TRIGGERS")
-            self.process([(database_name,trigger,'t') for(trigger,a,b,c,d,e,f,g,h,j,i) in self.cursor])
+            for trigger_name in [trigger for (trigger,*_) in self.cursor]:
+                sql = "DROP TRIGGER {db}.{name}".format(db=database_name,name=trigger_name)
+                print(sql)
+                if(self.args.dry_run):
+                    print("Dry dropping function {db}.{name}".format(db=database_name,name=trigger_name))
+                else:
+                    self.cursor.execute(sql)
 
-
-    def _load_and_process_views(self,target):
+    
+    def _cleanViews(self):
         '''
-        @target databases to check, or ALL
+        Load relevant mysql views and drop them
         '''
-        databases = []
-        if target == 'All': # go over all DBs except system ones
-            self.cursor.execute('SHOW DATABASES')
-            databases =  [dbs[0] for dbs in self.cursor if dbs not in self.ignore_dbs]
-
-        else:
-            databases.append(target)
-
-        for database_name in databases:
+        # iterate on each db to get the list of triggers
+        for database_name in self.what_to_handle['w']:
             self.cnx.database = database_name
-            self.cursor.execute("SHOW FULL TABLES IN {} WHERE TABLE_TYPE LIKE  'VIEW'".format(database_name))
-            self.process([(database_name,view,'w') for(view,a) in self.cursor])
-
-
-    def process(self,obj_descriptor_list):
-        '''
-        according to object type, construct the drop command
-        and either run it, or just display it (dry run) + show what u do in
-        the first case if verbose is on
-        @var obj_descriptor is a touple with three elements in it, db name, type and obj name
-        '''
-        if obj_descriptor_list is None or len(obj_descriptor_list)==0:
-            return
-
-        if obj_descriptor_list[0][2] == 'w':
-            command = "DROP VIEW "
-
-        elif obj_descriptor_list[0][2] == 's':
-            command = "DROP PROCEDURE "
-
-        elif obj_descriptor_list[0][2] == 'f':
-            command = "DROP FUNCTION "
-
-        elif obj_descriptor_list[0][2] == 't':
-            command = "DROP TRIGGER "
-
-        if self.dry_run:
-            print("============= DRY RUN, NOTHING WILL HAPPEN ============")
-        # Loop on the input and drop it/echo it
-        for obj_descriptor in obj_descriptor_list:
-            tmp_command = command + obj_descriptor[0] + "." + obj_descriptor[1]
-            if self.dry_run:
-                print(tmp_command + ";")
-            else:
-                if self.verbosity:
-                    print(tmp_command)
-                if self.verbosity == 2:
-                    print (tmp_command)
-
-                self.cursor.execute(tmp_command)
-
+            self.cursor.execute("SHOW FULL TABLES IN {} WHERE TABLE_TYPE LIKE 'VIEW'".format(database_name))
+            for view_name in [view for (view,*_) in self.cursor]:
+                sql = "DROP VIEW {db}.{name}".format(db=database_name,name=view_name)
+                print(sql)
+                if(self.args.dry_run):
+                    print("Dry dropping view {db}.{name}".format(db=database_name,name=view_name))
+                else:
+                    self.cursor.execute(sql)
