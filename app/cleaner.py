@@ -22,34 +22,36 @@ class AllDBObj():
         '''
         # Process arguments
         self.args = parser.parse_args()
-        handle_all = self.args.handle_all
         
-        if handle_all:
-            self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
-            self._load_all_db_names()
-
-        else:
-            self.what_to_handle = {'s':self.args.stored_proc,'w':self.args.views, 't':self.args.triggers, 'f':self.args.functions}
-
         # Loads the database names rcom is tracking. This will be used in case of --all, this will also be used in case a specific db 
         # is targeted to make sure i is a tracked DB.
-        meta.TrackedDBs(meta.STORED_PROCEDURES)
-        meta.TrackedDBs(meta.TRIGGERS)
-        meta.TrackedDBs(meta.FUNCTIONS)
-        meta.TrackedDBs(meta.VIEWS)
-        exit()
+        sp_dbs       = meta.TrackedDBs(meta.STORED_PROCEDURES,self.args.assets_path).folders
+        trigger_dbs  = meta.TrackedDBs(meta.TRIGGERS,self.args.assets_path).folders
+        function_dbs = meta.TrackedDBs(meta.FUNCTIONS,self.args.assets_path).folders
+        views_dbs    = meta.TrackedDBs(meta.VIEWS,self.args.assets_path).folders
         
+        # decide which DBs I am going to clean. --all means EVERYTHING,
+        #  -s,-w,-t,-f means every thing for each of those types
+        #  -s db name, -f db name -w db name -tdb name means JUST THAT db name 
+        #      for the specified object type, u can have several object types
+        if self.args.handle_all:
+            self.what_to_handle = {'s':sp_dbs,'w':views_dbs, 't':trigger_dbs, 'f':function_dbs}
+
+        else:
+            self.what_to_handle = {'s': sp_dbs       if self.args.stored_proc == 'All' else ([self.args.stored_proc] if self.args.stored_proc in sp_dbs       else []),
+                                   'w': views_dbs    if self.args.views       == 'All' else ([self.args.views]       if self.args.views       in views_dbs    else []), 
+                                   't': trigger_dbs  if self.args.triggers    == 'All' else ([self.args.triggers]    if self.args.triggers    in trigger_dbs  else []), 
+                                   'f': function_dbs if self.args.functions   == 'All' else ([self.args.functions]   if self.args.functions   in function_dbs else [])}
+        print("cleaning the following:")
+        print(self.what_to_handle)
+       
+        # More config values for later
         self.dry_run = self.args.dry_run
         self.verbosity = self.args.verbosity
         self.ignore_dbs = [('information_schema',),('performance_schema',),('sys',)]
         self.ignore_dbs_str = "'information_schema','performance_schema','sys'"
         self.connect()
 
-    def _load_all_db_names(self):
-        '''
-        Load the ALL db names Rahl is tracking, and format into the right SQL ('dbname','dbname'...)
-        '''
-        
         
     def connect(self):
         '''
@@ -72,7 +74,7 @@ class AllDBObj():
         '''
         main entry point. send to processing each type (trigger,sp,func,view,scripts)
         '''
-        self.prepareLists()
+        self.cleanMain()
         self.postProcess()
 
     def postProcess(self):
@@ -82,18 +84,15 @@ class AllDBObj():
         # Close connection
         self.cnx.close()
 
-    def prepareLists(self):
+    def cleanMain(self):
         '''
-        For each element kind (function,view,sp,trigger etc)
-        I check if an action is needed.
-        If so, I call a method to load the list of objects
-        to clean, and send those to the PROCESS method which deletes.
-        Sometime, the load has to call the process, if it has a loop in it
+        Just call each specific cleaner -> very procedural and simple
         '''
-        self.all_dbs = None
-        if self.what_to_handle['s']:
-            self.process(self._load_stored_procedures(self.what_to_handle['s']))
-
+        if(len(self.what_to_handle['s']) > 0):
+            print("Start droping Stored Procedures")
+            self._cleanSP()
+            
+        exit()
         if self.what_to_handle['f']:
             self.process(self._load_functions(self.what_to_handle['f']))
 
@@ -103,6 +102,23 @@ class AllDBObj():
         if self.what_to_handle['w']:
             self.process(self._load_and_process_views(self.what_to_handle['w']))
 
+    def _cleanSP(self):
+        '''
+        Load relevant stored procedures and drop them
+        '''
+        # first load stored procedures
+        sql = "SHOW PROCEDURE STATUS WHERE Db NOT IN(" +self.ignore_dbs_str + ") "
+        sql += "AND Db IN('" + "','".join(self.what_to_handle['s']) + "')"
+        print(sql)
+        self.cursor.execute(sql)
+        res = [(Db,Name) for(Db,Name,a,b,c,d,e,f,g,h,j) in self.cursor]
+        for sp in res:
+            sql = "DROP PROCEDURE {db}.{name}".format(db=sp[0],name=sp[1])
+            print(sql)
+            if(self.args.dry_run):
+                print("Dry dropping {db}.{name}".format(db=sp[0],name=sp[1]))
+            else:
+                self.cursor.execute(sql)
 
     def _load_stored_procedures(self,target):
         '''

@@ -23,21 +23,15 @@ class TrackedDBs():
 
     PATH = '\\'
 
-    def __init__(self, object_type,assets_path=None):
+    def __init__(self, object_type,assets_path=False):
         '''
         TODO there is no error handling here on what is sent, so I better call it right
         '''
-        object_path = config.assets_folder + '/' + object_type
         if assets_path:
             object_path = assets_path + '/' + object_type
+        else:
+            object_path = config.assets_folder + '/' + object_type
 
-        print("Doing folder [{}]".format(object_path))
+        print("Meta for folder [{}]".format(object_path))
         self.folders = [db_name for db_name in os.listdir(object_path) if '.' not in db_name]
-        print(self.folders)
         
-
-
-
-
-
-

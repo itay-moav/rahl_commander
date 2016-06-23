@@ -54,6 +54,9 @@ def main():
         parser.add_argument("--dryrun", dest="dry_run", action="store_true",                                        \
                             default=False, help="Specifying this flag will generate a list of drop commands, but not execute them.")
 
+        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?', default=False,                                 \
+                            help=config.help_common_language['assets'])
+
         parser.add_argument("--server", dest="server_connection", action="store", nargs='?',                        \
                             help=config.help_common_language['server_connection'])
 
