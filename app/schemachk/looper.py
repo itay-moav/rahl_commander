@@ -54,36 +54,40 @@ class Looper(app.iterator.AssetFilesDBConn):
 
     def process(self,db,file_content,filename):
         '''
-            Loops on each rule file (*.rchk | .schk), parse each rule and run the checks.
-            Each file found, a new table list is instantiated for that file to be
-            processed.
+            Loops on each folder, Each PROCESS call handles one rule file (*.rchk | .schk),
+            Calls the following actions: 
+            - Parses each rule and run the checks.
+            - Each file found, a new table list object is instantiated for that file to be
+              processed.
+            - Run the tests in the TableList object
         '''
         if(self.verbosity):
-            print("\n\nOpening db [{}] file [{}]. \n\nSTART FILE CONTENT\n{}\n\nEOF\n\n\n\n".format(db,filename,file_content))
+            print("\n\nOpening db [{}] file [{}].\n".format(db,filename))
         
         # INITIALIZE THE LIST OF TABLES
         # If I did not load the list of tables for this DB, I load it now.
-        if(not self.per_db_all_tables.has_key(db)):
+        # TODO: Move the below block into the TableList object
+        if(db not in self.per_db_all_tables):
             self.per_db_all_tables[db] = {}
             if(self.verbosity): print("Loading all table names from [{}]".format(db))
             sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='{}'".format(db)
             self.cursor.execute(sql)
-            #for(table_name) in self.cursor:
-            #    self.per_db_all_tables[db][table_name[0]] = ''
-            self.per_db_all_tables[db] = ({res:'' for res, in self.cursor})
+            self.per_db_all_tables[db] = {res:'' for res, in self.cursor}
             
         
-        # DECIDE ON FILE TYPE, AND SECONDARY db NAME
+        # DECIDE ON FILE TYPE, AND SECONDARY/right db NAME
         # start the overall parsing process
+        # TODO: move the below block into TableList object
         right_side_db = ''
         if(self.file_postfix == '.rchk'):
             right_side_db = filename.replace('.rchk','')
         
         
-        # Table list object for current file -> sending the file name for debug purposes   
+        # Table list object for current file -> sending the file name for right side DB name and debug   
         MyTableList = TableList(filename,self.verbosity,self.per_db_all_tables[db])
         
-        
+        # TODO move the below into a parser main object. The parser object
+        # should also get the TableList as a target to populate the rules
         rules_str = file_content.split("\n")
         for rule in rules_str:
             rule = rule.strip()
@@ -95,7 +99,7 @@ class Looper(app.iterator.AssetFilesDBConn):
             # Parse the read line
             T = TokenMaster(rule,related_db=right_side_db,file_type=self.file_postfix,log_verbosity=self.verbosity)
             T.parse()
-            #MyTableList.attchRules(T.tables_and_rules())
+            # MyTableList.attchRules(T.tables_and_rules())
          
         self.store_table_lists.append(MyTableList)
          
@@ -103,10 +107,11 @@ class Looper(app.iterator.AssetFilesDBConn):
     def getTableLists(self):
         return self.store_table_lists
              
+
+
                      
             
-            
-            
+# CURRENTLY NOT USED -> BELOW CODE       
 class RuleParser():
     '''
     Parses a specific line in the rule file, and translates 

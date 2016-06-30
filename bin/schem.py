@@ -39,7 +39,7 @@ def main():
         parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,                                 \
                             help=config.help_common_language['server_connection'])
 
-        # app.schemachk.run(parser)
+        app.schemachk.run(parser)
 
     except Exception as e:
         if config.DEBUG:
@@ -48,7 +48,6 @@ def main():
         sys.stderr.write(config.program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
         return 2
-    app.schemachk.run(parser)
 
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++

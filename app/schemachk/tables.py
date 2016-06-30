@@ -3,9 +3,6 @@ Created on May 19, 2016
 
 @author: Itay Moav
 '''
-from types import DictionaryType
-from SystemEvents.Text_Suite import attachment
-
 class TableList():
     '''
     Object to hold the list of tables a single config file [.schk | .rchk]
@@ -35,4 +32,6 @@ class TableList():
         and rules, which is the actuall rules to attach
         to the specifc table or to all tables in self.list_of_tables
         '''
+        pass
+    
         
