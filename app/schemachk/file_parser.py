@@ -35,6 +35,7 @@ class ChkFileParser():
         return self
     
     def getRuleList(self):
+        print(self.rule_list)
         return self.rule_list
     
     
@@ -64,6 +65,7 @@ class RuleParser():
         main logic for single rule parsing
         '''
         self.table_name,tokenized_rule_string = tokenize_rule_string(self.unparsed_rule_string)
+        print("table lefty")
         
     
    

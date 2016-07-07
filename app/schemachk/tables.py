@@ -33,7 +33,7 @@ class TableList():
         '''
         sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='{}'".format(self.current_db)
         cursor.execute(sql)
-        self.tables_list = {res:[] for res, in self.cursor}
+        self.tables_list = {res:[] for res, in cursor}
         if(self.verbosity):
             print(self.tables_list)
         return self
@@ -45,7 +45,7 @@ class TableList():
         .schk is a rule file for current db only (for example, all tables must have a field called 'id')
         '''
         if('.rchk' in file_name):
-            self.check_against_db = filename.replace('.rchk','')
+            self.check_against_db = file_name.replace('.rchk','')
         else:
             self.check_against_db = self.current_db    
         return self

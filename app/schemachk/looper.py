@@ -44,7 +44,7 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         self.folders = []
         self.verbosity = args.verbosity
         #self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
-        #self.args = args # for later use
+        self.args = args # for later use
         
         self.validateSelf()
         self.connect(db)
