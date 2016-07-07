@@ -6,15 +6,20 @@ Created on Oct 23, 2014
 
 import config
 import app.iterator
-from app.schemachk.tables import TableList
-from app.schemachk.tokenizer import TokenMaster
+from app.schemachk.tables      import TableList
+from app.schemachk.file_parser import ChkFileParser
 
 
 
 
-class Looper(app.iterator.AssetFilesDBConn):
+class ParseLooper(app.iterator.AssetFilesDBConn):
     '''
         Iterator class to find schema rules and check them on the live DB
+        Each iteration is one file opened and parsed into a file specific TableList object
+        the process() function is where the main logic happens.
+        The result of the rules parsed will be stored in a TableList object.
+        At the end, TableList object will be returned.
+        Who ever wants to, can run the rules stored in the TableList object/s
     '''
 
     def __init__(self, parser,db=None,file_postfix=".rchk"):
@@ -38,8 +43,8 @@ class Looper(app.iterator.AssetFilesDBConn):
 
         self.folders = []
         self.verbosity = args.verbosity
-        self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
-        self.args = args # for later use
+        #self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
+        #self.args = args # for later use
         
         self.validateSelf()
         self.connect(db)
@@ -49,7 +54,7 @@ class Looper(app.iterator.AssetFilesDBConn):
         One object per file found
         '''
         self.store_table_lists = []
-        self.per_db_all_tables = {}
+        #self.per_db_all_tables = {}
 
 
     def process(self,db,file_content,filename):
@@ -63,103 +68,15 @@ class Looper(app.iterator.AssetFilesDBConn):
         '''
         if(self.verbosity):
             print("\n\nOpening db [{}] file [{}].\n".format(db,filename))
-        
-        # INITIALIZE THE LIST OF TABLES
-        # If I did not load the list of tables for this DB, I load it now.
-        # TODO: Move the below block into the TableList object
-        if(db not in self.per_db_all_tables):
-            self.per_db_all_tables[db] = {}
-            if(self.verbosity): print("Loading all table names from [{}]".format(db))
-            sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='{}'".format(db)
-            self.cursor.execute(sql)
-            self.per_db_all_tables[db] = {res:'' for res, in self.cursor}
             
         
-        # DECIDE ON FILE TYPE, AND SECONDARY/right db NAME
-        # start the overall parsing process
-        # TODO: move the below block into TableList object
-        right_side_db = ''
-        if(self.file_postfix == '.rchk'):
-            right_side_db = filename.replace('.rchk','')
-        
-        
-        # Table list object for current file -> sending the file name for right side DB name and debug   
-        MyTableList = TableList(filename,self.verbosity,self.per_db_all_tables[db])
-        
-        # TODO move the below into a parser main object. The parser object
-        # should also get the TableList as a target to populate the rules
-        rules_str = file_content.split("\n")
-        for rule in rules_str:
-            rule = rule.strip()
-            if len(rule) == 0 or rule[0] == '#':
-                continue
-            if(self.verbosity):
-                print("Reading Rule [{}]".format(rule))
-            
-            # Parse the read line
-            T = TokenMaster(rule,related_db=right_side_db,file_type=self.file_postfix,log_verbosity=self.verbosity)
-            T.parse()
-            # MyTableList.attchRules(T.tables_and_rules())
-         
-        self.store_table_lists.append(MyTableList)
+        # INITIALIZE THE LIST OF TABLES OBJECT, load tbls, set the DB name with which current DB is checked.
+        DBTableList = (TableList(db,self.verbosity)).loadTables(self.cursor).setCheckAgainstDB(filename)
+        RuleParser  = (ChkFileParser(filename,file_content,self.verbosity)).parseRules()
+        DBTableList.attachRuleList(RuleParser.getRuleList())
+        self.store_table_lists.append(DBTableList)
          
             
     def getTableLists(self):
         return self.store_table_lists
              
-
-
-                     
-            
-# CURRENTLY NOT USED -> BELOW CODE       
-class RuleParser():
-    '''
-    Parses a specific line in the rule file, and translates 
-    to an Object + meta data (like which tables this rule applies to)
-    + assigns an overwrite type, in case a later rule of the same type comes
-    and it then overwrites this one.
-    '''
-    
-    @staticmethod
-    def factory_rule_container(rule_as_string,left_side_db,right_side_db):
-        '''
-        static method to run this one rule parsing.
-        '''
-        Parser = RuleParser(rule_as_string,left_side_db,right_side_db)
-        Parser.parseRule()
-        return Parser.getRuleObject()
-        
-        
-    '''
-    Takes one rule and builds from that (with many many little sweet helper classes)
-    a Reporting object (see far below the ReportingObject)
-    '''
-    
-    def __init__(self,rule_as_string,left_side_db,right_side_db):
-        self.ReportingObject = None
-        self.rule_as_string = rule_as_string
-        self.left_side_db = left_side_db
-        self.right_side_db = right_side_db
-        
-
-    def parseRule(self):
-        '''
-        Main entry point for this class functionality
-        - tokenize rule (Tokenaizer)
-        - Decide which tables are affected from this rule and load them to memeory as TableRule object
-        - Attach the right side rule to each TableRule object.
-        TODO this (prints) really has to move into a logger, Will try finding an existing one before doing my own ...
-        '''
-        print("rule [{}]\nleft db [{}] right db [{}]\n".format(self.rule_as_string,
-                                                                                                 self.left_side_db,
-                                                                                                 self.right_side_db,
-                                                                                                 ))
-        
-        # Break the rule into related tokens, for example all:exists same exclude_field[f1] the [exclude_field]
-        # is a subpart of the [same] rule, they have to be read together.
-        #Tokenized = Tokenizer.break(self.rule_as_string)
-        
-        
-        
-    def getRulebject(self):
-        return self.RuleObject
