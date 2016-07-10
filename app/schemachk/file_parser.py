@@ -10,9 +10,10 @@ class ChkFileParser():
     and translate that into a rule list, later to be matched
     to the right table
     '''
-    def __init__(self,filename,file_content,verbosity):
+    def __init__(self,check_against_db,file_content,verbosity):
         self.file_content = file_content
-        self.rule_list    = [] # array of toupls (left side table,parsed rule)
+        self.check_against_db = check_against_db
+        self.rule_list    = [] # array of toupls (left side table,parsed rule array of SQLReady )
         self.verbosity    = verbosity
         
     def parseRules(self):
@@ -29,56 +30,41 @@ class ChkFileParser():
                 print("Reading Rule [{}]".format(unparsed_rule_string))
             
             #parse the rule
-            ParsedRule = RuleParser(unparsed_rule_string,self.verbosity)
-            self.rule_list.append((ParsedRule.table_name,ParsedRule.rule_object))
+            self.rule_list.append(self._tokenize_parse_single_rule(unparsed_rule_string))
             
         return self
     
     def getRuleList(self):
+        print("entire rule list")
         print(self.rule_list)
         return self.rule_list
     
     
-    
-    
-    
-    
-    
-class RuleParser():
-    '''
-    Takes a single rule string, tokenize and parse it
-    into something I can make SQL out of
-    '''
-    
-    def __init__(self,unparsed_rule_string,verbosity):
+    def _tokenize_parse_single_rule(self,unparsed_rule_string):
         '''
-        do the entire thing here
+        @param unparsed_rle_String: string "tablename: rule rule rule" 
+        break in the : and then break in the spaces
+        @return: (,)
         '''
-        self.verbosity      = verbosity
-        self.unparsed_rule_string = unparsed_rule_string
-        self.table_name     = 'ALL'
-        self.rule_object    = None
-        self._do_the_parse_dance()
+        rule_left_side,right_side_rules_string = unparsed_rule_string.split(':')
+        return ("ALL" if rule_left_side.strip().lower() in ["all","*"] else rule_left_side.lower(),          
+                [SQLReady(rule_string,self.check_against_db,self.verbosity) for rule_string in right_side_rules_string.split(' ') if len(rule_string)>2])
+    
+
         
-    def _do_the_parse_dance(self):
+
+
+class SQLReady():
+    '''
+    This class will hold the actual SQL to run for each singular rule parsed.
+    '''
+    
+    def __init__(self,single_rule,db_name,verbosity):
         '''
-        main logic for single rule parsing
+        @param single_rule: string this is a single rule token from the file, Each line can have several rules space separated, this is only one.  
+        @param db_name: string the db name to attach to each sql rule. this is the DB that comes from the file name parsed
         '''
-        self.table_name,tokenized_rule_string = tokenize_rule_string(self.unparsed_rule_string)
-        print("table lefty")
+        self.verbosity = verbosity
+        self._single_rule = single_rule
+        self.db_name = db_name
         
-    
-   
-   
-   
-   
-   
-    
-def tokenize_rule_string(unparsed_rule_string):
-    '''
-    break in the : and then break in the spaces
-    @return: (,)
-    '''
-    rule_left_side,right_side_rules_string = unparsed_rule_string.split(':')
-    return ("ALL" if rule_left_side.strip().lower() in ["all","*"] else rule_left_side.lower(),right_side_rules_string.split(' '))
-    

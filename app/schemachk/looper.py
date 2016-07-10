@@ -72,11 +72,14 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         
         # INITIALIZE THE LIST OF TABLES OBJECT, load tbls, set the DB name with which current DB is checked.
         DBTableList = (TableList(db,self.verbosity)).loadTables(self.cursor).setCheckAgainstDB(filename)
-        RuleParser  = (ChkFileParser(filename,file_content,self.verbosity)).parseRules()
+        RuleParser  = (ChkFileParser(DBTableList.check_against_db ,file_content, self.verbosity)).parseRules()
         DBTableList.attachRuleList(RuleParser.getRuleList())
         self.store_table_lists.append(DBTableList)
          
             
     def getTableLists(self):
+        '''
+        @return: [TableList]
+        '''
         return self.store_table_lists
-             
+        

@@ -50,13 +50,19 @@ class TableList():
             self.check_against_db = self.current_db    
         return self
         
-    def attachRules(self,rule):
+    def attachRuleList(self,rules):
         '''
         rule is a DictionaryType
         with 'table' which can be ALL or a table name
         and rules, which is the actuall rules to attach
         to the specifc table or to all tables in self.list_of_tables
         '''
-        pass
+        for rule in rules:
+            if rule[0] == 'ALL': # Attach rule (it is an array of objects) to all tables
+                for table in self.tables_list:
+                    self.tables_list[table] = rule[1]
+            else:                # attach the rule to only one table
+                self.tables_list[rule[0]] = rule[1]
+            
     
         
