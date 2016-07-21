@@ -4,6 +4,8 @@ Created on Jul 7, 2016
 @author: itaymoav
 '''
 
+from app.schemachk.sql_objects import parse_to_sql_factory
+
 class ChkFileParser():
     '''
     Main class to get a filename and file content
@@ -36,7 +38,10 @@ class ChkFileParser():
     
     def getRuleList(self):
         print("entire rule list")
-        print(self.rule_list)
+        for rule in self.rule_list:
+            print("{}: ".format(rule[0]))
+            for Sql in rule[1]:
+                print("  {}".format(Sql))
         return self.rule_list
     
     
@@ -44,27 +49,14 @@ class ChkFileParser():
         '''
         @param unparsed_rle_String: string "tablename: rule rule rule" 
         break in the : and then break in the spaces
-        @return: (,)
+        @return: (,[])
         '''
         rule_left_side,right_side_rules_string = unparsed_rule_string.split(':')
-        return ("ALL" if rule_left_side.strip().lower() in ["all","*"] else rule_left_side.lower(),          
-                [SQLReady(rule_string,self.check_against_db,self.verbosity) for rule_string in right_side_rules_string.split(' ') if len(rule_string)>2])
+        return ("ALL" if rule_left_side.strip().lower() in ["all","*"] else rule_left_side.lower(),  # return Tuple left side        
+                [parse_to_sql_factory(rule_string,self.check_against_db,self.verbosity)                          # return Tuple right side
+                 for rule_string in right_side_rules_string.split(' ') if len(rule_string)>2])
     
 
-        
-
-
-class SQLReady():
-    '''
-    This class will hold the actual SQL to run for each singular rule parsed.
-    '''
     
-    def __init__(self,single_rule,db_name,verbosity):
-        '''
-        @param single_rule: string this is a single rule token from the file, Each line can have several rules space separated, this is only one.  
-        @param db_name: string the db name to attach to each sql rule. this is the DB that comes from the file name parsed
-        '''
-        self.verbosity = verbosity
-        self._single_rule = single_rule
-        self.db_name = db_name
+    
         

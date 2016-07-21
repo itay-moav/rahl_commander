@@ -13,8 +13,8 @@ def run(parser):
     SchemCheker = ParseLooper(parser,file_postfix=".rchk")
     SchemCheker.run()
     for TableList in SchemCheker.getTableLists():
-        print("Start running rules for .rchk files")
-        print(TableList.tables_list)
+        #print("Start running rules for .rchk files")
+        #print(TableList.tables_list)
         pass
      
     SchemCheker = ParseLooper(parser,file_postfix=".schk")
