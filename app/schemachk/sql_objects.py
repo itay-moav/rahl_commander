@@ -21,11 +21,7 @@ def parse_to_sql_factory(single_rule,db_name,verbosity):
         
     #instantiate the correct class (SqlRule+RuleName)
     SqlClass = globals()[class_and_params[0].capitalize().replace('_','')]
-    SqlObj = SqlClass(single_rule,db_name,params,verbosity)
-    return SqlObj.generate_sql()
-
-
-
+    return SqlClass(single_rule,db_name,params,verbosity)
 
 
 
@@ -45,41 +41,72 @@ class SQLReady():
         self.params = params
         self.db_name = db_name
         self.sql = ''
-        
+        self._generate_sql()
         
     def __str__(self):
         return "{}.{} ({}) : {}".format(self.db_name,self._single_rule,self.params,self.sql)
     
-    def generate_sql(self):
-        raise NotImplementedError("You must implement generate_sql in app.schemachk.sql_objects.{}".format(self.__class__.__name__))
+    def _generate_sql(self):
+        '''
+        generates the specific sql that will be used to validate the rule
+        Populates __self__.sql
+        ''' 
+        raise NotImplementedError("You must implement _generate_sql in app.schemachk.sql_objects.{}".format(self.__class__.__name__))
+    
+    def test_rule(self,table_name):
+        '''
+        adds the foreign table name
+        runs the sql
+        tests the result to see the rule has been complied to
+        @return boolean
+        
+        THIS IS AN ABSTRACT METHOD
+        '''
+        raise NotImplementedError("You must implement test_rule(table_name) in app.schemachk.sql_objects.{}".format(self.__class__.__name__))
+     
+     
+     
+     
      
      
 class Exists(SQLReady):
-    def generate_sql(self):
+    def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
         self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.db_name)
         return self
+                 
+                 
+                 
+                 
                   
 class Same(SQLReady):
-    def generate_sql(self):
+    def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
         self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.db_name)
         return self
+    
+    
+    
+    
     
 class Notexists(SQLReady):
-    def generate_sql(self):
+    def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
         self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.db_name)
         return self
     
+    
+    
+    
+    
 class Fieldexists(SQLReady):
-    def generate_sql(self):
+    def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
