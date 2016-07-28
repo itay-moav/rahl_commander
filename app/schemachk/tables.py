@@ -59,10 +59,14 @@ class TableList():
         '''
         for rule in rules:
             if rule[0] == 'ALL': # Attach rule (it is an array of objects) to all tables
-                for table in self.tables_list:
-                    self.tables_list[table] = rule[1]
+                for table in self.tables_list.keys():
+                    self.tables_list[table] += rule[1]
             else:                # attach the rule to only one table
-                self.tables_list[rule[0]] = rule[1]
+                self.tables_list[rule[0]] += rule[1]
             
+            
+    def getTables(self):
+        return self.tables_list
+    
     
         

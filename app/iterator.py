@@ -7,8 +7,8 @@ Basic iteration functionality on the right folders.
 '''
 import fnmatch
 import os
-import mysql.connector as My
 import config
+import app.db
 
 class AssetFiles():
     '''
@@ -24,7 +24,6 @@ class AssetFiles():
     def __init__(self, parser):
         '''
         Stores a dictionary of what to build
-        @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
         '''
         # Process arguments
         args = parser.parse_args()
@@ -202,39 +201,19 @@ class AssetFiles():
 
 class AssetFilesDBConn(AssetFiles):
 
-    def __init__(self, parser,db=None):
+    def __init__(self, parser):
         '''
         Stores a dictionary of what to build
-        @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
         '''
         AssetFiles.__init__(self, parser)
-        self.connect(db)
+        self.connect()
 
 
-    def connect(self,db):
+    def connect(self):
         '''
             overwrite this, if no DB connection is needed
         '''
-        # Check whther take config values or override from command line
-        if self.args.server_connection:
-            creds = self.args.server_connection.replace(':','@').split('@')
-            user=creds[0]
-            password=creds[1]
-            host=creds[2]
-        else:
-            user=config.mysql['username']
-            password=config.mysql['password']
-            host=config.mysql['host']
-
-        # Connect to DB (TODO get DB connection abstracted)
-        if db:
-            self.cnx = db
-            self.cnx_proxy = True
-
-        else:
-            self.cnx = My.connect(user=user, password=password,host=host)
-            self.cnx_proxy = False
-
+        self.cnx = app.db.get_connection(self.args.server_connection)
         self.cursor = self.cnx.cursor()
 
 
@@ -242,28 +221,18 @@ class AssetFilesDBConn(AssetFiles):
         '''
             Changes the DB connected too
         '''
-        if self.cnx.database != db and db:
-            try:
-                self.cnx.database = db
-            except My.Error as err:
-                if err.errno == My.errorcode.ER_BAD_DB_ERROR:
-                    # This means the DB is going to be created in the script
-                    # TODO make it work only for scripts
-                    if "CREATE DATABASE" in file_content:
-                        pass
-                    else:
-                        print("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
-                        print("CODE:\n{}".format(file_content))
-                        exit()
-
-                else:
-                    raise err
+        # This means the DB is going to be created in the script
+        if "CREATE DATABASE" in file_content:
+            return
+        
+        if not app.db.change_db(db):
+            print("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
+            print("CODE:\n{}".format(file_content))
+            exit()
 
 
     def postIterate(self):
         '''
         '''
-        # Close connection
-        if not self.cnx_proxy:
-            self.cnx.close()
+        pass
 

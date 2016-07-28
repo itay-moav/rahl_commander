@@ -22,7 +22,7 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         Who ever wants to, can run the rules stored in the TableList object/s
     '''
 
-    def __init__(self, parser,db=None,file_postfix=".rchk"):
+    def __init__(self, parser,file_postfix=".rchk"):
         '''
         Stores a dictionary of what to build
         @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
@@ -47,7 +47,7 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         self.args = args # for later use
         
         self.validateSelf()
-        self.connect(db)
+        self.connect()
         self.file_postfix = file_postfix
         '''
         list of Objects that maintaines the list of tables to be checked
