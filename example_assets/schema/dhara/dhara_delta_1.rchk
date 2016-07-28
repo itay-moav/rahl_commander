@@ -43,5 +43,6 @@
 #dumbo: notexists
 #people_palace:table[delta_people_palace] exists same
 
-*:exist
-*:same
+sisters_of_the_light:exist
+first_file_members:exist
+#*:same

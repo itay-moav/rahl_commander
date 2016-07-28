@@ -16,7 +16,7 @@ def run(parser):
     SchemCheker.run()
     for TableList in SchemCheker.getTableLists():
         for table_name in TableList.getTables().keys():
-            app.schemachk.reporting.run_tests(table_name,TableList.getTables()[table_name],SchemCheker.cursor)
+            app.schemachk.reporting.run_tests(table_name,TableList.getTables()[table_name])
      
     SchemCheker = ParseLooper(parser,file_postfix=".schk")
     SchemCheker.run()

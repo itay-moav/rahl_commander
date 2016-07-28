@@ -3,6 +3,7 @@ Created on May 19, 2016
 
 @author: Itay Moav
 '''
+import app.db
 class TableList():
     '''
     Object to hold the list of tables a single config file [.schk | .rchk]
@@ -25,15 +26,17 @@ class TableList():
         if(self.verbosity):
             print("Initiating TableList for db [{}]".format(db))
         
-    def loadTables(self,cursor):
+    def loadTables(self):
         '''
         Load ALL the table names current db has.
         I know I can cache this action, but, I rather have clear code
         than optimized code at this stage.
         '''
         sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='{}'".format(self.current_db)
+        cursor = app.db.get_connection().cursor()
         cursor.execute(sql)
         self.tables_list = {res:[] for res, in cursor}
+        
         if(self.verbosity):
             print(self.tables_list)
         return self

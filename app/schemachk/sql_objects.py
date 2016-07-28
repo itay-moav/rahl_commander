@@ -3,7 +3,8 @@ Created on Jul 21, 2016
 
 @author: itaymoav
 '''
-
+import app.db
+from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
 def parse_to_sql_factory(single_rule,check_against_db_name,verbosity):
@@ -68,9 +69,15 @@ class SQLReady():
         raise NotImplementedError("You must implement test_rule(table_name) in app.schemachk.sql_objects.{}".format(self.__class__.__name__))
      
     def _prepare_sql_for_running(self,right_side_table_name):
+        self.right_side_table_name = right_side_table_name
         return self.sql.replace('[[table_name]]', right_side_table_name)
-
-
+    
+    def get_error_msg(self):
+        raise NotImplementedError("You must implement get_error_msg")
+    
+    def _get_cursor(self):
+        cnx = app.db.get_connection()
+        return cnx.cursor()
 
 
 class Table(SQLReady):
@@ -82,8 +89,11 @@ class Table(SQLReady):
         self.sql = self.params[0]
         return self
      
-    def test_rule(self,right_side_table_name,cursor):
+    def test_rule(self,right_side_table_name):
         return self.sql
+    
+    def get_error_msg(self):
+        return ''
      
      
      
@@ -96,10 +106,26 @@ class Exists(SQLReady):
         self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.check_against_db)
         return self
     
-    def test_rule(self,right_side_table_name,cursor):
-        sql = self._prepare_sql_for_running(right_side_table_name)
-        cursor.execute(sql)
+    def test_rule(self,right_side_table_name):
+        '''
+        Checks for table existance
+        '''
+        
+        sql    = self._prepare_sql_for_running(right_side_table_name)
+        cursor = self._get_cursor()
+        try:
+            cursor.execute(sql)
+            
+        except MyExcp as err:
+            if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
+                print(self.get_error_msg())
+            else:
+                raise err
+            
         return right_side_table_name
+    
+    def get_error_msg(self):
+        return "{current_db}.{table_name} does not exists".format(current_db=self.check_against_db,table_name=self.right_side_table_name)
         
 
 #just aliasing to prevent needless errors
@@ -118,10 +144,19 @@ class Same(SQLReady):
         self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.check_against_db)
         return self
     
-    def test_rule(self,right_side_table_name,cursor):
+    def test_rule(self,right_side_table_name):
         sql = self._prepare_sql_for_running(right_side_table_name)
-        cursor.execute(sql)
+        cursor = self._get_cursor()
+        
+        try:
+            cursor.execute(sql)
+        except Exception as e: # build error object
+            raise e
+            
+        return self.right_side_table_name
     
+    def get_error_msg(self):
+        return "{current_db}.{table_name} does not match".format(current_db=self.check_against_db,table_name=self.right_side_table_name)
     
     
     

@@ -24,7 +24,7 @@ def get_connection(server_connection_override=None):
             password=config.mysql['password']
             host=config.mysql['host']
             
-        _connection = My.connect(user=user, password=password,host=host)
+        _connection = My.connect(user=user, password=password,host=host,buffered=True)
         
     return _connection
 
