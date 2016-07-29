@@ -17,7 +17,7 @@ class BuildDBObj(app.iterator.AssetFilesDBConn):
             Delete what we build. Check the Wheel of Time books, The Dragon had to destroy the
             existing seals first to built better ones
         '''
-        DropDBObj(self.parser,self.cnx).run()
+        DropDBObj(self.parser).run()
 
     def process(self,db,file_content,filename):
         '''
