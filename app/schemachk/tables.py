@@ -22,7 +22,7 @@ class TableList():
         self.verbosity        = log_verbosity
         self.current_db       = db
         self.tables_list      = {}
-        self.check_against_db = ''
+        self.right_side_db = ''
         if(self.verbosity):
             print("Initiating TableList for db [{}]".format(db))
         
@@ -40,20 +40,8 @@ class TableList():
         if(self.verbosity):
             print(self.tables_list)
         return self
-    
-    def setCheckAgainstDB(self,file_name):
-        '''
-        Check which DB name the rule file currently parsed is
-        pointing to. rchk is to compare current db with a different db (file name is the db name)
-        .schk is a rule file for current db only (for example, all tables must have a field called 'id')
-        '''
-        if('.rchk' in file_name):
-            self.check_against_db = file_name.replace('.rchk','')
-        else:
-            self.check_against_db = self.current_db    
-        return self
         
-    def attachRuleList(self,rules):
+    def bindRulesToTables(self,rules):
         '''
         rule is a DictionaryType
         with 'table' which can be ALL or a table name

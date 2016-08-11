@@ -7,7 +7,7 @@ import app.db
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
-def parse_to_sql_factory(single_rule,check_against_db_name,verbosity):
+def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
     '''
     Factory function to instantiate, parse and return the correct SQL object
     '''
@@ -21,33 +21,38 @@ def parse_to_sql_factory(single_rule,check_against_db_name,verbosity):
         params = []
         
     #instantiate the correct class (SqlRule+RuleName)
-    SqlClass = globals()[class_and_params[0].capitalize().replace('_','')]
-    return SqlClass(single_rule,check_against_db_name,params,verbosity)
+    TestRuleClass = globals()[class_and_params[0].capitalize().replace('_','')]
+    return TestRuleClass(single_rule,left_side_db,right_side_db,params,verbosity)
 
 
 
 
 
-class SQLReady():
+class TestRule():
     '''
-    This class will hold the actual SQL to run for each singular rule parsed.
-    Parses the string token into a SQL command
+    This class will hold the logic to test rules, including the actual SQL 
+    to run for each singular rule parsed.
+    Initiated with the rule string.
     '''
     
-    def __init__(self,single_rule,check_against_db,params,verbosity):
+    def __init__(self,single_rule,left_side_db,right_side_db,params,verbosity):
         '''
         @param single_rule: string this is a single rule token from the file, Each line can have several rules space separated, this is only one.  
-        @param check_against_db: string the db name to attach to each sql rule. this is the DB that comes from the file name parsed
+        @param right_side_db: string the db name to attach to each sql rule. this is the DB that comes from the file name parsed, left side db
         '''
-        self.verbosity = verbosity
-        self._single_rule = single_rule
-        self.params = params
-        self.check_against_db = check_against_db
-        self.sql = ''
+        self.verbosity     = verbosity
+        self._single_rule  = single_rule
+        self.params        = params
+        self.left_side_db  = left_side_db
+        self.right_side_db = right_side_db
+        self.sql           = ''
         self._generate_sql()
         
     def __str__(self):
-        return "{rule} in {db_name} ({params}) : {sql}".format(db_name=self.check_against_db,rule=self._single_rule,params=self.params,sql=self.sql)
+        return "{left_side_db} {rule} in {db_name} ({params}) : {sql}".format(left_side_db = self.left_side_db,
+                                                                              db_name      = self.right_side_db,
+                                                                              rule         = self._single_rule,
+                                                                              params       = self.params,sql=self.sql)
     
     def _generate_sql(self):
         '''
@@ -82,11 +87,11 @@ class SQLReady():
         return cnx.cursor()
 
 
-class Table(SQLReady):
+class Table(TestRule):
     def _generate_sql(self):
         '''
         This special rule, which better come first, will set the table name to 
-        something but the default (assumes table name to check is the same as the right side table name)
+        something but the default (default assumes table name to check is the same as the right side table name)
         '''
         self.sql = self.params[0]
         return self
@@ -100,12 +105,12 @@ class Table(SQLReady):
      
      
      
-class Exists(SQLReady):
+class Exists(TestRule):
     def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.check_against_db)
+        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
         return self
     
     def test_rule(self,right_side_table_name):
@@ -127,7 +132,7 @@ class Exists(SQLReady):
         return right_side_table_name
     
     def get_error_msg(self):
-        return "{current_db}.{table_name} does not exists".format(current_db=self.check_against_db,table_name=self.right_side_table_name)
+        return "{current_db}.{table_name} does not exists".format(current_db=self.right_side_db,table_name=self.right_side_table_name)
         
 
 #just aliasing to prevent needless errors
@@ -138,12 +143,12 @@ class Exist(Exists):
                  
                  
                   
-class Same(SQLReady):
+class Same(TestRule):
     def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.check_against_db)
+        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
         return self
     
     def test_rule(self,right_side_table_name):
@@ -158,16 +163,16 @@ class Same(SQLReady):
         return self.right_side_table_name
     
     def get_error_msg(self):
-        return "{current_db}.{table_name} does not match".format(current_db=self.check_against_db,table_name=self.right_side_table_name)
+        return "{current_db}.{table_name} does not match".format(current_db=self.right_side_db,table_name=self.right_side_table_name)
     
     
     
-class Notexists(SQLReady):
+class Notexists(TestRule):
     def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.check_against_db)
+        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
         return self
     
     
@@ -175,11 +180,11 @@ class Notexists(SQLReady):
     
 
     
-class Fieldexists(SQLReady):
+class Fieldexists(TestRule):
     def _generate_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.check_against_db)
+        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
         return self
     

@@ -4,7 +4,7 @@ Created on Jul 7, 2016
 @author: itaymoav
 '''
 
-from app.schemachk.sql_objects import parse_to_sql_factory
+from app.schemachk.test_rules import parse_to_TestRule_factory
 
 class ChkFileParser():
     '''
@@ -12,11 +12,12 @@ class ChkFileParser():
     and translate that into a rule list, later to be matched
     to the right table
     '''
-    def __init__(self,check_against_db,file_content,verbosity):
-        self.file_content = file_content
-        self.check_against_db = check_against_db
-        self.rule_list    = [] # array of toupls (left side table,parsed rule array of SQLReady )
-        self.verbosity    = verbosity
+    def __init__(self,left_side_db,right_side_db,file_content,verbosity):
+        self.file_content  = file_content
+        self.left_side_db  = left_side_db
+        self.right_side_db = right_side_db
+        self.rule_list     = [] # array of toupls (left side table,parsed rule array of SQLReady )
+        self.verbosity     = verbosity
         
     def parseRules(self):
         '''
@@ -50,11 +51,11 @@ class ChkFileParser():
         '''
         @param unparsed_rle_String: string "tablename: rule rule rule" 
         break in the : and then break in the spaces
-        @return: (,[])
+        @return: ("table name",[TestRules])
         '''
         rule_left_side,right_side_rules_string = unparsed_rule_string.split(':')
         return ("ALL" if rule_left_side.strip().lower() in ["all","*"] else rule_left_side.lower(),  # return Tuple left side        
-                [parse_to_sql_factory(rule_string,self.check_against_db,self.verbosity)              # return Tuple right side
+                [parse_to_TestRule_factory(rule_string,self.left_side_db,self.right_side_db,self.verbosity)         # return Tuple right side-array of TestRules
                  for rule_string in right_side_rules_string.split(' ') if len(rule_string)>2])
     
 

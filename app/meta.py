@@ -33,5 +33,5 @@ class TrackedDBs():
             object_path = config.assets_folder + '/' + object_type
 
         print("Meta for folder [{}]".format(object_path))
-        self.folders = [check_against_db for check_against_db in os.listdir(object_path) if '.' not in check_against_db]
+        self.folders = [right_side_db for right_side_db in os.listdir(object_path) if '.' not in right_side_db]
         

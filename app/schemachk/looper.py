@@ -65,15 +65,19 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
             - Each file found, a new table list object is instantiated for that file to be
               processed.
             - Run the tests in the TableList object
+            @param db is the current database name, the left side db name: string 
         '''
         if(self.verbosity):
             print("\n\nOpening db [{}] file [{}].\n".format(db,filename))
             
         
         # INITIALIZE THE LIST OF TABLES OBJECT, load tbls, set the DB name with which current DB is checked.
-        DBTableList = (TableList(db,self.verbosity)).loadTables().setCheckAgainstDB(filename)
-        RuleParser  = (ChkFileParser(DBTableList.check_against_db ,file_content, self.verbosity)).parseRules()
-        DBTableList.attachRuleList(RuleParser.getRuleList())
+        DBTableList = (TableList(db,self.verbosity)).loadTables()
+        RuleParser  = (ChkFileParser(left_side_db=db,
+                                    right_side_db=self.getCheckAgainstDB(filename),
+                                    file_content=file_content,
+                                    verbosity=self.verbosity)).parseRules()
+        DBTableList.bindRulesToTables(RuleParser.getRuleList())
         self.store_table_lists.append(DBTableList)
          
             
@@ -82,4 +86,15 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         @return: [TableList]
         '''
         return self.store_table_lists
+    
+    def getCheckAgainstDB(self,file_name):
+        '''
+        Check which DB name (right side) the rule file currently parsed is
+        pointing to. rchk is to compare current db with a different db (file name is the db name)
+        .schk is a rule file for current db only (for example, all tables must have a field called 'id')
+        '''
+        if('.rchk' in file_name):
+            return file_name.replace('.rchk','')
+        else:
+            return self.current_db    
         
