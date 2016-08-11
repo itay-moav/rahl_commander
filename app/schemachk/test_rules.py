@@ -46,7 +46,8 @@ class TestRule():
         self.left_side_db  = left_side_db
         self.right_side_db = right_side_db
         self.sql           = ''
-        self._generate_sql()
+        self.left_side_table  = ''
+        self.right_side_table = ''
         
     def __str__(self):
         return "{left_side_db} {rule} in {db_name} ({params}) : {sql}".format(left_side_db = self.left_side_db,
@@ -54,12 +55,23 @@ class TestRule():
                                                                               rule         = self._single_rule,
                                                                               params       = self.params,sql=self.sql)
     
-    def _generate_sql(self):
+    def bind_all_to_sql(self,left_side_table,right_side_table):
+        '''
+        Binds all the values into the SQL.
+        Called when rules a hard binded to their relevance db.table
+        '''
+        self.sql = self._base_sql().replace("[[left_side_db]]",    self.left_side_db)       \
+                                   .replace("[[right_side_db]]",   self.right_side_db)      \
+                                   .replace("[[left_side_table]]", left_side_table)         \
+                                   .replace("[[right_side_table]]",right_side_table)
+        return self
+    
+    def _base_sql(self):
         '''
         generates the specific sql that will be used to validate the rule
         Populates __self__.sql
         ''' 
-        raise NotImplementedError("You must implement _generate_sql in app.schemachk.sql_objects.{}".format(self.__class__.__name__))
+        raise NotImplementedError("You must implement _base_sql in app.schemachk.test_rules.{}".format(self.__class__.__name__))
     
     def test_rule(self,right_side_table_name):
         '''
@@ -88,7 +100,7 @@ class TestRule():
 
 
 class Table(TestRule):
-    def _generate_sql(self):
+    def _base_sql(self):
         '''
         This special rule, which better come first, will set the table name to 
         something but the default (default assumes table name to check is the same as the right side table name)
@@ -106,19 +118,18 @@ class Table(TestRule):
      
      
 class Exists(TestRule):
-    def _generate_sql(self):
+    def _base_sql(self):
         '''
         exists will verify input table exists in this db (just name)
         '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
-        return self
+        self.sql = "DESCRIBE [[right_side_db]].[[right_side_table]]"
+        return self.sql
     
-    def test_rule(self,right_side_table_name):
+    def test_rule(self,overwrite_right_side_table):
         '''
         Checks for table existance
         '''
-        
-        sql    = self._prepare_sql_for_running(right_side_table_name)
+        sql    = self._prepare_sql_for_running(overwrite_right_side_table)
         cursor = self._get_cursor()
         try:
             cursor.execute(sql)
@@ -129,7 +140,7 @@ class Exists(TestRule):
             else:
                 raise err
             
-        return right_side_table_name
+        return overwrite_right_side_table
     
     def get_error_msg(self):
         return "{current_db}.{table_name} does not exists".format(current_db=self.right_side_db,table_name=self.right_side_table_name)

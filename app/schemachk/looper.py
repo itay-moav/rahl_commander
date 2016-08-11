@@ -74,7 +74,7 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         # INITIALIZE THE LIST OF TABLES OBJECT, load tbls, set the DB name with which current DB is checked.
         DBTableList = (TableList(db,self.verbosity)).loadTables()
         RuleParser  = (ChkFileParser(left_side_db=db,
-                                    right_side_db=self.getCheckAgainstDB(filename),
+                                    right_side_db=self.getRightSideDB(filename,db),
                                     file_content=file_content,
                                     verbosity=self.verbosity)).parseRules()
         DBTableList.bindRulesToTables(RuleParser.getRuleList())
@@ -87,7 +87,7 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         '''
         return self.store_table_lists
     
-    def getCheckAgainstDB(self,file_name):
+    def getRightSideDB(self,file_name,current_db):
         '''
         Check which DB name (right side) the rule file currently parsed is
         pointing to. rchk is to compare current db with a different db (file name is the db name)
@@ -96,5 +96,5 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         if('.rchk' in file_name):
             return file_name.replace('.rchk','')
         else:
-            return self.current_db    
+            return current_db    
         
