@@ -38,7 +38,11 @@
 
 
 # BELOW IS THE RULE!
-* :exists same
- people_palace: notexists
-dumbo: notexists
+#*:exists same
+#people_palace: notexists
+#dumbo: notexists
+#people_palace:table[delta_people_palace] exists same
 
+sisters_of_the_light:exist
+first_file_members:exist
+#*:same

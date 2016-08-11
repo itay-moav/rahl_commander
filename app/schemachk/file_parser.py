@@ -37,11 +37,12 @@ class ChkFileParser():
         return self
     
     def getRuleList(self):
-        print("entire rule list")
-        for rule in self.rule_list:
-            print("{}: ".format(rule[0]))
-            for Sql in rule[1]:
-                print("  {}".format(Sql))
+        if(self.verbosity):
+            print("entire rule list")
+            for rule in self.rule_list:
+                print("{}: ".format(rule[0]))
+                for Sql in rule[1]:
+                    print("  {}".format(Sql))
         return self.rule_list
     
     
@@ -53,7 +54,7 @@ class ChkFileParser():
         '''
         rule_left_side,right_side_rules_string = unparsed_rule_string.split(':')
         return ("ALL" if rule_left_side.strip().lower() in ["all","*"] else rule_left_side.lower(),  # return Tuple left side        
-                [parse_to_sql_factory(rule_string,self.check_against_db,self.verbosity)                          # return Tuple right side
+                [parse_to_sql_factory(rule_string,self.check_against_db,self.verbosity)              # return Tuple right side
                  for rule_string in right_side_rules_string.split(' ') if len(rule_string)>2])
     
 

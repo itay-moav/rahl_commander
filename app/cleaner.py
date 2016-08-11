@@ -6,8 +6,7 @@ Created on Oct 9, 2014
 Specialized DB class to clean all user db objects
 functions | stored procedures | views | triggers
 '''
-import mysql.connector as My
-
+import app.db
 import config
 import app.meta as meta
 
@@ -56,19 +55,9 @@ class AllDBObj():
     def connect(self):
         '''
         '''
-        # Check whther take config values or override from command line
-        if self.args.server_connection:
-            creds = self.args.server_connection.replace(':','@').split('@')
-            user=creds[0]
-            password=creds[1]
-            host=creds[2]
-        else:
-            user=config.mysql['username']
-            password=config.mysql['password']
-            host=config.mysql['host']
-
-        self.cnx = My.connect(user=user, password=password,host=host)
+        self.cnx = app.db.get_connection(self.args.server_connection)
         self.cursor = self.cnx.cursor()
+
 
     def run(self):
         '''

@@ -9,13 +9,14 @@ TableList will take in the rule object and attach it to a specific tables, or al
 At end of file processing, Main will call a looper on the TableList and run the rules, generate a report (Render Object-> stdio,email,file)
 '''
 from app.schemachk.looper import ParseLooper
+import app.schemachk.reporting
+
 def run(parser):
     SchemCheker = ParseLooper(parser,file_postfix=".rchk")
     SchemCheker.run()
     for TableList in SchemCheker.getTableLists():
-        #print("Start running rules for .rchk files")
-        #print(TableList.tables_list)
-        pass
+        for table_name in TableList.getTables().keys():
+            app.schemachk.reporting.run_tests(table_name,TableList.getTables()[table_name])
      
     SchemCheker = ParseLooper(parser,file_postfix=".schk")
     SchemCheker.run()
