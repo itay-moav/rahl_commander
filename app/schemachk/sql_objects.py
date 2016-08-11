@@ -25,6 +25,8 @@ def parse_to_sql_factory(single_rule,db_name,verbosity):
 
 
 
+
+
 class SQLReady():
     '''
     This class will hold the actual SQL to run for each singular rule parsed.
