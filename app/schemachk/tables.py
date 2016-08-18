@@ -51,14 +51,14 @@ class TableList():
         for rule in rules:
             if rule[0] == 'ALL': # Attach rule (it is an array of objects) to all tables
                 for table in self.tables_list.keys():
-                    self.tables_list[table] += [binded_rules.bind_all_to_sql(left_side_table=table,right_side_table=table) for binded_rules in rule[1]]
+                    self.tables_list[table] += [binded_rules.bind_all_to_sql(left_side_table=table) for binded_rules in rule[1]]
             else:                # attach the rule to only one table
                 try:
-                    self.tables_list[rule[0]] += [binded_rules.bind_all_to_sql(left_side_table=rule[0],right_side_table=rule[0]) for binded_rules in rule[1]]
+                    self.tables_list[rule[0]] += [binded_rules.bind_all_to_sql(left_side_table=rule[0]) for binded_rules in rule[1]]
                 except KeyError as ke:
                     print("ERROR!")
-                    print("Database {db_name} has no such table {tbl_name}".format(db_name=self.current_db,tbl_name=ke))
-                    print("Please fix your rule files under database folder {db_name}".format(db_name=self.current_db))
+                    print("Database [{db_name}] has no such table [{tbl_name}]".format(db_name=self.current_db,tbl_name=ke))
+                    print("Please fix your rule files under database folder [{db_name}]".format(db_name=self.current_db))
                     exit()
                    
     def getTables(self):

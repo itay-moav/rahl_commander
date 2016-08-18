@@ -55,41 +55,53 @@ class TestRule():
                                                                               rule         = self._single_rule,
                                                                               params       = self.params,sql=self.sql)
     
-    def bind_all_to_sql(self,left_side_table,right_side_table):
+    def bind_all_to_sql(self,left_side_table):
         '''
         Binds all the values into the SQL.
-        Called when rules a hard binded to their relevance db.table
+        Called when rules are hard binded to their relevance db.table
         '''
+        self.left_side_table = left_side_table
         self.sql = self._base_sql().replace("[[left_side_db]]",    self.left_side_db)       \
                                    .replace("[[right_side_db]]",   self.right_side_db)      \
-                                   .replace("[[left_side_table]]", left_side_table)         \
-                                   .replace("[[right_side_table]]",right_side_table)
+                                   .replace("[[left_side_table]]", left_side_table)
         return self
-    
+
+    def test_rule(self,overwrite_right_side_table):
+        self.right_side_table = overwrite_right_side_table
+        self._table_rename_phase() # overwrite this
+        self._prepare_sql_for_running()
+        self._internal_test_rule() # overwrite this
+        return self.right_side_table
+
     def _base_sql(self):
         '''
         generates the specific sql that will be used to validate the rule
         Populates __self__.sql
         ''' 
         raise NotImplementedError("You must implement _base_sql in app.schemachk.test_rules.{}".format(self.__class__.__name__))
-    
-    def test_rule(self,right_side_table_name):
+            
+    def _internal_test_rule(self):
         '''
-        adds the origin table name -> The table name that is on the right side of
-        the rule string [table name]:rule 
-        This makes the assumptions you match tables to same name tables in other DBs.
-        
-        runs the sql
-        tests the result to see the rule has been complied to
-        @return boolean
+        overwrite this method with the specific logic to modify right side table (post/prefix)
+        and to run the tests.
+        The method will return a (maybe) modified name of the right side table, and 
+        send to the reporting object info as to whther the test passed or not and the error message
+        @return string new right side table name
         
         THIS IS AN ABSTRACT METHOD
         '''
-        raise NotImplementedError("You must implement test_rule(table_name) in app.schemachk.sql_objects.{}".format(self.__class__.__name__))
+        raise NotImplementedError("You must implement _internal_test_rule() in app.schemachk.sql_objects.{}".format(self.__class__.__name__))
      
-    def _prepare_sql_for_running(self,right_side_table_name):
-        self.right_side_table_name = right_side_table_name
-        return self.sql.replace('[[table_name]]', right_side_table_name)
+    def _prepare_sql_for_running(self):
+        self.sql = self.sql.replace("[[right_side_table]]",self.right_side_table)
+        return self
+    
+    def _table_rename_phase(self):
+        '''
+        If you have a "rule" whose purpose is to modify table name
+        Implement this here by overwriting this method
+        '''
+        pass
     
     def get_error_msg(self):
         raise NotImplementedError("You must implement get_error_msg")
@@ -100,21 +112,44 @@ class TestRule():
 
 
 class Table(TestRule):
-    def _base_sql(self):
-        '''
+    '''
         This special rule, which better come first, will set the table name to 
         something but the default (default assumes table name to check is the same as the right side table name)
-        '''
-        self.sql = self.params[0]
-        return self
-     
-    def test_rule(self,right_side_table_name):
+    '''
+        
+    def _table_rename_phase(self):
+        self.right_side_table = self.params[0]
+    
+    def _base_sql(self):
         return self.sql
+     
+    def _internal_test_rule(self):
+        return self
     
     def get_error_msg(self):
         return ''
      
      
+   
+class Prefix(Table):
+    '''
+        Adds a prefix to the table name
+    '''
+        
+    def _table_rename_phase(self):
+        self.right_side_table = self.params[0] + self.right_side_table
+
+
+
+class Postfix(Table):
+    '''
+        Adds a postfix to the table name
+    '''
+        
+    def _table_rename_phase(self):
+        self.right_side_table = self.right_side_table + self.params[0]
+ 
+  
      
      
 class Exists(TestRule):
@@ -125,14 +160,13 @@ class Exists(TestRule):
         self.sql = "DESCRIBE [[right_side_db]].[[right_side_table]]"
         return self.sql
     
-    def test_rule(self,overwrite_right_side_table):
+    def _internal_test_rule(self):
         '''
-        Checks for table existance
+        Checks for table existence
         '''
-        sql    = self._prepare_sql_for_running(overwrite_right_side_table)
         cursor = self._get_cursor()
         try:
-            cursor.execute(sql)
+            cursor.execute(self.sql)
             
         except MyExcp as err:
             if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
@@ -140,10 +174,10 @@ class Exists(TestRule):
             else:
                 raise err
             
-        return overwrite_right_side_table
+        return self
     
     def get_error_msg(self):
-        return "{current_db}.{table_name} does not exists".format(current_db=self.right_side_db,table_name=self.right_side_table_name)
+        return "{current_db}.{table_name} does not exists".format(current_db=self.right_side_db,table_name=self.right_side_table)
         
 
 #just aliasing to prevent needless errors
@@ -162,7 +196,7 @@ class Same(TestRule):
         self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
         return self
     
-    def test_rule(self,right_side_table_name):
+    def _internal_test_rule(self,right_side_table_name):
         sql = self._prepare_sql_for_running(right_side_table_name)
         cursor = self._get_cursor()
         

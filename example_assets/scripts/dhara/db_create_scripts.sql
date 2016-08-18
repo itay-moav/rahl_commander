@@ -8,6 +8,15 @@ CREATE DATABASE dhara;
 
 
 USE dhara;
+
+CREATE TABLE IF NOT EXISTS `sisters_of_the_light` (
+  `sister_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sister_name` varchar(255) NOT NULL,
+  `power` smallint(3) UNSIGNED NOT NULL,
+  PRIMARY KEY (`sister_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
 -- --------------------------------------------------------
 
 --
