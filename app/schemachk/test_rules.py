@@ -21,7 +21,14 @@ def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
         params = []
         
     #instantiate the correct class (SqlRule+RuleName)
-    TestRuleClass = globals()[class_and_params[0].capitalize().replace('_','')]
+    try:
+        TestRuleClass = globals()[class_and_params[0].capitalize().replace('_','')]
+    except KeyError:
+        print("The rule [{no_such_rule}] is not yet supported, or you have a syntax error!".format(no_such_rule=class_and_params[0]))
+        print("asset folder= [{}]".format(left_side_db))
+        print("file name   = [{}]".format(right_side_db))
+        exit(-1)
+
     return TestRuleClass(single_rule,left_side_db,right_side_db,params,verbosity)
 
 

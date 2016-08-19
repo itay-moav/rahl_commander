@@ -44,8 +44,9 @@
 # people_palace:table[delta_people_palace] exists same
 # sisters_of_the_light:prefix[delta1_] exists
 
-sisters_of_the_light:postfix[_cadabra] exists
+# sisters_of_the_light:postfix[_cadabra] exists
 
 #sisters_of_the_light:exist
-#first_file_members:exist
+#first_file_members:exist same[structure,keys,defaults]
+all:prefix[dhara_] same_if_exists[structure]
 #*:same
