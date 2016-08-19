@@ -47,6 +47,6 @@
 # sisters_of_the_light:postfix[_cadabra] exists
 
 #sisters_of_the_light:exist
-#first_file_members:exist same[structure,keys,defaults]
-all:prefix[dhara_] same_if_exists[structure]
+first_file_members:exist same[structure,keys,defaults]
+#all:prefix[dhara_] same_if_exists[structure]
 #*:same

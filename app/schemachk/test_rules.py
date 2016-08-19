@@ -194,49 +194,34 @@ class Exist(Exists):
                  
                  
                  
-                  
+I STOPPED HERE, I NEED TO RUN BOTH QUERIES sql 0 and sql 1 AND COMPARE THE FIELDS IN THE RESULTS
+I NEED TO TEST WITH TABLES OF DIFFERENT AUTO INCREMENT VALUES
+BELOW I HAVE SOME QUERIES WITH OUTPUT EXAMPLE                  
 class Same(TestRule):
-    def _generate_sql(self):
+    def _base_sql(self):
         '''
-        exists will verify input table exists in this db (just name)
         '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
-        return self
+        self.sql = "DESCRIBE [[left_side_db]].[[left_side_table]];DESCRIBE [[right_side_db]].[[right_side_table]]"
+        return self.sql
     
-    def _internal_test_rule(self,right_side_table_name):
-        sql = self._prepare_sql_for_running(right_side_table_name)
+    def _internal_test_rule(self):
         cursor = self._get_cursor()
-        
-        try:
-            cursor.execute(sql)
-        except Exception as e: # build error object
-            raise e
-            
-        return self.right_side_table_name
+        sql=self.sql.split(sep=";")
+        cursor.execute(sql[0])
+        for allof in cursor:
+            print(allof)
+        for (field_name,type,*_) in cursor:
+            print(field_name)
+        exit()
+        left_table_structure = [l for l in cursor]
+        print(left_table_structure);
+        exit()
+        cursor.execute(sql[1])
+        return self
     
     def get_error_msg(self):
-        return "{current_db}.{table_name} does not match".format(current_db=self.right_side_db,table_name=self.right_side_table_name)
-    
-    
-    
-class Notexists(TestRule):
-    def _generate_sql(self):
-        '''
-        exists will verify input table exists in this db (just name)
-        '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
-        return self
-    
-    
-    
-    
-
-    
-class Fieldexists(TestRule):
-    def _generate_sql(self):
-        '''
-        exists will verify input table exists in this db (just name)
-        '''
-        self.sql = "DESCRIBE {current_db}.[[table_name]]".format(current_db=self.right_side_db)
-        return self
+        return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]".format(left_side_db     = self.left_side_db,
+                                                                                                               left_side_table  = self.left_side_table,
+                                                                                                               right_side_db    = self.right_side_db,
+                                                                                                               right_side_table = self.right_side_table)
     
