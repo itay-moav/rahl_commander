@@ -5,6 +5,9 @@ Created on Jul 21, 2016
 '''
 import app.db
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
+from telnetlib import DO
+from _csv import field_size_limit
+from matplotlib.testing import compare
 
 
 def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
@@ -12,13 +15,23 @@ def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
     Factory function to instantiate, parse and return the correct SQL object
     '''
 
-    # extract the rule name and params
+    # extract the rule name and action_params
     class_and_params = single_rule.split('[')
+    action_params = []
+    ignore_params = []
     try:
         params = class_and_params[1].replace(']','').split(',')
         
+        # extract ignore rules
+        for param in params:
+            if "ignore" in param:
+                ignore_params += param.split('(')[1].replace(')','').split('|')
+                
+            else:
+                action_params.append(param)
+        
     except IndexError:
-        params = []
+        action_params = []
         
     #instantiate the correct class (SqlRule+RuleName)
     try:
@@ -29,7 +42,7 @@ def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
         print("file name   = [{}]".format(right_side_db))
         exit(-1)
 
-    return TestRuleClass(single_rule,left_side_db,right_side_db,params,verbosity)
+    return TestRuleClass(single_rule,left_side_db,right_side_db,action_params,ignore_params,verbosity)
 
 
 
@@ -42,7 +55,7 @@ class TestRule():
     Initiated with the rule string.
     '''
     
-    def __init__(self,single_rule,left_side_db,right_side_db,params,verbosity):
+    def __init__(self,single_rule,left_side_db,right_side_db,params,ignore_params,verbosity):
         '''
         @param single_rule: string this is a single rule token from the file, Each line can have several rules space separated, this is only one.  
         @param right_side_db: string the db name to attach to each sql rule. this is the DB that comes from the file name parsed, left side db
@@ -50,6 +63,7 @@ class TestRule():
         self.verbosity     = verbosity
         self._single_rule  = single_rule
         self.params        = params
+        self.ignore_params = ignore_params
         self.left_side_db  = left_side_db
         self.right_side_db = right_side_db
         self.sql           = ''
@@ -194,9 +208,7 @@ class Exist(Exists):
                  
                  
                  
-I STOPPED HERE, I NEED TO RUN BOTH QUERIES sql 0 and sql 1 AND COMPARE THE FIELDS IN THE RESULTS
-I NEED TO TEST WITH TABLES OF DIFFERENT AUTO INCREMENT VALUES
-BELOW I HAVE SOME QUERIES WITH OUTPUT EXAMPLE                  
+                
 class Same(TestRule):
     def _base_sql(self):
         '''
@@ -205,19 +217,63 @@ class Same(TestRule):
         return self.sql
     
     def _internal_test_rule(self):
+        '''
+        Remember! the results of describe [table_name] are:
+        Field,Type,Nul,Key,Default,Extra
+        '''
+        sql=self.sql.split(';')
         cursor = self._get_cursor()
-        sql=self.sql.split(sep=";")
         cursor.execute(sql[0])
-        for allof in cursor:
-            print(allof)
-        for (field_name,type,*_) in cursor:
-            print(field_name)
-        exit()
-        left_table_structure = [l for l in cursor]
-        print(left_table_structure);
-        exit()
+        left_side_table = {all_fields[0]:all_fields for all_fields in cursor if all_fields[0] not in self.ignore_params}
+        del cursor
+        cursor = self._get_cursor()
         cursor.execute(sql[1])
+        
+        right_side_table = {all_fields[0]:all_fields for all_fields in cursor if all_fields[0] not in self.ignore_params}
+        del cursor
+        
+        # print(left_side_table)
+        # print(right_side_table)
+        # exit()
+        
+        if(self.params[0] in ['*','All','all'] or sorted(['structure','defaults','incr','keys']) == sorted(self.params)): # Do a full comparison
+            print('doing full comparison')
+            self._do_full_comparison(left_side_table, right_side_table)
+        else:
+            print('doing ' + str(self.params))
+            self._do_partial_comparison(left_side_table, right_side_table)
+        
         return self
+    
+    def _do_full_comparison(self,left_side_table,right_side_table):
+        '''
+        I check number of fields match (I removed ignored fields in previous steps)
+        I check structure is exact same
+        '''
+        
+        if len(left_side_table) != len(right_side_table):
+            raise Exception("For now: number of fileds does not match between both tables")
+        
+        for a_key in left_side_table.keys():
+            print("checking field {}".format(a_key))
+            try:
+                if left_side_table[a_key] != right_side_table[a_key]:
+                    raise Exception("For now: schema for field {} is not same".format(a_key))
+            except IndexError:
+                raise Exception("For now: Field {} does not exists in right side table".format(a_key))
+            
+      
+    def _do_partial_comparison(self,left_side_table,right_side_table):
+        '''
+        Remove the columns I need to exclude 
+        they come in this order: Field,Type,Nul,Key,Default,Extra
+        '''
+        I STOPPED HERE, READ COMMENT ABOVE TO WHAT I NEED TO DO
+        I GET TWO DIM ARRAY FOR EACH TABLE, EACH RECORD IS A FIELD
+        I NEED CHECK ALL FIELDS ARE THERE AND THEN, IN THE LOOP, BEFORE I COMPARE
+        THE ARRAY, I NEED TO DELETE COLUMNS I AM NOT CHECKING
+        
+        pass
     
     def get_error_msg(self):
         return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]".format(left_side_db     = self.left_side_db,

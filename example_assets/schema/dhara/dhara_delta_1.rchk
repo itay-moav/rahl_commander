@@ -47,6 +47,10 @@
 # sisters_of_the_light:postfix[_cadabra] exists
 
 #sisters_of_the_light:exist
-first_file_members:exist same[structure,keys,defaults]
+first_file_members:exist same[all,ignore_fields(rank|delta_note|member_id)]
+first_file_members:exist same[structure,keys,defaults,incr]
+first_file_members:exist same[structure,keys,incr]
+first_file_members:exist same[All]
+first_file_members:exist same[*]
 #all:prefix[dhara_] same_if_exists[structure]
 #*:same
