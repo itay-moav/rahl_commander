@@ -5,7 +5,7 @@ Created on Jul 21, 2016
 '''
 import app.db
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
-from telnetlib import DO
+from CodeWarrior.Metrowerks_Shell_Suite import classes
 
 
 def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
@@ -83,6 +83,7 @@ class TestRule():
         self.sql = self._base_sql().replace("[[left_side_db]]",    self.left_side_db)       \
                                    .replace("[[right_side_db]]",   self.right_side_db)      \
                                    .replace("[[left_side_table]]", left_side_table)
+
         return self
 
     def test_rule(self,overwrite_right_side_table):
@@ -190,6 +191,7 @@ class Exists(TestRule):
         except MyExcp as err:
             if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
                 print(self.get_error_msg())
+                raise err
             else:
                 raise err
             
@@ -292,3 +294,56 @@ class Same(TestRule):
                                                                                                                right_side_db    = self.right_side_db,
                                                                                                                right_side_table = self.right_side_table)
     
+    
+class Sameifexists(TestRule):
+    '''
+    a compunt rule, container, will run exists, if exists does not fail
+    will run same.
+    if exists fail, we just continue
+    '''
+    
+    def _base_sql(self):
+        '''
+        no need for this
+        '''
+        return ''
+            
+    def _internal_test_rule(self):
+        '''
+        overwrite this method with the specific logic to modify right side table (post/prefix)
+        and to run the tests.
+        The method will return a (maybe) modified name of the right side table, and 
+        send to the reporting object info as to whther the test passed or not and the error message
+        @return string new right side table name
+        
+        THIS IS AN ABSTRACT METHOD
+        '''
+        TO MAKE THIS HAPPEN PROPERLY I ALSO NEED TO BIND ALL THAT MATTERS TO THE E AND S classes
+        IF I DO NOT DO IT, THE SQL WILL BE EMPTY IN THOSE INEER CLASSES.
+        I CAN (ND SHOULD) PROBABLY DO THIS IN THIS METHOD ONLY
+        
+        
+        E = Exists(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
+
+        try:
+            self.right_side_table = E.test_rule(self.right_side_table)
+        except MyExcp as err:
+            if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
+                return self # no such table, no need to do the same
+            else:
+                raise err
+            
+        # if I got here, table exists, now I need to run the Same test
+        S = Same(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
+        return S.test_rule(self.right_side_table)
+     
+    def _prepare_sql_for_running(self):
+        return self
+    
+    def get_error_msg(self):
+        return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]".format(left_side_db     = self.left_side_db,
+                                                                                                               left_side_table  = self.left_side_table,
+                                                                                                               right_side_db    = self.right_side_db,
+                                                                                                               right_side_table = self.right_side_table)
+    
+
