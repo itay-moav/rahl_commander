@@ -6,8 +6,6 @@ Created on Jul 21, 2016
 import app.db
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 from telnetlib import DO
-from _csv import field_size_limit
-from matplotlib.testing import compare
 
 
 def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
@@ -210,6 +208,13 @@ class Exist(Exists):
                  
                 
 class Same(TestRule):
+    
+    comapre = { #fields returned in DESCRIBE, and the comparison type that will use that field
+               'type':      1,
+               'keys':      3,
+               'defaults':  4,
+               'incr':      5}
+    
     def _base_sql(self):
         '''
         '''
@@ -236,7 +241,7 @@ class Same(TestRule):
         # print(right_side_table)
         # exit()
         
-        if(self.params[0] in ['*','All','all'] or sorted(['structure','defaults','incr','keys']) == sorted(self.params)): # Do a full comparison
+        if(self.params[0] in ['*','All','all'] or sorted(['type','defaults','incr','keys']) == sorted(self.params)): # Do a full comparison
             print('doing full comparison')
             self._do_full_comparison(left_side_table, right_side_table)
         else:
@@ -252,29 +257,35 @@ class Same(TestRule):
         '''
         
         if len(left_side_table) != len(right_side_table):
-            raise Exception("For now: number of fileds does not match between both tables")
+            raise Exception("REPORTLOGGER: number of fields does not match between both tables")
         
-        for a_key in left_side_table.keys():
-            print("checking field {}".format(a_key))
+        for field_name in left_side_table.keys():
+            print("checking field {}".format(field_name))
             try:
-                if left_side_table[a_key] != right_side_table[a_key]:
-                    raise Exception("For now: schema for field {} is not same".format(a_key))
+                if left_side_table[field_name] != right_side_table[field_name]: #full array comparison
+                    raise Exception("REPORTLOGGER: schema for field {} is not same".format(field_name))
             except IndexError:
-                raise Exception("For now: Field {} does not exists in right side table".format(a_key))
+                raise Exception("REPORTLOGGERREPORTLOGGER: Field {} does not exists in right side table".format(field_name))
             
       
     def _do_partial_comparison(self,left_side_table,right_side_table):
         '''
-        Remove the columns I need to exclude 
-        they come in this order: Field,Type,Nul,Key,Default,Extra
+        Loops on the fields,
+        For each field (record) compare just the traits (columns) I need to.
+        I need to do it that way to have a detailed report as to what is not matching
+        Columns in records come in this order: Field,Type,Nul,Key,Default,Extra
         '''
-        I STOPPED HERE, READ COMMENT ABOVE TO WHAT I NEED TO DO
-        I GET TWO DIM ARRAY FOR EACH TABLE, EACH RECORD IS A FIELD
-        I NEED CHECK ALL FIELDS ARE THERE AND THEN, IN THE LOOP, BEFORE I COMPARE
-        THE ARRAY, I NEED TO DELETE COLUMNS I AM NOT CHECKING
+        for field_name in left_side_table.keys():
+            print("checking field {}".format(field_name))
+            try:
+                for compare_type in self.params:
+                    if left_side_table[field_name][Same.comapre[compare_type]] != right_side_table[field_name][Same.comapre[compare_type]]:
+                        raise Exception("REPORTLOGGER: field {} is not same for comparison param {}".format(field_name,compare_type))
+                
+            except IndexError:
+                raise Exception("REPORTLOGGERREPORTLOGGER: Field {} does not exists in right side table".format(field_name))
         
-        pass
-    
+        
     def get_error_msg(self):
         return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]".format(left_side_db     = self.left_side_db,
                                                                                                                left_side_table  = self.left_side_table,
