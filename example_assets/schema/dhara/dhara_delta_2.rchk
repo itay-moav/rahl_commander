@@ -1,0 +1,60 @@
+# You can find the scrip to build the demo DBs under example_assets/scripts/dhara
+#
+# This file post fix is rchk, which means relation check i.e. apply schema rules to relations
+# between two databases. For example: All tables in one db must have a copy in secondary db.
+#
+# Let's interpret this file:
+# The primary db is [dhara] this comes from the folder name. Left side of the colon (*:) represents the tables in [dhara] we 
+# will apply relation rules in secondary db [dhara_delta_1]. We get the secondary db name from the file name [dhara_delta_1.rchk]. 
+#
+# below rule means:
+# 1. `*:exists` all tables in [dhara] must exists in [dhara_delta_1]. 
+# 2. `*:same` all tables in [dhara] that exists in [dhara_delta_1] must have the same structure.
+# 3. `*:equals` both [dhara] and [dhara_delta_1] must have the same tabels
+# You can replace [*] with [all] or a specific table name to target just one table.
+#     all:exists
+#
+# For example (see below) if you want to write a rule where all the tables in [dhara] exits in [dhara_delta_1] AND have the same 
+#                         structure, You need to write the following two rules.
+#
+#                         *:exists
+#                         *:same
+#
+# or
+#                         *:exists same
+# or
+#                         all:exists same
+# or
+#                         all:exists
+#                         all:same
+#
+# NOTICE! The rule [same] does not includes the rule [exists] if you write just [same]. 
+#         It will mean only tables from [dhara] found in [dhara_delta_1] must have same structure.
+#
+# (Yes! you can concate commands) For sake of simplicity, I will use the [*] from now on, but u can always replace it with [all]
+# 
+# TRY!    Try to remove one table from [dhara_delta_1], besides [delta_monitor], (`DROP TABLE dhara_delta_1.first_file_members;`) 
+#         run the schema cheker and see what happens.
+
+
+# BELOW IS THE RULE!
+#*:exists same
+#people_palace: notexists
+#dumbo: notexists
+# people_palace:table[delta_people_palace] exists same
+# sisters_of_the_light:prefix[delta1_] exists
+
+# sisters_of_the_light:postfix[_cadabra] exists
+
+#sisters_of_the_light:exist
+#first_file_members:exist same[all,ignore_fields(rank|delta_note|member_id)]
+#first_file_members:exist same[type,keys,defaults,incr]
+#first_file_members:exist same[type,keys,incr]
+#first_file_members:exist same[defaults]
+#first_file_members:exist same[All]
+#first_file_members:exist same[*]
+first_file_members:same_if_exists[type,ignore_fields(modified_by)]
+#First_file_members:exist blank_traits[defaults,incr,keys]
+#First_file_members:exist blank_traits[defaults,incr,keys,ignore_fields(delta_id|delta_note)]
+#blank traits rule is more appropriate for single db rule file, but can be here First_file_members:exist same[type,ignore_fields(delta_id|delta_note)] blank_traits[defaults,incr,keys,ignore_fields(delta_id|delta_note)]
+#*:same

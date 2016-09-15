@@ -11,6 +11,18 @@
 # 1. `*:exists` all tables in [dhara] must exists in [dhara_delta_1]. 
 # 2. `*:same` all tables in [dhara] that exists in [dhara_delta_1] must have the same structure.
 # 3. `*:equals` both [dhara] and [dhara_delta_1] must have the same tabels
+# 4. `*:same_if_exists` If a table in [dhara] exists in [dhara_delta_1] then they must be the same (or partialy same, depends on parametrs, see below)
+# 5. `some_table_name:table[new_table_name]` This special rule, that is usually followed by other rules
+#                                            makes sure all following checks happens between 
+#                                            left_side_db.some_table_name to right_side_db.new_table_name
+# 6. `*:prefix[any_name_]` This will ensure all checks will try to match left side tables to the same name right side tables + the prefix "any_name_"
+#    so `my_t:prefix[poo_] same will try to make sure left_side_db.my_t is the same as right_side_db.poo_my_t
+# 7. `*:postfix[_any_name] Same as prefix, just postfix...douh
+# NOTICE! You can have both `prefix` and `postfix` rules. 
+# NOTICE! Make sure they are comming at the beginning of the rules.
+#
+# 
+# NOTICE!
 # You can replace [*] with [all] or a specific table name to target just one table.
 #     all:exists
 #
@@ -33,10 +45,39 @@
 #
 # (Yes! you can concate commands) For sake of simplicity, I will use the [*] from now on, but u can always replace it with [all]
 # 
+#
+# Rules Parameters
+# ================
+# Some rule can get parameters to modify their behaviors. For example, you might want to use the rule `same` on two tables (schema must be same)
+# with the exception of one or more field, and/or you would like to allow for different default values between the tabels.
+# Rule params follow the following syntax: left_side_table:rule[param1,param2...paramn]
+
+# List of rules and their params
+# ------------------------------
+# Rule: `same`
+# Params: * , all , ''  ::means a full comparison.  Examples: *:same
+#                                                             *:same[all]
+#                                                             *:same[*]
+#         type          ::Means same field type.    Example:  *:same[type]
+#         keys          ::Means same keys.          Example:  *:same[keys]
+#         defaults      ::Means All default values
+#                         must be the same          Example:  *:same[defaults]
+#         incr          ::Means Auto increment must 
+#                         be defined for the same 
+#                         fields                    Example:  *:same[incr]
+#         ignore_fields ::A list of fields to
+#                         ignore when doing the 
+#                         comparison.               Example:  *:same[all,ignore_fields(f1|f2|...|f3)]
+# NOTICE! you can send more than one parameter to a rule, the need to be coma separated
+# EXAMPLE: *:same[defaults,type]
+#
+# NOTICE! Some parameters need their own parameters, like the ignore_fileds param
+#         In such a case, the sub params will be enclosed in () and separated by |
+# EXAMPLE: *:same[type,ignore_fields(f1|f2)]  This will compare both table fields, except f1 and f2 and it will compare only the type of the field.
+
+
 # TRY!    Try to remove one table from [dhara_delta_1], besides [delta_monitor], (`DROP TABLE dhara_delta_1.first_file_members;`) 
 #         run the schema cheker and see what happens.
-
-
 # BELOW IS THE RULE!
 #*:exists same
 #people_palace: notexists

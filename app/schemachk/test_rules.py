@@ -5,7 +5,6 @@ Created on Jul 21, 2016
 '''
 import app.db
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
-from CodeWarrior.Metrowerks_Shell_Suite import classes
 
 
 def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
@@ -277,6 +276,9 @@ class Same(TestRule):
         I need to do it that way to have a detailed report as to what is not matching
         Columns in records come in this order: Field,Type,Nul,Key,Default,Extra
         '''
+        if len(left_side_table) != len(right_side_table):
+            raise Exception("REPORTLOGGER: number of fields does not match between both tables")
+
         for field_name in left_side_table.keys():
             print("checking field {}".format(field_name))
             try:
@@ -285,7 +287,7 @@ class Same(TestRule):
                         raise Exception("REPORTLOGGER: field {} is not same for comparison param {}".format(field_name,compare_type))
                 
             except IndexError:
-                raise Exception("REPORTLOGGERREPORTLOGGER: Field {} does not exists in right side table".format(field_name))
+                raise Exception("REPORTLOGGER: Field {} does not exists in right side table".format(field_name))
         
         
     def get_error_msg(self):
@@ -316,15 +318,16 @@ class Sameifexists(TestRule):
         send to the reporting object info as to whther the test passed or not and the error message
         @return string new right side table name
         
-        THIS IS AN ABSTRACT METHOD
-        '''
         TO MAKE THIS HAPPEN PROPERLY I ALSO NEED TO BIND ALL THAT MATTERS TO THE E AND S classes
         IF I DO NOT DO IT, THE SQL WILL BE EMPTY IN THOSE INEER CLASSES.
         I CAN (ND SHOULD) PROBABLY DO THIS IN THIS METHOD ONLY
         
+        '''
+        
         
         E = Exists(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
-
+        E.bind_all_to_sql(self.left_side_table)
+        
         try:
             self.right_side_table = E.test_rule(self.right_side_table)
         except MyExcp as err:
@@ -335,6 +338,7 @@ class Sameifexists(TestRule):
             
         # if I got here, table exists, now I need to run the Same test
         S = Same(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
+        S.bind_all_to_sql(self.left_side_table)
         return S.test_rule(self.right_side_table)
      
     def _prepare_sql_for_running(self):
