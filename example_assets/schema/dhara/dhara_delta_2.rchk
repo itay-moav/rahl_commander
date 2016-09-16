@@ -2,6 +2,6 @@
 # the same field names and field types as dhara.first_file_members.
 # But, it will ignore the field (if exists) dhara_delta_2.first_file_members.modified_by
 
-first_file_members:same_if_exists[type,ignore_fields(modified_by)]
+first_file_members:same_if_exists[all,ignore_fields(modified_by)]
 
 

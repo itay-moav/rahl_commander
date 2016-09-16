@@ -67,6 +67,7 @@ class TestRule():
         self.sql           = ''
         self.left_side_table  = ''
         self.right_side_table = ''
+        self.dynamic_error_str = ''
         
     def __str__(self):
         return "{left_side_db} {rule} in {db_name} ({params}) : {sql}".format(left_side_db = self.left_side_db,
@@ -123,8 +124,11 @@ class TestRule():
         '''
         pass
     
+    def _get_error_msg(self):
+        raise NotImplementedError("You must implement _get_error_msg")
+    
     def get_error_msg(self):
-        raise NotImplementedError("You must implement get_error_msg")
+        return self._get_error_msg() + ' ' + self.dynamic_error_str
     
     def hasErrors(self):
         return self.has_errors
@@ -149,7 +153,7 @@ class Table(TestRule):
     def _internal_test_rule(self):
         return self
     
-    def get_error_msg(self):
+    def _get_error_msg(self):
         return ''
      
      
@@ -193,14 +197,13 @@ class Exists(TestRule):
             
         except MyExcp as err:
             if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
-                print(self.get_error_msg())
-                raise err
+                self.has_errors = True
             else:
                 raise err
             
         return self
     
-    def get_error_msg(self):
+    def _get_error_msg(self):
         return "{current_db}.{table_name} does not exists".format(current_db=self.right_side_db,table_name=self.right_side_table)
         
 
@@ -262,15 +265,23 @@ class Same(TestRule):
         '''
         
         if len(left_side_table) != len(right_side_table):
-            raise Exception("REPORTLOGGER: number of fields does not match between both tables")
+            self.has_errors = True
+            self.dynamic_error_str = "number of fields does not match between both tables"
+            return
         
         for field_name in left_side_table.keys():
-            print("checking field {}".format(field_name))
+            # LOGGER! print("checking field {}".format(field_name))
             try:
                 if left_side_table[field_name] != right_side_table[field_name]: #full array comparison
-                    raise Exception("REPORTLOGGER: schema for field {} is not same".format(field_name))
+                    self.has_errors = True
+                    self.dynamic_error_str = "schema for field {} is not same".format(field_name)
+                    return
+                
             except IndexError:
-                raise Exception("REPORTLOGGERREPORTLOGGER: Field {} does not exists in right side table".format(field_name))
+                self.has_errors = True
+                self.dynamic_error_str = "Field {} does not exists in right side table".format(field_name)
+                return
+                
             
       
     def _do_partial_comparison(self,left_side_table,right_side_table):
@@ -288,13 +299,17 @@ class Same(TestRule):
             try:
                 for compare_type in self.params:
                     if left_side_table[field_name][Same.comapre[compare_type]] != right_side_table[field_name][Same.comapre[compare_type]]:
-                        raise Exception("REPORTLOGGER: field {} is not same for comparison param {}".format(field_name,compare_type))
+                        self.has_errors = True
+                        self.dynamic_error_str = "field {} is not same for comparison param {}".format(field_name,compare_type)
+                        return
                 
             except IndexError:
-                raise Exception("REPORTLOGGER: Field {} does not exists in right side table".format(field_name))
+                self.has_errors = True
+                self.dynamic_error_str = "Field {} does not exists in right side table".format(field_name)
+                return
         
         
-    def get_error_msg(self):
+    def _get_error_msg(self):
         return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]".format(left_side_db     = self.left_side_db,
                                                                                                                left_side_table  = self.left_side_table,
                                                                                                                right_side_db    = self.right_side_db,
@@ -332,26 +347,25 @@ class Sameifexists(TestRule):
         E = Exists(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
         E.bind_all_to_sql(self.left_side_table)
         
-        try:
-            self.right_side_table = E.test_rule(self.right_side_table)
-        except MyExcp as err:
-            if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
-                return self # no such table, no need to do the same
-            else:
-                raise err
+        self.right_side_table = E.test_rule(self.right_side_table)
+        if E.hasErrors():
+            self.dynamic_error_str = E.get_error_msg()
+            self.has_errors = True
+            return
             
         # if I got here, table exists, now I need to run the Same test
         S = Same(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
         S.bind_all_to_sql(self.left_side_table)
-        return S.test_rule(self.right_side_table)
+        self.right_side_table = S.test_rule(self.right_side_table)
+        if S.hasErrors():
+            self.dynamic_error_str = S.get_error_msg()
+            self.has_errors = True
+        
+        return
      
     def _prepare_sql_for_running(self):
         return self
     
-    def get_error_msg(self):
-        return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]".format(left_side_db     = self.left_side_db,
-                                                                                                               left_side_table  = self.left_side_table,
-                                                                                                               right_side_db    = self.right_side_db,
-                                                                                                               right_side_table = self.right_side_table)
-    
+    def _get_error_msg(self):
+        return ""
 

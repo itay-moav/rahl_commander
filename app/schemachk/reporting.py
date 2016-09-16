@@ -6,7 +6,7 @@ from __builtin__ import file
 
 def run_tests(table_name,table_rules):
     if len(table_rules) == 0:
-        return
+        return EmptyErrorContainer()
     
     # initiating an error report container
     MyErrorContainer = ErrorContainer(right_side_table_name=table_name)
@@ -18,8 +18,8 @@ def run_tests(table_name,table_rules):
                                                 # Both rules can appear in any combination (both, or just one, in any order, in the BEGINNING)
         
         if rule.hasErrors() == True:
-            MyErrorContainer.append(left_side_table_name = table_name,msg=rule.get_error_msg())
-            
+            MyErrorContainer.append(error_msg=rule.get_error_msg())
+    
     return MyErrorContainer
             
  
@@ -35,14 +35,20 @@ def generate_report(many_error_containers):
     the future
     '''
     for MyErrorContainer in many_error_containers:
-        print("===") THE SECOND MEMBER IN THIS ARRAY IS OF TYPE NON -NEED TO FIGURE OUT FROM WHERE IT CAME
-        print(MyErrorContainer)
-        print(MyErrorContainer.right_side_table_name)           
+        if(MyErrorContainer.hasErrors()):
+            print(MyErrorContainer.right_side_table_name)
+            for error_msg in MyErrorContainer.errors():
+                print(error_msg)
+                
+                   
    
    
    
    
-            
+class EmptyErrorContainer():
+    def hasErrors(self):
+        return False 
+               
 class ErrorContainer():
     '''
     An abstract of an array to hold all the errors returned from a list 
@@ -50,9 +56,17 @@ class ErrorContainer():
     '''
     
     def __init__(self,right_side_table_name):
+        self.has_errors = False
         self.right_side_table_name=right_side_table_name
         self.error_collection = []
         
     def append(self,error_msg):
-        self.error_collection.append(error_msg)  
+        self.has_errors = True
+        self.error_collection.append(error_msg) 
+        
+    def hasErrors(self):
+        return self.has_errors 
+    
+    def errors(self):
+        return self.error_collection
     
