@@ -12,11 +12,13 @@ from app.schemachk.looper import ParseLooper
 import app.schemachk.reporting
 
 def run(parser):
+    AllErrors=[]
     SchemCheker = ParseLooper(parser,file_postfix=".rchk")
     SchemCheker.run()
     for TableList in SchemCheker.getTableLists():
         for table_name in TableList.getTables().keys():
-            app.schemachk.reporting.run_tests(table_name,TableList.getTables()[table_name])
+            AllErrors.append(app.schemachk.reporting.run_tests(table_name,TableList.getTables()[table_name]))
+    app.schemachk.reporting.generate_report(AllErrors) #Right now, output to stdio, later from config
      
     SchemCheker = ParseLooper(parser,file_postfix=".schk")
     SchemCheker.run()

@@ -57,6 +57,7 @@ class TestRule():
         @param single_rule: string this is a single rule token from the file, Each line can have several rules space separated, this is only one.  
         @param right_side_db: string the db name to attach to each sql rule. this is the DB that comes from the file name parsed, left side db
         '''
+        self.has_errors    = False
         self.verbosity     = verbosity
         self._single_rule  = single_rule
         self.params        = params
@@ -104,7 +105,7 @@ class TestRule():
         overwrite this method with the specific logic to modify right side table (post/prefix)
         and to run the tests.
         The method will return a (maybe) modified name of the right side table, and 
-        send to the reporting object info as to whther the test passed or not and the error message
+        send to the reporting object info as to whether the test passed or not and the error message
         @return string new right side table name
         
         THIS IS AN ABSTRACT METHOD
@@ -124,6 +125,9 @@ class TestRule():
     
     def get_error_msg(self):
         raise NotImplementedError("You must implement get_error_msg")
+    
+    def hasErrors(self):
+        return self.has_errors
     
     def _get_cursor(self):
         cnx = app.db.get_connection()
@@ -299,7 +303,7 @@ class Same(TestRule):
     
 class Sameifexists(TestRule):
     '''
-    a compunt rule, container, will run exists, if exists does not fail
+    a compound rule, container, will run exists, if exists does not fail
     will run same.
     if exists fail, we just continue
     '''
@@ -315,7 +319,7 @@ class Sameifexists(TestRule):
         overwrite this method with the specific logic to modify right side table (post/prefix)
         and to run the tests.
         The method will return a (maybe) modified name of the right side table, and 
-        send to the reporting object info as to whther the test passed or not and the error message
+        send to the reporting object info as to whether the test passed or not and the error message
         @return string new right side table name
         
         TO MAKE THIS HAPPEN PROPERLY I ALSO NEED TO BIND ALL THAT MATTERS TO THE E AND S classes

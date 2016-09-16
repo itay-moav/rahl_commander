@@ -94,7 +94,11 @@
 #first_file_members:exist same[defaults]
 #first_file_members:exist same[All]
 #first_file_members:exist same[*]
+
 first_file_members:same_if_exists[type]
+
+
+#blank traits rule is more appropriate for single db rule file, but can be here First_file_members:exist same[type,ignore_fields(delta_id|delta_note)] blank_traits[defaults,incr,keys,ignore_fields(delta_id|delta_note)]
 #First_file_members:exist blank_traits[defaults,incr,keys]
 #First_file_members:exist blank_traits[defaults,incr,keys,ignore_fields(delta_id|delta_note)]
 #First_file_members:exist same[type,ignore_fields(delta_id|delta_note)] blank_traits[defaults,incr,keys,ignore_fields(delta_id|delta_note)]
