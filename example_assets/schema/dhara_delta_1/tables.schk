@@ -1,0 +1,16 @@
+# Single table rules, like all tables must have a [created_by] field
+#table_name:field_exists[stored_by,date_stored]
+#table_name:primary_key[]
+#table_name:no_primary_key
+#table_name:primary_key[id]
+#table_name:primary_key[id,date_stored]
+all:ignore_tables[delta_monitor,counter] field_exists[stored_by,date_stored]
+
+
+I HAVE A PROBLEM!!!!
+Right now, if I have ALL|* on the left side
+The system will attache the SAME object (not class) for all the tables.
+This trashes table specific data I might have.
+I need to change the architecture of how I load rules and bind them to tables.
+
+It should be one object for use of only one table!

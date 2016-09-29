@@ -36,7 +36,10 @@ def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
     except KeyError:
         print("The rule [{no_such_rule}] is not yet supported, or you have a syntax error!".format(no_such_rule=class_and_params[0]))
         print("asset folder= [{}]".format(left_side_db))
-        print("file name   = [{}]".format(right_side_db))
+        file_name = right_side_db
+        if left_side_db == right_side_db:
+            file_name = "*.schk"
+        print("file name   = [{}]".format(file_name))
         exit(-1)
 
     return TestRuleClass(single_rule,left_side_db,right_side_db,action_params,ignore_params,verbosity)
@@ -68,6 +71,7 @@ class TestRule():
         self.left_side_table  = ''
         self.right_side_table = ''
         self.dynamic_error_str = ''
+        self.bail_out = False
         
     def __str__(self):
         return "{left_side_db} {rule} in {db_name} ({params}) : {sql}".format(left_side_db = self.left_side_db,
@@ -133,6 +137,12 @@ class TestRule():
     def hasErrors(self):
         return self.has_errors
     
+    def dontContinue(self):
+        '''
+        Will flag the test runner to stop testing further rules for the current table
+        '''
+        return self.bail_out
+    
     def _get_cursor(self):
         cnx = app.db.get_connection()
         return cnx.cursor()
@@ -176,7 +186,32 @@ class Postfix(Table):
     def _table_rename_phase(self):
         self.right_side_table = self.right_side_table + self.params[0]
  
-  
+ 
+ 
+ 
+ 
+ 
+class Ignoretables(TestRule):
+    '''
+    Table names in params, if they match current table
+    will cause the test runner to skip further tests.
+    USefull when using all:rules and want to avoid one or two tables
+    '''
+    def _base_sql(self):
+        return self.sql
+     
+    def _internal_test_rule(self):
+        if self.right_side_table in self.params:
+            self.bail_out = True
+        else:
+            self.bail_out = False
+        
+        return self
+    
+    def _get_error_msg(self):
+        return ''    
+     
+     
      
      
 class Exists(TestRule):
@@ -369,3 +404,39 @@ class Sameifexists(TestRule):
     def _get_error_msg(self):
         return ""
 
+
+
+class Fieldexists(Exist):
+    '''
+    makes sense to use in a single db rule file (schk) but, can also be used in 
+    match rule file (rchk)
+    It verifies the existence of the fields sent as params to this rule
+    '''
+    
+    def _base_sql(self):
+        '''
+        '''
+        self.sql = "DESCRIBE [[right_side_db]].[[right_side_table]]"
+        return self.sql
+    
+    def _internal_test_rule(self):
+        '''
+        Remember! the results of describe [table_name] are:
+        Field,Type,Nul,Key,Default,Extra
+        '''
+        cursor = self._get_cursor()
+        cursor.execute(self.sql)
+        fields = [all_fields[0] for all_fields in cursor]
+        
+        for check_field in self.params:
+            # print("checking field {} exists in".format(check_field))
+            # print(fields)
+            if check_field not in fields:
+                self.has_errors = True
+                self.dynamic_error_str += " " + check_field
+        return self
+    
+    def _get_error_msg(self):
+        return "[{right_side_db}.{right_side_table}] is missing".format(  right_side_db    = self.right_side_db,
+                                                                           right_side_table = self.right_side_table)
+        

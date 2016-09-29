@@ -2,8 +2,6 @@
 Reporting classes
 Will run the rules and generate a report
 '''
-from __builtin__ import file
-
 def run_tests(table_name,table_rules):
     if len(table_rules) == 0:
         return EmptyErrorContainer()
@@ -19,6 +17,10 @@ def run_tests(table_name,table_rules):
         
         if rule.hasErrors() == True:
             MyErrorContainer.append(error_msg=rule.get_error_msg())
+            
+        if rule.dontContinue() == True:
+            #step away from the rest of the tests
+            break
     
     return MyErrorContainer
             
