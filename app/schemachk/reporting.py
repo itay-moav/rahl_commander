@@ -48,8 +48,13 @@ def generate_report(many_error_containers):
    
    
 class EmptyErrorContainer():
+    '''
+    Used as an empty return container.
+    To use when no errors
+    '''
     def hasErrors(self):
         return False 
+   
                
 class ErrorContainer():
     '''

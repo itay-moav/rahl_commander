@@ -7,7 +7,7 @@ import app.db
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
-def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
+def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db):
     '''
     Factory function to instantiate, parse and return the correct SQL object
     '''
@@ -42,7 +42,7 @@ def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db,verbosity):
         print("file name   = [{}]".format(file_name))
         exit(-1)
 
-    return TestRuleClass(single_rule,left_side_db,right_side_db,action_params,ignore_params,verbosity)
+    return TestRuleClass(single_rule,left_side_db,right_side_db,action_params,ignore_params)
 
 
 
@@ -55,13 +55,12 @@ class TestRule():
     Initiated with the rule string.
     '''
     
-    def __init__(self,single_rule,left_side_db,right_side_db,params,ignore_params,verbosity):
+    def __init__(self,single_rule,left_side_db,right_side_db,params,ignore_params):
         '''
         @param single_rule: string this is a single rule token from the file, Each line can have several rules space separated, this is only one.  
         @param right_side_db: string the db name to attach to each sql rule. this is the DB that comes from the file name parsed, left side db
         '''
         self.has_errors    = False
-        self.verbosity     = verbosity
         self._single_rule  = single_rule
         self.params        = params
         self.ignore_params = ignore_params
@@ -379,7 +378,7 @@ class Sameifexists(TestRule):
         '''
         
         
-        E = Exists(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
+        E = Exists(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params)
         E.bind_all_to_sql(self.left_side_table)
         
         self.right_side_table = E.test_rule(self.right_side_table)
@@ -389,7 +388,7 @@ class Sameifexists(TestRule):
             return
             
         # if I got here, table exists, now I need to run the Same test
-        S = Same(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params,self.verbosity)
+        S = Same(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params)
         S.bind_all_to_sql(self.left_side_table)
         self.right_side_table = S.test_rule(self.right_side_table)
         if S.hasErrors():

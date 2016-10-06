@@ -69,14 +69,13 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         '''
         if(self.verbosity):
             print("\n\nOpening db [{}] file [{}].\n".format(db,filename))
-            
         
         # INITIALIZE THE LIST OF TABLES OBJECT, load tbls, set the DB name with which current DB is checked.
         DBTableList = (TableList(db,self.verbosity)).loadTables()
-        RuleParser  = (ChkFileParser(left_side_db=db,
-                                    right_side_db=self.getRightSideDB(filename,db),
-                                    file_content=file_content,
-                                    verbosity=self.verbosity)).parseRules()
+        RuleParser  = (ChkFileParser(all_tables_names=DBTableList.getTablesNames(),
+                                     left_side_db=db,
+                                     right_side_db=self.getRightSideDB(filename,db),
+                                     file_content=file_content)).parseRules()
         DBTableList.bindRulesToTables(RuleParser.getRuleList())
         self.store_table_lists.append(DBTableList)
          

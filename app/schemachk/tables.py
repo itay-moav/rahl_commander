@@ -64,5 +64,8 @@ class TableList():
     def getTables(self):
         return self.tables_list
     
-    
+    def getTablesNames(self):
+        return self.tables_list.keys()
+        
+        
         
