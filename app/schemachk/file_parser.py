@@ -58,21 +58,22 @@ class ChkFileParser():
         rule_left_side,right_side_rules_string = unparsed_rule_string.split(':')
         if rule_left_side.strip().lower() in ["all","*"]:
             for table_name in self.all_tables_names:
-                self._append_rule(table_name=table_name,rule_string=right_side_rules_string)
+                self._append_rule(table_name=table_name,rules_string=right_side_rules_string)
             
         else:
-            self._append_rule(table_name=rule_left_side, rule_string=right_side_rules_string)
+            self._append_rule(table_name=rule_left_side, rules_string=right_side_rules_string)
          
         return self
          
-    def _append_rule(self,table_name,rule_string):
+    def _append_rule(self,table_name,rules_string):
         '''
-        Instantiate the rules from string and attche them in a touple to the table name
+        Instantiate the rules from string and attach them in a tuple to the table name
         and store in the local tble:ruls container
         '''
         self.rule_list.append(
-                (table_name,                                                                    # return Tuple right side-array of TestRules
-                 [parse_to_TestRule_factory(rule_string,self.left_side_db,self.right_side_db)]) # return Tuple right side-array of TestRules
+                (table_name,                                                                    # return Tuple left table to apply rule on
+                 [parse_to_TestRule_factory(single_rule_string,self.left_side_db,self.right_side_db)
+                  for single_rule_string in rules_string.split(' ') if len(single_rule_string)>2]) # return Tuple right side-array of TestRules
             )
         return self
         
