@@ -17,13 +17,10 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
 
 import config
-import app
 import app.schemachk
 
 def main():
     '''Command line options.'''
-
-
 
     # Setup argument parser
     parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)

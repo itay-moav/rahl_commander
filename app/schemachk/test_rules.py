@@ -329,25 +329,23 @@ class Same(TestRule):
             raise Exception("REPORTLOGGER: number of fields does not match between both tables")
 
         for field_name in left_side_table.keys():
-            print("checking field {}".format(field_name))
+            # VERBOSITY print("checking field {}".format(field_name))
             try:
                 for compare_type in self.params:
                     if left_side_table[field_name][Same.comapre[compare_type]] != right_side_table[field_name][Same.comapre[compare_type]]:
                         self.has_errors = True
-                        self.dynamic_error_str = "field {} is not same for comparison param {}".format(field_name,compare_type)
-                        return
+                        self.dynamic_error_str += "field {} is not same for comparison param {}".format(field_name,compare_type) + "\n"
                 
             except IndexError:
                 self.has_errors = True
-                self.dynamic_error_str = "Field {} does not exists in right side table".format(field_name)
-                return
+                self.dynamic_error_str += "Field {} does not exists in right side table".format(field_name) + "\n"
         
         
     def _get_error_msg(self):
-        return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]".format(left_side_db     = self.left_side_db,
-                                                                                                               left_side_table  = self.left_side_table,
-                                                                                                               right_side_db    = self.right_side_db,
-                                                                                                               right_side_table = self.right_side_table)
+        return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]\n".format(left_side_db     = self.left_side_db,
+                                                                                                                 left_side_table  = self.left_side_table,
+                                                                                                                 right_side_db    = self.right_side_db,
+                                                                                                                 right_side_table = self.right_side_table)
     
     
 class Sameifexists(TestRule):
