@@ -284,10 +284,10 @@ class Same(TestRule):
         # exit()
         
         if(self.params[0] in ['*','All','all'] or sorted(['type','defaults','incr','keys']) == sorted(self.params)): # Do a full comparison
-            print('doing full comparison')
+            # LOG print('doing full comparison')
             self._do_full_comparison(left_side_table, right_side_table)
         else:
-            print('doing ' + str(self.params))
+            # LOG print('doing ' + str(self.params))
             self._do_partial_comparison(left_side_table, right_side_table)
         
         return self

@@ -8,7 +8,7 @@ def run_tests(table_name,table_rules):
     
     # initiating an error report container
     MyErrorContainer = ErrorContainer(right_side_table_name=table_name)
-    print("Checking rules for table [{table_name}]".format(table_name=table_name))
+    #LOG print("Checking rules for table [{table_name}]".format(table_name=table_name))
     for rule in table_rules:
         table_name = rule.test_rule(table_name) # Do notice, a rule might change the table name, like prefix[baba_] will add baba_ to the right side
                                                 # table name for the rest of the rules.
