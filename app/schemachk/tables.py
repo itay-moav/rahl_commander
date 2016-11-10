@@ -4,6 +4,8 @@ Created on May 19, 2016
 @author: Itay Moav
 '''
 import app.db
+from app import logging as L
+from __builtin__ import str
 class TableList():
     '''
     Object to hold the list of tables a single config file [.schk | .rchk]
@@ -15,16 +17,14 @@ class TableList():
     '''
 
 
-    def __init__(self,db,log_verbosity):
+    def __init__(self,db):
         '''
         Constructor
         '''
-        self.verbosity        = log_verbosity
         self.current_db       = db
         self.tables_list      = {}
         self.right_side_db = ''
-        if(self.verbosity):
-            print("Initiating TableList for db [{}]".format(db))
+        L.info("Initiating TableList for db [{}]".format(db))
         
     def loadTables(self):
         '''
@@ -37,8 +37,7 @@ class TableList():
         cursor.execute(sql)
         self.tables_list = {res:[] for res, in cursor}
         
-        if(self.verbosity):
-            print(self.tables_list)
+        L.debug(str(self.tables_list))
         return self
         
     def bindRulesToTables(self,rules):
@@ -56,10 +55,9 @@ class TableList():
                 try:
                     self.tables_list[rule[0]] += [binded_rules.bind_all_to_sql(left_side_table=rule[0]) for binded_rules in rule[1]]
                 except KeyError as ke:
-                    print("ERROR!")
-                    print("Database [{db_name}] has no such table [{tbl_name}]".format(db_name=self.current_db,tbl_name=ke))
-                    print("Please fix your rule files under database folder [{db_name}]".format(db_name=self.current_db))
-                    exit()
+                    L.fatal("Database [{db_name}] has no such table [{tbl_name}]".format(db_name=self.current_db,tbl_name=ke))
+                    L.fatal("Please fix your rule files under database folder [{db_name}]".format(db_name=self.current_db))
+                    raise Exception("Missmatch between files and db tables")
                    
     def getTables(self):
         return self.tables_list

@@ -7,8 +7,8 @@ Specialized DB class to clean all user db objects
 functions | stored procedures | views | triggers
 '''
 import app.db
-import config
 import app.meta as meta
+from app import logging as L
 
 class AllDBObj():
     '''
@@ -41,12 +41,11 @@ class AllDBObj():
                                    'w': views_dbs    if self.args.views       == 'All' else ([self.args.views]       if self.args.views       in views_dbs    else []), 
                                    't': trigger_dbs  if self.args.triggers    == 'All' else ([self.args.triggers]    if self.args.triggers    in trigger_dbs  else []), 
                                    'f': function_dbs if self.args.functions   == 'All' else ([self.args.functions]   if self.args.functions   in function_dbs else [])}
-        print("cleaning the following:")
-        print(self.what_to_handle)
+        L.info("cleaning the following:")
+        L.info(self.what_to_handle)
        
         # More config values for later
         self.dry_run = self.args.dry_run
-        self.verbosity = self.args.verbosity
         self.ignore_dbs = [('information_schema',),('performance_schema',),('sys',)]
         self.ignore_dbs_str = "'information_schema','performance_schema','sys'"
         self.connect()
@@ -78,19 +77,19 @@ class AllDBObj():
         Just call each specific cleaner -> very procedural and simple
         '''
         if(len(self.what_to_handle['s']) > 0):
-            print("Start dropping Stored Procedures")
+            L.info("Start dropping Stored Procedures")
             self._cleanSP()
             
         if(len(self.what_to_handle['f']) > 0):
-            print("Start dropping Functions")
+            L.info("Start dropping Functions")
             self._cleanFunctions()
 
         if(len(self.what_to_handle['t']) > 0):
-            print("Start dropping Triggers")
+            L.info("Start dropping Triggers")
             self._cleanTriggers()
 
         if(len(self.what_to_handle['w']) > 0):
-            print("Start dropping Views")
+            L.info("Start dropping Views")
             self._cleanViews()
 
 
@@ -101,14 +100,14 @@ class AllDBObj():
         # first load stored procedures
         sql = "SHOW PROCEDURE STATUS WHERE Db NOT IN(" +self.ignore_dbs_str + ") "
         sql += "AND Db IN('" + "','".join(self.what_to_handle['s']) + "')"
-        print(sql)
+        L.debug(sql)
         self.cursor.execute(sql)
         res = [(Db,Name) for (Db,Name,*_) in self.cursor]
         for sp in res:
             sql = "DROP PROCEDURE {db}.{name}".format(db=sp[0],name=sp[1])
-            print(sql)
+            L.debug(sql)
             if(self.args.dry_run):
-                print("Dry dropping sp {db}.{name}".format(db=sp[0],name=sp[1]))
+                L.warning("Dry dropping sp {db}.{name}".format(db=sp[0],name=sp[1]))
             else:
                 self.cursor.execute(sql)
 
@@ -119,14 +118,14 @@ class AllDBObj():
         # first load functions
         sql = "SHOW FUNCTION STATUS WHERE Db NOT IN(" +self.ignore_dbs_str + ") "
         sql += "AND Db IN('" + "','".join(self.what_to_handle['f']) + "')"
-        print(sql)
+        L.debug(sql)
         self.cursor.execute(sql)
         res = [(Db,Name) for (Db,Name,*_) in self.cursor]
         for mysql_func in res:
             sql = "DROP FUNCTION {db}.{name}".format(db=mysql_func[0],name=mysql_func[1])
-            print(sql)
+            L.debug(sql)
             if(self.args.dry_run):
-                print("Dry dropping function {db}.{name}".format(db=mysql_func[0],name=mysql_func[1]))
+                L.warning("Dry dropping function {db}.{name}".format(db=mysql_func[0],name=mysql_func[1]))
             else:
                 self.cursor.execute(sql)
 
@@ -141,9 +140,9 @@ class AllDBObj():
             self.cursor.execute("SHOW TRIGGERS")
             for trigger_name in [trigger for (trigger,*_) in self.cursor]:
                 sql = "DROP TRIGGER {db}.{name}".format(db=database_name,name=trigger_name)
-                print(sql)
+                L.debug(sql)
                 if(self.args.dry_run):
-                    print("Dry dropping function {db}.{name}".format(db=database_name,name=trigger_name))
+                    L.warning("Dry dropping function {db}.{name}".format(db=database_name,name=trigger_name))
                 else:
                     self.cursor.execute(sql)
 
@@ -158,8 +157,8 @@ class AllDBObj():
             self.cursor.execute("SHOW FULL TABLES IN {} WHERE TABLE_TYPE LIKE 'VIEW'".format(database_name))
             for view_name in [view for (view,*_) in self.cursor]:
                 sql = "DROP VIEW {db}.{name}".format(db=database_name,name=view_name)
-                print(sql)
+                L.debug(sql)
                 if(self.args.dry_run):
-                    print("Dry dropping view {db}.{name}".format(db=database_name,name=view_name))
+                    L.warning("Dry dropping view {db}.{name}".format(db=database_name,name=view_name))
                 else:
                     self.cursor.execute(sql)

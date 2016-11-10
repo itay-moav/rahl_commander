@@ -9,6 +9,7 @@ import fnmatch
 import os
 import config
 import app.db
+from app import logging as L
 
 class AssetFiles():
     '''
@@ -50,7 +51,6 @@ class AssetFiles():
             self.assets_path = args.assets_path
 
         self.folders = []
-        self.verbosity = args.verbosity
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.args = args # for later use
         
@@ -125,9 +125,7 @@ class AssetFiles():
                 db = self.extractDb(sub_folder)
                 # TOBEDELETED once verified not used self._current_file = sub_folder
                 self._current_path = sub_folder # NOT SURE IT IS USED!
-                if(self.verbosity):
-                    print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,sub_folder,sub_folder,db))
-
+                L.info("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,sub_folder,sub_folder,db))
                 f = open(sub_folder,'r')
                 file_content = f.read()
                 f.close()
@@ -151,9 +149,7 @@ class AssetFiles():
                         # print(db+"\n")
                         # print(config.ignore_files_dirs_with)
                         self._current_path = root
-                        if(self.verbosity):
-                            print("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,root,filename,db))
-
+                        L.info("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,root,filename,db))
                         f = open(root + '/' + filename,'r')
                         file_content = f.read()
                         f.close()
@@ -226,9 +222,8 @@ class AssetFilesDBConn(AssetFiles):
             return
         
         if not app.db.change_db(db):
-            print("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
-            print("CODE:\n{}".format(file_content))
-            exit()
+            L.debug("CODE:\n{}".format(file_content))
+            raise Exception("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
 
 
     def postIterate(self):

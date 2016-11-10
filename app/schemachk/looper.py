@@ -8,6 +8,7 @@ import config
 import app.iterator
 from app.schemachk.tables      import TableList
 from app.schemachk.file_parser import ChkFileParser
+from app                       import logging as L
 
 
 
@@ -42,10 +43,8 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
             self.assets_path = args.assets_path
 
         self.folders = []
-        self.verbosity = args.verbosity
         #self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.args = args # for later use
-        
         self.validateSelf()
         self.connect()
         self.file_postfix = file_postfix
@@ -67,11 +66,10 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
             - Run the tests in the TableList object
             @param db is the current database name, the left side db name: string 
         '''
-        if(self.verbosity):
-            print("\n\nOpening db [{}] file [{}].\n".format(db,filename))
+        L.info("\n\nOpening db [{}] file [{}].\n".format(db,filename))
         
         # INITIALIZE THE LIST OF TABLES OBJECT, load tbls, set the DB name with which current DB is checked.
-        DBTableList = (TableList(db,self.verbosity)).loadTables()
+        DBTableList = (TableList(db)).loadTables()
         RuleParser  = (ChkFileParser(all_tables_names=DBTableList.getTablesNames(),
                                      left_side_db=db,
                                      right_side_db=self.getRightSideDB(filename,db),

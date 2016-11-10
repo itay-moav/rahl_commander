@@ -4,6 +4,7 @@ Created on Jul 7, 2016
 @author: itaymoav
 '''
 from app.schemachk.test_rules import parse_to_TestRule_factory
+from app import logging as L
 class ChkFileParser():
     '''
     Main class to get a filename and file content
@@ -28,10 +29,7 @@ class ChkFileParser():
             if len(unparsed_rule_string) == 0 or unparsed_rule_string[0] == '#': # this is an empty line or a comment
                 continue
             
-            '''
-            if(self.verbosity):
-                print("Reading Rule [{}]".format(unparsed_rule_string))
-            '''
+            L.debug("Reading Rule [{}]".format(unparsed_rule_string))
             
             #parse the rule
             self._tokenize_parse_single_rule(unparsed_rule_string)
@@ -40,7 +38,6 @@ class ChkFileParser():
     
     def getRuleList(self):
         '''
-        if(self.verbosity):
             print("entire rule list")
             for rule in self.rule_list:
                 print("{}: ".format(rule[0]))

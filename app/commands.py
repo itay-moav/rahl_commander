@@ -6,6 +6,7 @@ Created on Oct 23, 2014
 import app.iterator
 import re
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
+from app import logging as L
 
 class BuildDBObj(app.iterator.AssetFilesDBConn):
     '''
@@ -23,9 +24,7 @@ class BuildDBObj(app.iterator.AssetFilesDBConn):
         '''
             Just run the sqls
         '''
-        if self.verbosity == 2:
-            print(file_content)
-
+        L.debug(file_content)
         self.cursor.execute(file_content)
 
 
@@ -52,11 +51,10 @@ class DropDBObj(app.iterator.AssetFilesDBConn):
                 db_obj_name = db_object_search.group(4)
 
             command = "DROP {type} {name} ".format(type=db_obj_type,name=db_obj_name)
-            if self.verbosity == True:
-                print(command) #TODO move to proepr logger
+            L.info(command)
                 
         except IndexError:
-            print("Error parsing file contents [{}]".format(file_content))
+            L.fatal("Error parsing file contents [{}]".format(file_content))
             raise Exception("Error parsing file contents")
             
         
@@ -92,12 +90,12 @@ class CleanCodeObj(app.iterator.AssetFiles):
 
            or print it as is
         '''
-        print("\n===================================\n")
+        L.info("\n===================================\n")
         if self.args.dont_clean_code:
-            print(file_content)
+            L.info(file_content)
         else:
             pattern = re.compile('(--.*\n|\s)') # remove SQL comments and then white spaces. Replace with ' '
-            print(pattern.sub(' ',file_content))
+            L.info(pattern.sub(' ',file_content))
 
 
 

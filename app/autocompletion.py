@@ -3,12 +3,11 @@ Created on Oct 23, 2014
 
 @author: Itay Moav
 '''
-import sys
 import os
-import fnmatch
 import shutil
 import config
 import app.iterator
+from app import logging as L
 
 
 
@@ -122,7 +121,7 @@ class SP{
         if len(config.autocomplete[config.autocomplete['editor']]['plugin_dir']) > 1:
             plugin_dir = config.autocomplete['editor_workspace'] + "/" + config.autocomplete[config.autocomplete['editor']]['plugin_dir']
             auto_complete_dir = plugin_dir + "/" + sorted(os.listdir(plugin_dir),reverse=True)[0]
-            print("Copy [" + self.assets_path + "/autocompletion/php/SP.php] TO [" + auto_complete_dir + "/SP.php]")
+            L.info("Copy [" + self.assets_path + "/autocompletion/php/SP.php] TO [" + auto_complete_dir + "/SP.php]")
             shutil.copyfile(self.assets_path + "/autocompletion/php/SP.php",auto_complete_dir + "/SP.php")
 
 

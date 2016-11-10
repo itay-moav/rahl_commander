@@ -4,6 +4,7 @@ Created on Jul 21, 2016
 @author: itaymoav
 '''
 import app.db
+from app import logging as L
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
@@ -34,12 +35,14 @@ def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db):
     try:
         TestRuleClass = globals()[class_and_params[0].capitalize().replace('_','')]
     except KeyError:
-        print("The rule [{no_such_rule}] is not yet supported, or you have a syntax error!".format(no_such_rule=class_and_params[0]))
-        print("asset folder= [{}]".format(left_side_db))
         file_name = right_side_db
         if left_side_db == right_side_db:
             file_name = "*.schk"
-        print("file name   = [{}]".format(file_name))
+        L.fatal("The rule [{no_such_rule}] is not yet supported, or you have a syntax error! " + \
+                "Folder [{asset_folder}] File [{file_name}]".format(\
+                                                no_such_rule = class_and_params[0],\
+                                                asset_folder = left_side_db,\
+                                                file_name=file_name))
         exit(-1)
 
     return TestRuleClass(single_rule,left_side_db,right_side_db,action_params,ignore_params)
@@ -284,10 +287,10 @@ class Same(TestRule):
         # exit()
         
         if(self.params[0] in ['*','All','all'] or sorted(['type','defaults','incr','keys']) == sorted(self.params)): # Do a full comparison
-            print('doing full comparison')
+            L.info('doing full comparison')
             self._do_full_comparison(left_side_table, right_side_table)
         else:
-            print('doing ' + str(self.params))
+            L.info('doing ' + str(self.params))
             self._do_partial_comparison(left_side_table, right_side_table)
         
         return self
@@ -304,7 +307,7 @@ class Same(TestRule):
             return
         
         for field_name in left_side_table.keys():
-            # LOGGER! print("checking field {}".format(field_name))
+            L.info("checking field {}".format(field_name))
             try:
                 if left_side_table[field_name] != right_side_table[field_name]: #full array comparison
                     self.has_errors = True
@@ -329,7 +332,7 @@ class Same(TestRule):
             raise Exception("REPORTLOGGER: number of fields does not match between both tables")
 
         for field_name in left_side_table.keys():
-            # VERBOSITY print("checking field {}".format(field_name))
+            L.info("checking field {}".format(field_name))
             try:
                 for compare_type in self.params:
                     if left_side_table[field_name][Same.comapre[compare_type]] != right_side_table[field_name][Same.comapre[compare_type]]:
@@ -426,8 +429,8 @@ class Fieldexists(Exist):
         fields = [all_fields[0] for all_fields in cursor]
         
         for check_field in self.params:
-            # print("checking field {} exists in".format(check_field))
-            # print(fields)
+            L.info("checking field {} exists in".format(check_field))
+            L.debug(str(fields))
             if check_field not in fields:
                 self.has_errors = True
                 self.dynamic_error_str += " " + check_field

@@ -13,36 +13,20 @@
 
 import sys
 import os
-
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
-
-import config
+from app import parser as parser
 import app.schemachk
 
 def main():
-    '''Command line options.'''
+    ''' Specific command line options.'''
 
     # Setup argument parser
-    parser = app.ArgumentParser(description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
-    parser.add_argument("--version",action="version",version=config.program_version_message)
-    parser.add_argument("--all", dest="handle_all", action="store_true", \
-                                    help="Specifying this flag will Schema Check the entire project")
-    parser.add_argument("-v", "--verbose", dest="verbosity", action="store_true", \
-                                    help="By default, not specifying this will echo only the errors. Specifying it -v will show compared elements. -vv will Show what rules are applied for each element")
     parser.add_argument("-d","--database", dest="database", action="store",nargs='?', default=False, const='All', \
                                     help="Schema check the specified database name rules, or the folder/*.[s|r]chk specified. Root folder is the database name.")
-    parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',  \
-                                    help="optional way to specifiy the assets full path (starting from /)")
-    parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,                                 \
-                        help=config.help_common_language['server_connection'])
-
     app.schemachk.run(parser)
 
    
 
 
-#++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
-
-if len(sys.argv) == 1: # no params given, do --help
-    sys.argv.append("-h")
+#++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++s
 sys.exit(main())
