@@ -15,7 +15,7 @@ class StatDBObj:
             decides which stat class to use
         '''
         args = parser.parse_args()
-        if args.verbosity == '2':
+        if args.verbosity == 'vvv': #TODO make this depending on params, not on debug level
             self.__StatObj = FullStatDBObj(parser)
         else:
             self.__StatObj = QuickStatDBObj(parser)

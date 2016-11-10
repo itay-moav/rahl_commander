@@ -35,7 +35,6 @@ class SP(app.iterator.AssetFiles):
 
         self.folders = []
         self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
-        self.verbosity = args.verbosity
         self.file_postfix = '.sql'
 
     def postCalcFolder(self):
