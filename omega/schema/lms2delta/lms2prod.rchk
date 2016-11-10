@@ -1,0 +1,2 @@
+all:ignore_tables[user_roles,organization_education_grouptobedeleted,organization_education_group_usertobedeleted,rbac_user_grouptobedeleted] exists
+#all:same[type,ignore_fields(date_stored|delta_type|delta_note|delta_rbac_user_id)]

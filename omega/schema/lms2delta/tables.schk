@@ -1,0 +1,1 @@
+all:field_exists[date_stored,delta_type,delta_note,delta_rbac_user_id]
