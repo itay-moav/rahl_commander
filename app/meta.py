@@ -9,6 +9,7 @@ For example:
 '''
 import os
 import config
+from app import logging as L
 
 TRIGGERS          = 'triggers'
 FUNCTIONS         = 'functions'
@@ -32,6 +33,6 @@ class TrackedDBs():
         else:
             object_path = config.assets_folder + '/' + object_type
 
-        print("Meta for folder [{}]".format(object_path))
+        L.debug("Meta for folder [{}]".format(object_path))
         self.folders = [right_side_db for right_side_db in os.listdir(object_path) if '.' not in right_side_db]
         

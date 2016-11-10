@@ -4,7 +4,7 @@ Created on Nov 20, 2014
 @author: Itay Moav
 '''
 import app.iterator
-from distutils.sysconfig import project_base
+from app import logging as L
 
 class StatDBObj:
     '''
@@ -42,8 +42,8 @@ class StatDBObj:
         try:
             self.__StatObj.run()
 
-        except GeneralExceptionNoneSync as e:
-            print("Project is not in sync with database. Run the more verbose stat to get more info.")
+        except GeneralExceptionNoneSync:
+            L.warning("Project is not in sync with database. Run the more verbose stat to get more info.")
 
 
 
@@ -76,7 +76,7 @@ class QuickStatDBObj(app.iterator.AssetFiles):
         '''
         tokenized_file_content = file_content.split()
         normalized_file_content = ' '.join(tokenized_file_content)
-        print(normalized_file_content)
+        L.debug(normalized_file_content)
 
 
 
@@ -103,7 +103,6 @@ class FullStatDBObj(app.iterator.AssetFiles):
            
         '''
         raise Exception('baba')
-        print(filename)
 
 
 

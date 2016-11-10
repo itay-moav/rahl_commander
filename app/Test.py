@@ -6,6 +6,7 @@ Created on Oct 23, 2014
 import app.iterator
 import os
 import config
+from app import logging as L
 
 class Install(app.iterator.AssetFilesDBConn):
     '''
@@ -28,11 +29,11 @@ class Install(app.iterator.AssetFilesDBConn):
 
         # First check the auto completion folder exists
         if not os.path.isdir(config.assets_folder + '/autocompletion'):
-            print ("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion'))
+            L.fatal("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion'))
             exit()
 
         if not os.path.isdir(config.assets_folder + '/autocompletion/php'):
-            print ("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion/php'))
+            L.fatal("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion/php'))
             exit()
 
 
@@ -40,7 +41,7 @@ class Install(app.iterator.AssetFilesDBConn):
         for sub_folder in self.folders:
             #check subfolder exists or fail
             if not os.path.isdir(sub_folder):
-                print ("You are missing [{}] folder. Please create it and run tests again".format(sub_folder))
+                L.fatal("You are missing [{}] folder. Please create it and run tests again".format(sub_folder))
                 exit()
 
 
@@ -51,10 +52,10 @@ class Install(app.iterator.AssetFilesDBConn):
                     continue
 
                 db = self.extractDb(root)
-                # print("Checking root [{}] and DB  [{}]\n".format(root,db))
+                L.info("Checking root [{}] and DB  [{}]\n".format(root,db))
                 try:
                     self.changeDB(db,'')
 
-                except app.iterator.My.errors.ProgrammingError:
-                    print("Missing DB [{}] in root [{}]\n".format(db,root))
+                except app.db.My.errors.ProgrammingError:
+                    L.fatal("Missing DB [{}] in root [{}]\n".format(db,root))
 
