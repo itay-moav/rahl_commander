@@ -5,7 +5,6 @@ Created on May 19, 2016
 '''
 import app.db
 from app import logging as L
-from __builtin__ import str
 class TableList():
     '''
     Object to hold the list of tables a single config file [.schk | .rchk]
