@@ -22,18 +22,36 @@ class ChkFileParser():
         '''
         start iterating on each line, send relevant lines 
         to the proper translator
+        A line can be a continue of the previews line. The rule I use is the : Each line starts with a "table_identifier:" 
+        So, the next time I get to a "table_identifier:" this will mark a new rule/line for me
         '''
         all_rules_unparsed = self.file_content.split("\n")
+        current_rule = ''
         for unparsed_rule_string in all_rules_unparsed:
             unparsed_rule_string = unparsed_rule_string.strip()
             if len(unparsed_rule_string) == 0 or unparsed_rule_string[0] == '#': # this is an empty line or a comment
                 continue
             
-            L.debug("Reading Rule [{}]".format(unparsed_rule_string))
-            
-            #parse the rule
-            self._tokenize_parse_single_rule(unparsed_rule_string)
-            
+            if(':' in unparsed_rule_string): #We start a new rule, first, let's take care of the previous one
+                if len(current_rule) > 0: # I need the condition to handle the first iteration, not nice, but simpler and more robust
+                    L.debug("Reading Rule [{}]".format(current_rule))
+                    #parse the rule
+                    self._tokenize_parse_single_rule(current_rule)
+                
+                # we have a : so we start a new rule
+                current_rule = unparsed_rule_string
+                
+            else: # we concatenate. we need to be aware of ' ' ':' ',' and '|' separators
+                #check the last char type to see how to concatenate
+                concat_char = ' '
+                if   current_rule.endswith(':') or current_rule.endswith(',') or current_rule.endswith('|'):
+                    concat_char = ''
+                current_rule = current_rule + concat_char + unparsed_rule_string
+    
+        #last iteration
+        L.debug("Reading Rule [{}]".format(current_rule))
+        #parse the rule
+        self._tokenize_parse_single_rule(current_rule)
         return self
     
     def getRuleList(self):
