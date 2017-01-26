@@ -15,12 +15,12 @@ class AllDBObj():
     Get command line params Loop on all specified DBs and get the objects we need to remove
     '''
 
-    def __init__(self, parser):
+    def __init__(self, args):
         '''
         Stores a dictionary of what to clean
         '''
         # Process arguments
-        self.args = parser.parse_args()
+        self.args = args
         
         # Loads the database names rcom is tracking. This will be used in case of --all, this will also be used in case a specific db 
         # is targeted to make sure i is a tracked DB.

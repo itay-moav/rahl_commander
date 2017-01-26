@@ -18,7 +18,7 @@ class BuildDBObj(app.iterator.AssetFilesDBConn):
             Delete what we build. Check the Wheel of Time books, The Dragon had to destroy the
             existing seals first to built better ones
         '''
-        DropDBObj(self.parser).run()
+        DropDBObj(self.args).run()
 
     def process(self,db,file_content,filename):
         '''
@@ -73,49 +73,4 @@ class DropDBObj(app.iterator.AssetFilesDBConn):
 # ============================================================================================================================
 
 
-class CleanCodeObj(app.iterator.AssetFiles):
-    '''
-        Iterator class to fetch sql code without problematic
-        white characters.
-        Will also remove full line comments.
-        Good to use when u want to copy paste the code and run it manually without \t\t\t
-        developers might use in formating the code.
-    '''
 
-    def process(self,db,file_content,filename):
-        '''
-           Prints a copy of the procedure which
-           can be copy-pasted into the CLI of MySQL without
-           problematic white spaces like TABS \t
-
-           or print it as is
-        '''
-        L.info("\n===================================\n")
-        if self.args.dont_clean_code:
-            L.info(file_content)
-        else:
-            pattern = re.compile('(--.*\n|\s)') # remove SQL comments and then white spaces. Replace with ' '
-            L.info(pattern.sub(' ',file_content))
-
-
-
-# ============================================================================================================================
-
-
-
-
-class StatDBObj(app.iterator.AssetFiles):
-    '''
-        Iterator class to check sync stat ALL by input params
-    '''
-
-
-    def process(self,db,file_content,filename):
-        '''
-            Just run the sqls
-        '''
-        print("not functional yet")
-        exit()
-
-
-# ============================================================================================================================

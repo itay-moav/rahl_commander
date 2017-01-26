@@ -12,10 +12,10 @@ from app.schemachk.looper import ParseLooper
 import app.schemachk.reporting
 from app import logging as L
 
-def run(parser):
+def run(args):
     # MATCH DB RULES
     AllErrors=[]
-    SchemCheker = ParseLooper(parser,file_postfix=".rchk")
+    SchemCheker = ParseLooper(args,file_postfix=".rchk")
     SchemCheker.run()
     for TableList in SchemCheker.getTableLists():
         for table_name in TableList.getTables().keys():
@@ -24,7 +24,7 @@ def run(parser):
 
     # SINGLE DB RULES     
     AllErrors=[]
-    SchemCheker = ParseLooper(parser,file_postfix=".schk")
+    SchemCheker = ParseLooper(args,file_postfix=".schk")
     SchemCheker.run()
     for TableList in SchemCheker.getTableLists():
         for table_name in TableList.getTables().keys():

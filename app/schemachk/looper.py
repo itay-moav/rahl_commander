@@ -23,13 +23,12 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
         Who ever wants to, can run the rules stored in the TableList object/s
     '''
 
-    def __init__(self, parser,file_postfix=".rchk"):
+    def __init__(self, args,file_postfix=".rchk"):
         '''
         Stores a dictionary of what to build
         @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
         '''
         # Process arguments
-        args = parser.parse_args()
         handle_all = args.handle_all
         if handle_all:
             self.what_to_handle = {'d':'All'}
@@ -43,7 +42,6 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
             self.assets_path = args.assets_path
 
         self.folders = []
-        #self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.args = args # for later use
         self.validateSelf()
         self.connect()

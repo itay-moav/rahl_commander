@@ -16,23 +16,24 @@ parser.add_argument("--version",action="version",version=config.program_version_
 parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will apply command to the entire project")
 parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',help="optional way to specify the assets full path (starting from /)")
 parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help=config.help_common_language['server_connection'])
-args = parser.parse_args()
-#setup the logger
-log_verbosity_tmp = args.verbosity
-log_verbosity     = logging.FATAL
-if(log_verbosity_tmp is None):
-    log_verbosity = logging.ERROR
-elif(log_verbosity_tmp == 'v'):
-    log_verbosity = logging.WARNING
-elif(log_verbosity_tmp == 'vv'):
-    log_verbosity = logging.INFO
-elif(log_verbosity_tmp == 'vvv'):
-    log_verbosity = logging.DEBUG
-else:
-    try:
-        if(config.logman['default_log_level']):
-            log_verbosity = config.logman['default_log_level']
-    except Exception:
-        pass #do nothing, use the default fatal level
-    
-logging.basicConfig(level=log_verbosity)
+
+def set_logging(verbosity):
+    #setup the logger
+    log_verbosity_tmp = verbosity
+    log_verbosity     = logging.FATAL
+    if(log_verbosity_tmp is None):
+        log_verbosity = logging.ERROR
+    elif(log_verbosity_tmp == 'v'):
+        log_verbosity = logging.WARNING
+    elif(log_verbosity_tmp == 'vv'):
+        log_verbosity = logging.INFO
+    elif(log_verbosity_tmp == 'vvv'):
+        log_verbosity = logging.DEBUG
+    else:
+        try:
+            if(config.logman['default_log_level']):
+                log_verbosity = config.logman['default_log_level']
+        except Exception:
+            pass #do nothing, use the default fatal level
+        
+    logging.basicConfig(level=log_verbosity)

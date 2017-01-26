@@ -22,12 +22,11 @@ class AssetFiles():
 
 
 
-    def __init__(self, parser):
+    def __init__(self, args):
         '''
         Stores a dictionary of what to build
         '''
         # Process arguments
-        args = parser.parse_args()
         handle_all = args.handle_all
         if handle_all:
             self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
@@ -51,7 +50,6 @@ class AssetFiles():
             self.assets_path = args.assets_path
 
         self.folders = []
-        self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.args = args # for later use
         
         self.validateSelf()
@@ -197,11 +195,11 @@ class AssetFiles():
 
 class AssetFilesDBConn(AssetFiles):
 
-    def __init__(self, parser):
+    def __init__(self, args):
         '''
         Stores a dictionary of what to build
         '''
-        AssetFiles.__init__(self, parser)
+        AssetFiles.__init__(self, args)
         self.connect()
 
 

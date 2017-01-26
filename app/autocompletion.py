@@ -16,13 +16,12 @@ class SP(app.iterator.AssetFiles):
         Iterator class to find SPs and build auto completion for PHP/Eclipse
     '''
 
-    def __init__(self, parser,db=None):
+    def __init__(self, args,db=None):
         '''
         Stores a dictionary of what to build
         @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
         '''
         # Process arguments
-        args = parser.parse_args()
         handle_all = args.handle_all
         if handle_all:
             self.what_to_handle = {'s':'All'}
@@ -34,7 +33,7 @@ class SP(app.iterator.AssetFiles):
             self.assets_path = args.assets_path
 
         self.folders = []
-        self.parser = parser # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
+        self.args = args # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.file_postfix = '.sql'
 
     def postCalcFolder(self):
