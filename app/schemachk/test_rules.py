@@ -277,7 +277,14 @@ class Same(TestRule):
         left_side_table = {all_fields[0]:all_fields for all_fields in cursor if all_fields[0] not in self.ignore_params}
         del cursor
         cursor = self._get_cursor()
-        cursor.execute(sql[1])
+        try:
+            cursor.execute(sql[1])
+        except MyExcp as err:
+            if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
+                print("The following query failed for missing table:\n {}\n\n folder [{}] file [{}]\nFIx Schema file before running again!".format(sql[1],self.left_side_db,self.right_side_db))
+                exit(1)
+            else:
+                raise err
         
         right_side_table = {all_fields[0]:all_fields for all_fields in cursor if all_fields[0] not in self.ignore_params}
         del cursor
