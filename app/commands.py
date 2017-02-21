@@ -25,7 +25,7 @@ class BuildDBObj(app.iterator.AssetFilesDBConn):
             Just run the sqls
         '''
         L.debug(file_content)
-        self.cursor.execute(file_content)
+        self.cursor.execute(file_content) # TODO add multi=True
 
 
 # ============================================================================================================================
