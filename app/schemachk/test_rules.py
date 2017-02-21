@@ -277,7 +277,14 @@ class Same(TestRule):
         left_side_table = {all_fields[0]:all_fields for all_fields in cursor if all_fields[0] not in self.ignore_params}
         del cursor
         cursor = self._get_cursor()
-        cursor.execute(sql[1])
+        try:
+            cursor.execute(sql[1])
+        except MyExcp as err:
+            if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
+                print("The following query failed for missing table:\n {}\n\n folder [{}] file [{}]\nFIx Schema file before running again!".format(sql[1],self.left_side_db,self.right_side_db))
+                exit(1)
+            else:
+                raise err
         
         right_side_table = {all_fields[0]:all_fields for all_fields in cursor if all_fields[0] not in self.ignore_params}
         del cursor
@@ -329,7 +336,8 @@ class Same(TestRule):
         Columns in records come in this order: Field,Type,Nul,Key,Default,Extra
         '''
         if len(left_side_table) != len(right_side_table):
-            raise Exception("REPORTLOGGER: number of fields does not match between both tables")
+            self.has_errors = True
+            self.dynamic_error_str += "number of fields do not match between both tables\n"
 
         for field_name in left_side_table.keys():
             L.info("checking field {}".format(field_name))
@@ -337,15 +345,19 @@ class Same(TestRule):
                 for compare_type in self.params:
                     if left_side_table[field_name][Same.comapre[compare_type]] != right_side_table[field_name][Same.comapre[compare_type]]:
                         self.has_errors = True
-                        self.dynamic_error_str += "field {} is not same for comparison param {}".format(field_name,compare_type) + "\n"
+                        self.dynamic_error_str += "field [{}] is not same for comparison param [{}]".format(field_name,compare_type) + "\n"
                 
             except IndexError:
                 self.has_errors = True
-                self.dynamic_error_str += "Field {} does not exists in right side table".format(field_name) + "\n"
+                self.dynamic_error_str += "Field [{}] does not exists in right side table".format(field_name) + "\n"
+                
+            except KeyError:
+                self.has_errors = True
+                self.dynamic_error_str += "Field [{}] does not exists in table [{}.{}]".format(field_name,self.right_side_db,self.right_side_table) + "\n"
         
         
     def _get_error_msg(self):
-        return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]\n".format(left_side_db     = self.left_side_db,
+        return "[{left_side_db}.{left_side_table}] does not match [{right_side_db}.{right_side_table}]: ".format(left_side_db     = self.left_side_db,
                                                                                                                  left_side_table  = self.left_side_table,
                                                                                                                  right_side_db    = self.right_side_db,
                                                                                                                  right_side_table = self.right_side_table)
@@ -377,8 +389,6 @@ class Sameifexists(TestRule):
         I CAN (ND SHOULD) PROBABLY DO THIS IN THIS METHOD ONLY
         
         '''
-        
-        
         E = Exists(self._single_rule,self.left_side_db,self.right_side_db,self.params,self.ignore_params)
         E.bind_all_to_sql(self.left_side_table)
         
@@ -429,14 +439,14 @@ class Fieldexists(Exist):
         fields = [all_fields[0] for all_fields in cursor]
         
         for check_field in self.params:
-            L.info("checking field {} exists in".format(check_field))
+            L.info("checking field [{}] exists in".format(check_field))
             L.debug(str(fields))
             if check_field not in fields:
                 self.has_errors = True
-                self.dynamic_error_str += " " + check_field
+                self.dynamic_error_str += " [" + check_field + "]"
         return self
     
     def _get_error_msg(self):
         return "[{right_side_db}.{right_side_table}] is missing".format(  right_side_db    = self.right_side_db,
-                                                                           right_side_table = self.right_side_table)
+                                                                          right_side_table = self.right_side_table)
         

@@ -16,11 +16,11 @@ class SP{
 	   /**
 		* Database: dhara
 		* clean_palace_from_dead_soldiers 
-		* File: ../example_assets/sp/dhara\palace/clean_palace_from_dead_soldiers.sql
+		* File: C:\Users\Itay\Documents\github\rahl_commander\example_assets/sp\dhara\palace\soldiers/clean_palace_from_dead_soldiers.sql
 		*
 		* @param integer $in_member_id  :IN in_member_id INT
 		*
-		* @return Data_MySQL_DB
+		* @return Return_Data_Type
 		*/
 		public function dhara_clean_palace_from_dead_soldiers ($in_member_id){
 			/*

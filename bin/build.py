@@ -19,18 +19,13 @@ pyverse.bin.build Use this command to build the various code generate objects in
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
-import config
+from app import parser as parser
 import app.commands
 
-def main():
+def main(parser):
     '''Command line options.'''
 
     try:
-        # Setup argument parser
-        parser = app.ArgumentParser(prog='build.py',description=config.program_license, formatter_class=app.RawDescriptionHelpFormatter)
-        parser.add_argument("--version",action="version",version=config.program_version_message)
-        parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will rebuild all the Stored procedures, Triggers, Functions and Views")
-        parser.add_argument("-v", "--verbose", dest="verbosity", action="count", help=config.help_common_language['verbosity'])
         parser.add_argument("-s","--stored_proc", dest="stored_proc", action="store",nargs='?', default=False, const='All',                 \
                             help="build all stored procedures, or the folder/*.sql specified. Root folder is the database name.")
 
@@ -46,30 +41,18 @@ def main():
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All',                         \
                             help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
 
-        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?', default=False,                                 \
-                            help=config.help_common_language['assets'])
-
-        parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,                                 \
-                            help=config.help_common_language['server_connection'])
-
-        Builder = app.commands.BuildDBObj(parser)
+        args = parser.parse_args()
+        app.set_logging(args.verbosity)
+        
+        Builder = app.commands.BuildDBObj(args)
         Builder.run()
 
-    except KeyboardInterrupt:
-        ### handle keyboard interrupt ###
-        return 0
 
     except Exception as e:
-        if config.DEBUG:
-            raise(e)
-        indent = len(config.program_name) * " "
-        sys.stderr.write(config.program_name + ": " + repr(e) + "\n")
-        sys.stderr.write(indent + "  for help use --help")
-        return 2
+        print(e)
+        return 1
 
 
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
-if len(sys.argv) == 1: # no params given, do --help
-    sys.argv.append("-h")
-sys.exit(main())
+sys.exit(main(parser))

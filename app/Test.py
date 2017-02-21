@@ -14,7 +14,7 @@ class Install(app.iterator.AssetFilesDBConn):
     in the given database
     '''
 
-    def __init__(self, parser,db=None):
+    def __init__(self, args,db=None):
         '''
         init for testing
         '''
