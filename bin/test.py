@@ -13,7 +13,7 @@ for verbosity 2 Will give a list of objects not in sync
 
 @copyright:  2014 Itay Moav. All rights reserved.
 
-@license:    license
+@license:    Do what ever you want, I am not responsible in any way,
 
 @contact:    itay.malimovka@gmail.com
 @deffield    updated: Updated
@@ -21,10 +21,30 @@ for verbosity 2 Will give a list of objects not in sync
 
 import sys
 import os
-
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
+import argparse
+if len(sys.argv) == 1: # no params given, do --help
+    sys.argv.append("--all")
+import app.test
 
-import config
-print("start\n")
-print(config.autocomplete['language'])
+def main():
+    '''Command line options.'''
+    print("start\n")
+    try:
+        parser = argparse.ArgumentParser(description="testing ...", formatter_class=argparse.RawDescriptionHelpFormatter)
+        parser.add_argument("--all", dest="handle_all", action="store_true",help=argparse.SUPPRESS)
+        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?', default=False,help="optional way to specify the assets full path (starting from /)")
+        parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help="server_connection")
+        args = parser.parse_args()
+        Tester = app.test.Install(args)
+        Tester.run()
 
+
+    except Exception as e:
+        print(e)
+        return 1
+
+
+
+#++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
+sys.exit(main())

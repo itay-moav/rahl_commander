@@ -8,19 +8,9 @@ import os
 import config
 from app import logging as L
 
-class Install(app.iterator.AssetFilesDBConn):
-    '''
-    Iterate on all folders and checks DBs defined do exists
-    in the given database
-    '''
 
-    def __init__(self, args,db=None):
-        '''
-        init for testing
-        '''
-        self.folders = []
-        self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All', 'c':'All'}
-        self.connect(db)
+class Install(app.iterator.AssetFilesDBConn):
+
 
     def iterate(self):
         '''
@@ -29,22 +19,29 @@ class Install(app.iterator.AssetFilesDBConn):
 
         # First check the auto completion folder exists
         if not os.path.isdir(config.assets_folder + '/autocompletion'):
-            L.fatal("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion'))
-            exit()
+            print("WARNING: OH MY GOD!  XX You are missing autocompletion folder [{}]. Please create it and run tests again".format(config.assets_folder + '/autocompletion'))
+        else: 
+            print("GOOD! autocompletion folder found [{}]".format(config.assets_folder + '/autocompletion'))
 
         if not os.path.isdir(config.assets_folder + '/autocompletion/php'):
-            L.fatal("You are missing [{}] folder. Please create it and run tests again".format(config.assets_folder + '/autocompletion/php'))
-            exit()
-
+            print("WARNING: OH MY GOD!  XX You are missing autocompletion folder for PHP [{}] folder FOR PHP. Create it if you plan to use it".format(config.assets_folder + '/autocompletion/php'))
+        else:
+            print("GOOD!  autocompletion folder found for PHP [{}].".format(config.assets_folder + '/autocompletion/php'))
 
         # Check the db objects folder exist
+        sub_filders_to_check = []
         for sub_folder in self.folders:
             #check subfolder exists or fail
             if not os.path.isdir(sub_folder):
-                L.fatal("You are missing [{}] folder. Please create it and run tests again".format(sub_folder))
-                exit()
+                print("ERROR: You are missing [{}] folder. Please create it and run tests again".format(sub_folder))
+            else:
+                print("GOOD! folder [{}] was found".format(sub_folder))
+                sub_filders_to_check.append(sub_folder)
 
-
+        # CHECK DBs existance
+        print("\n\nNOW! Now I will test all dbs you try to work with exists\n\n")
+        for sub_folder in sub_filders_to_check:
+        
             # Loop on files and run sql
             for root, dirnames, filenames in os.walk(sub_folder):
                 # This is where I apply the filter of the ignored file list.
@@ -52,10 +49,9 @@ class Install(app.iterator.AssetFilesDBConn):
                     continue
 
                 db = self.extractDb(root)
-                L.info("Checking root [{}] and DB  [{}]\n".format(root,db))
                 try:
                     self.changeDB(db,'')
 
                 except app.db.My.errors.ProgrammingError:
-                    L.fatal("Missing DB [{}] in root [{}]\n".format(db,root))
+                    print("FATAL: HOLY CRAP! I am missing DB [{}] in root [{}]\n".format(db,root))
 

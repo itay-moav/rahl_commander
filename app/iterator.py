@@ -221,7 +221,7 @@ class AssetFilesDBConn(AssetFiles):
         
         if not app.db.change_db(db):
             L.debug("CODE:\n{}".format(file_content))
-            raise Exception("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
+            raise app.db.My.errors.ProgrammingError("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
 
 
     def postIterate(self):
