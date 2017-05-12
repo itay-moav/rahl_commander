@@ -10,6 +10,15 @@ from app import logging as L
 
 class Install(app.iterator.AssetFilesDBConn):
 
+    def extractAssetType(self,sub_folder):
+        '''
+        get the asset folder name from the folder input (triggers/sp/functions ...)
+        '''
+        try:
+            asset_type = sub_folder.split(self.assets_path)[1].replace('\\','/').split('/')[1]
+            return asset_type
+        except IndexError:
+            return ''
 
     def iterate(self):
         '''
@@ -21,7 +30,7 @@ class Install(app.iterator.AssetFilesDBConn):
         # NOTICE! assets folder is not tested for as there is an intrinsic test for it in the core system, it will throw an EnvironmentException
 
         # USING THE CONFIG
-        print("Using values from config folder!")
+        print("\nUsing values from config folder!\n")
         
         # First check the auto completion folder exists
         if not os.path.isdir(config.assets_folder + '/autocompletion'):
@@ -56,7 +65,7 @@ class Install(app.iterator.AssetFilesDBConn):
 
         # CHECK DBs existance
         print("\n\nNOW! I will test all dbs, you try to work with, exists\n\n")
-        databases_tracked = set()
+        databases_tracked = dict()
         for sub_folder in self.folders:
         
             # Loop on files and run sql
@@ -64,16 +73,20 @@ class Install(app.iterator.AssetFilesDBConn):
                 # This is where I apply the filter of the ignored file list.
                 if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
                     continue
-
+                
                 db_name = self.extractDb(root)
                 if db_name=='': continue
-                databases_tracked.add(self.extractDb(root))
+                
                 try:
                     self.changeDB(db_name,'')
+                    # Getting asset type for each DB we track, to show what we track for
+                    if db_name not in databases_tracked:
+                        databases_tracked[db_name] = set()
+                    databases_tracked[db_name].add(self.extractAssetType(root))
                     
                 except app.db.My.errors.ProgrammingError:
-                    print("FATAL: HOLY CRAP! I am missing DB [{}] in root [{}]".format(db_name,root))
+                    print("FATAL: HOLY CRAP! I am missing DB [{}] in folder [{}]".format(db_name,root))
                 
                 
         for db_name in databases_tracked:
-            print(" Tracking db {}".format(db_name))
+            print(" Tracking db {} for the following asset types {}".format(db_name,databases_tracked[db_name]))
