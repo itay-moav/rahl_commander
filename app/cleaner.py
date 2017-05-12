@@ -24,10 +24,10 @@ class AllDBObj():
         
         # Loads the database names rcom is tracking. This will be used in case of --all, this will also be used in case a specific db 
         # is targeted to make sure i is a tracked DB.
-        sp_dbs       = meta.TrackedDBs(meta.STORED_PROCEDURES,self.args.assets_path).folders
-        trigger_dbs  = meta.TrackedDBs(meta.TRIGGERS,self.args.assets_path).folders
-        function_dbs = meta.TrackedDBs(meta.FUNCTIONS,self.args.assets_path).folders
-        views_dbs    = meta.TrackedDBs(meta.VIEWS,self.args.assets_path).folders
+        sp_dbs       = meta.tracked_dbs(meta.STORED_PROCEDURES,self.args.assets_path)
+        trigger_dbs  = meta.tracked_dbs(meta.TRIGGERS,self.args.assets_path)
+        function_dbs = meta.tracked_dbs(meta.FUNCTIONS,self.args.assets_path)
+        views_dbs    = meta.tracked_dbs(meta.VIEWS,self.args.assets_path)
         
         # decide which DBs I am going to clean. --all means EVERYTHING,
         #  -s,-w,-t,-f means every thing for each of those types

@@ -10,6 +10,7 @@ import os
 import config
 import app.db
 from app import logging as L
+import app.meta as meta
 
 class AssetFiles():
     '''
@@ -143,7 +144,7 @@ class AssetFiles():
                         # print(filenames)
                         # print(dirnames)
                         # print(root)
-                        db = self.extractDb(root)
+                        db = meta.extract_db_name(root)
                         # print(db+"\n")
                         # print(config.ignore_files_dirs_with)
                         self._current_path = root
@@ -162,16 +163,20 @@ class AssetFiles():
         pass
 
 
-    def extractDb(self,sub_folder):
+    def extractDbTOBEDELETED100(self,sub_folder):
         '''
         get the database name from the folder input
         '''
         try:
-            db_name = sub_folder.split(self.assets_path)[1].replace('\\','/').split('/')[2]
-            return db_name
+            return self.extractFromFolder(sub_folder,2)
         except IndexError:
             return ''
-
+    
+    def extractFromFolderTOBEDELETED100(self,sub_folder,index):
+        '''
+        get the folder part the folder input
+        '''
+        return sub_folder.split(self.assets_path)[1].replace('\\','/').split('/')[index]
 
     def process(self,db,file_content,current_subdir):
         '''

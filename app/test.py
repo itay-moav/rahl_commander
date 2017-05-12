@@ -6,19 +6,9 @@ Created on Oct 23, 2014
 import app.iterator
 import os
 import config
-from app import logging as L
+import app.meta as meta
 
 class Install(app.iterator.AssetFilesDBConn):
-
-    def extractAssetType(self,sub_folder):
-        '''
-        get the asset folder name from the folder input (triggers/sp/functions ...)
-        '''
-        try:
-            asset_type = sub_folder.split(self.assets_path)[1].replace('\\','/').split('/')[1]
-            return asset_type
-        except IndexError:
-            return ''
 
     def iterate(self):
         '''
@@ -65,6 +55,10 @@ class Install(app.iterator.AssetFilesDBConn):
 
         # CHECK DBs existance
         print("\n\nNOW! I will test all dbs, you try to work with, exists\n\n")
+        
+        # I am not using the meta here to hard code the assets I check
+        # This is to catch errors in the folder structure.
+        # Meta assumes all is correct
         databases_tracked = dict()
         for sub_folder in self.folders:
         
@@ -74,7 +68,7 @@ class Install(app.iterator.AssetFilesDBConn):
                 if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
                     continue
                 
-                db_name = self.extractDb(root)
+                db_name = meta.extract_db_name(root)
                 if db_name=='': continue
                 
                 try:
@@ -82,7 +76,7 @@ class Install(app.iterator.AssetFilesDBConn):
                     # Getting asset type for each DB we track, to show what we track for
                     if db_name not in databases_tracked:
                         databases_tracked[db_name] = set()
-                    databases_tracked[db_name].add(self.extractAssetType(root))
+                    databases_tracked[db_name].add(meta.extract_from_folder(root,1)) # 1 means the asset type folder sp, views,schema etc
                     
                 except app.db.My.errors.ProgrammingError:
                     print("FATAL: HOLY CRAP! I am missing DB [{}] in folder [{}]".format(db_name,root))
