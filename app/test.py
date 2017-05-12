@@ -68,7 +68,6 @@ class Install(app.iterator.AssetFilesDBConn):
                 db_name = self.extractDb(root)
                 if db_name=='': continue
                 databases_tracked.add(self.extractDb(root))
-                print("------------------ DB [{}] in root [{}]".format(db_name,root))
                 try:
                     self.changeDB(db_name,'')
                     
