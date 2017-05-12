@@ -121,7 +121,7 @@ class AssetFiles():
         for sub_folder in self.folders:
             # If this is actually just a sql file, do it directly. Otherwise do loop next
             if self.file_postfix in sub_folder:
-                db = self.extractDb(sub_folder)
+                db = meta.extract_db_name(sub_folder)
                 # TOBEDELETED once verified not used self._current_file = sub_folder
                 self._current_path = sub_folder # NOT SURE IT IS USED!
                 L.info("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,sub_folder,sub_folder,db))
