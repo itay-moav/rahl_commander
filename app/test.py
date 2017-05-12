@@ -38,7 +38,7 @@ class Install(app.iterator.AssetFilesDBConn):
         if not os.path.isdir(config.assets_folder + '/schema'):
             print("WARNING: OH MY GOD!  XX You are missing Schema Checker folder [{}]. Please create it if u need it, and run tests again".format(config.assets_folder + '/schema'))
         else: 
-            print(" GOOD! Schema Checker folder found [{}]".format(config.assets_folder + '/schema'))
+            print("GOOD! Schema Checker folder found [{}]".format(config.assets_folder + '/schema'))
             self.folders.append(self.assets_path + '/schema')
 
         # Check the db objects folder exist
@@ -62,6 +62,7 @@ class Install(app.iterator.AssetFilesDBConn):
                 db = self.extractDb(root)
                 try:
                     self.changeDB(db,'')
+                    print("GOOD! db {} is here".format(db))
 
                 except app.db.My.errors.ProgrammingError:
                     print("FATAL: HOLY CRAP! I am missing DB [{}] in root [{}]\n".format(db,root))
