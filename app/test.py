@@ -15,8 +15,13 @@ class Install(app.iterator.AssetFilesDBConn):
         '''
         Main iteration processor bala bala
         '''
+        print("******************************************************************************************************")
+        print("                                               START ")
+        print("******************************************************************************************************")
         # NOTICE! assets folder is not tested for as there is an intrinsic test for it in the core system, it will throw an EnvironmentException
 
+        # USING THE CONFIG
+        print("Using values from config folder!")
         
         # First check the auto completion folder exists
         if not os.path.isdir(config.assets_folder + '/autocompletion'):
@@ -38,7 +43,7 @@ class Install(app.iterator.AssetFilesDBConn):
         if not os.path.isdir(config.assets_folder + '/schema'):
             print("WARNING: OH MY GOD!  XX You are missing Schema Checker folder [{}]. Please create it if u need it, and run tests again".format(config.assets_folder + '/schema'))
         else: 
-            print("GOOD! Schema Checker folder found [{}]".format(config.assets_folder + '/schema'))
+            print(" GOOD! Schema Checker folder found [{}]".format(config.assets_folder + '/schema'))
             self.folders.append(self.assets_path + '/schema')
 
         # Check the db objects folder exist
@@ -50,7 +55,8 @@ class Install(app.iterator.AssetFilesDBConn):
                 print(" GOOD! folder [{}] was found".format(sub_folder))
 
         # CHECK DBs existance
-        print("\n\nNOW! Now I will test all dbs you try to work with exists\n\n")
+        print("\n\nNOW! I will test all dbs, you try to work with, exists\n\n")
+        databases_tracked = set()
         for sub_folder in self.folders:
         
             # Loop on files and run sql
@@ -59,11 +65,16 @@ class Install(app.iterator.AssetFilesDBConn):
                 if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
                     continue
 
-                db = self.extractDb(root)
+                db_name = self.extractDb(root)
+                if db_name=='': continue
+                databases_tracked.add(self.extractDb(root))
+                print("------------------ DB [{}] in root [{}]".format(db_name,root))
                 try:
-                    self.changeDB(db,'')
-                    print("GOOD! db {} is here".format(db))
-
+                    self.changeDB(db_name,'')
+                    
                 except app.db.My.errors.ProgrammingError:
-                    print("FATAL: HOLY CRAP! I am missing DB [{}] in root [{}]\n".format(db,root))
-
+                    print("FATAL: HOLY CRAP! I am missing DB [{}] in root [{}]".format(db_name,root))
+                
+                
+        for db_name in databases_tracked:
+            print(" Tracking db {}".format(db_name))
