@@ -49,6 +49,7 @@ class AssetFiles():
         self.assets_path = config.assets_folder
         if args.assets_path:
             self.assets_path = args.assets_path
+            config.assets_folder = args.assets_path
 
         self.folders = []
         self.args = args # for later use
@@ -143,6 +144,7 @@ class AssetFiles():
                     for filename in fnmatch.filter(filenames, '*'+self.file_postfix):
                         # print(filenames)
                         # print(dirnames)
+                        # print("----------------------------------")
                         # print(root)
                         db = meta.extract_db_name(root)
                         # print(db+"\n")
