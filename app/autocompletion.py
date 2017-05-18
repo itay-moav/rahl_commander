@@ -22,15 +22,15 @@ class SP(app.iterator.AssetFiles):
         @var cnx_proxy boolean : whether we use an injected DB connection or create our own. True == injected
         '''
         # Process arguments
-        handle_all = args.handle_all
-        if handle_all:
+        if args.handle_all:
             self.what_to_handle = {'s':'All'}
         else:
             self.what_to_handle = {'s':args.database}
         
         self.assets_path = config.assets_folder
-        if args.assets_path:
-            self.assets_path = args.assets_path
+        
+        #TOBEDELETED100 if args.assets_path:
+        #    self.assets_path = args.assets_path
 
         self.folders = []
         self.args = args # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)

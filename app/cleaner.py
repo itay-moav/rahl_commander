@@ -54,7 +54,7 @@ class AllDBObj():
     def connect(self):
         '''
         '''
-        self.cnx = app.db.get_connection(self.args.server_connection)
+        self.cnx = app.db.get_connection() #TOBEDELETED100 self.args.server_connection)
         self.cursor = self.cnx.cursor()
 
 

@@ -22,20 +22,24 @@ for verbosity 2 Will give a list of objects not in sync
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
-import argparse
-if len(sys.argv) == 1: # no params given, do --help
-    sys.argv.append("--all")
+from app import parser as parser
+#import app.commands
+
+# import argparse
+#if len(sys.argv) == 1: # no params given, do --help
+#    sys.argv.append("--all")
 import app.test
 
-def main():
+def main(parser):
     '''Command line options.'''
     print("start\n")
     try:
-        parser = argparse.ArgumentParser(description="testing ...", formatter_class=argparse.RawDescriptionHelpFormatter)
-        parser.add_argument("--all", dest="handle_all", action="store_true",help=argparse.SUPPRESS)
-        parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?', default=False,help="optional way to specify the assets full path (starting from /)")
-        parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help="server_connection")
-        args = parser.parse_args()
+        #parser = argparse.ArgumentParser(description="testing ...", formatter_class=argparse.RawDescriptionHelpFormatter)
+        #parser.add_argument("--all", dest="handle_all", action="store_true",help=argparse.SUPPRESS)
+        #parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?', default=False,help="optional way to specify the assets full path (starting from /)")
+        #parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help="server_connection")
+        args = app.init(parser)
+        #args = parser.parse_args()
         Tester = app.test.Install(args)
         Tester.run()
 
@@ -47,4 +51,4 @@ def main():
 
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
-sys.exit(main())
+sys.exit(main(parser))

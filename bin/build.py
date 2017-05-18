@@ -41,8 +41,9 @@ def main(parser):
         parser.add_argument("-c","--scripts", dest="scripts", action="store",nargs='?', default=False, const='All',                         \
                             help="run all scripts, or the folder/*.sql specified. Root folder is the database name.")
 
-        args = parser.parse_args()
-        app.set_logging(args.verbosity)
+        args = app.init(parser)
+        #args = parser.parse_args()
+        #app.set_logging(args.verbosity)
         
         Builder = app.commands.BuildDBObj(args)
         Builder.run()

@@ -26,8 +26,9 @@ def main(parser):
     try:
         # Setup argument parser
         parser.add_argument("-d","--database", dest="database", action="store",nargs='?', default=False, const='All', help="Generate php auto complete file for stored procedures, or the folder/*.sql specified. Root folder is the database name.")
-        args = parser.parse_args()
-        app.set_logging(args.verbosity)
+        #args = parser.parse_args()
+        #app.set_logging(args.verbosity)
+        args = app.init(parser)
         Builder = app.autocompletion.SP(args)
         Builder.run()
 

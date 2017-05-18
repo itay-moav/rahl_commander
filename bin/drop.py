@@ -42,8 +42,9 @@ def main(parser):
         parser.add_argument("-f","--functions", dest="functions", action="store",nargs='?',  default=False, const='All',                \
                                 help="drop all functions, or the folder/*.sql specified. Root folder is the database name.")
 
-        args = parser.parse_args()
-        app.set_logging(args.verbosity)
+        args = app.init(parser)
+        #args = parser.parse_args()
+        #app.set_logging(args.verbosity)
 
         Builder = app.commands.DropDBObj(args)
         Builder.run()

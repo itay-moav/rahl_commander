@@ -46,8 +46,9 @@ def main(parser):
         parser.add_argument("--dryrun", dest="dry_run", action="store_true",                                        \
                             default=False, help="Specifying this flag will generate a list of drop commands, but not execute them.")
 
-        args = parser.parse_args()
-        app.set_logging(args.verbosity)
+        args = app.init(parser)
+        #args = parser.parse_args()
+        #app.set_logging(args.verbosity)
 
         Builder = app.cleaner.AllDBObj(args)
         Builder.run()

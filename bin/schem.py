@@ -23,8 +23,10 @@ def main(parser):
     # Setup argument parser
     parser.add_argument("-d","--database", dest="database", action="store",nargs='?', default=False, const='All', \
                                     help="Schema check the specified database name rules, or the folder/*.[s|r]chk specified. Root folder is the database name.")
-    args = parser.parse_args()
-    app.set_logging(args.verbosity)
+    
+    #args = parser.parse_args()
+    #app.set_logging(args.verbosity)
+    args = app.init(parser)
     app.schemachk.run(args)
 
    

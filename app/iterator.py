@@ -28,8 +28,7 @@ class AssetFiles():
         Stores a dictionary of what to build
         '''
         # Process arguments
-        handle_all = args.handle_all
-        if handle_all:
+        if args.handle_all:
             self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
 
         else:
@@ -47,9 +46,10 @@ class AssetFiles():
             self.what_to_handle['c'] = args.scripts
 
         self.assets_path = config.assets_folder
-        if args.assets_path:
-            self.assets_path = args.assets_path
-            config.assets_folder = args.assets_path
+        
+        #TOBEDELETED100 if args.assets_path:
+        #    self.assets_path = args.assets_path
+        #    config.assets_folder = args.assets_path
 
         self.folders = []
         self.args = args # for later use
@@ -214,7 +214,7 @@ class AssetFilesDBConn(AssetFiles):
         '''
             overwrite this, if no DB connection is needed
         '''
-        self.cnx = app.db.get_connection(self.args.server_connection)
+        self.cnx = app.db.get_connection() #TOBEDELETED100 self.args.server_connection)
         self.cursor = self.cnx.cursor()
 
 
