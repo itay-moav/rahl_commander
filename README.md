@@ -22,17 +22,15 @@ A command line tool to simplify the managment of DB objects and scripts in your 
 
 ## Description
 
-Many projects requires the usage of Stored Procedurs, Triggers, SQL Functions, Views
-and various scripts.  
-Rahl Commander (RCom)provides facilities and structure to manage all those pieces of code
-used in your project, but are not part of the main code base.  
+Many projects requires the usage of Stored Procedurs, Triggers, SQL Functions, Views, various scripts and Schema Checking/validations.  
+Rahl Commander (rcom) provides facilities and structure to manage all those pieces of code
+used in your project.  
 
-RCom will do the following for you:  
+rcom will do the following for you:  
 <ol>
 <li>Build for you all or some of the objects into the DB of your choice.</li>
 <li>Will generate auto completion files for your IDE (how nice it is to get auto completion for a stored procedure in your PHP, heh?).</li>
 <li>Will give easy cleanup of the DB of all or some objects (Great for use in release scritps).</li>
-<li>Provide a simple cleanup tool of the code. You write a nice Stored Procedure. All indented and commented. But, when u copy it and try to run it through the command line, it craps out. All due to white space characters in the wrong place.  RCom will generate a clean version for you to copy paste into the command line.</li>
 </ol>
  
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -53,12 +51,12 @@ Currently supporting only manual (very simple) installation.
 <li>Checkout/export the project where ever you want. This folder becomes <b>APPDIR</b>.</li>
 <li>Check your <b>ASSETS</b> folder has the following subfolders: <code>autocompletion, functions, scripts, sp, triggers, views</code></li>
 <li>Copy directory  <b>cp -r example_config config</b>
-<li>Open <b>CONFIG</b> and make sure the DB credentials are correct</li>
+<li>Open <b>CONFIG/__init__.py</b> and make sure the DB credentials are correct</li>
 <li>If not existing, create DB folders. For example, if u have a database named <b>proddb</b> and it has stored procedures and triggers, go to <code><b>ASSETS</b>/sp</code> and create folder <code><b>proddb</b></code>. Then go to folder <code><b>ASSETS</b>/triggers</code> and create folder <code><b>proddb</b></code>.  
 So you end with <code><b>ASSETS</b>/sp/proddb</code> and <code><b>ASSETS</b>/sp/triggers</code>.  
 (Check the <b>examle_assets</b> structure, which is setup for DBs <b>dhara</b> and <b>dhara_views</b>).
 </li>
-<li>Run the <code>test.py</code> under the <b>BIN</b> to see all is good.</li>
+<li>Run the <code>test.py --all</code> under the <b>BIN</b> to see all is good.</li>
 </ol>
 <b>You Are Done!</b>
 
