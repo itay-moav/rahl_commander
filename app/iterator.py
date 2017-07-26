@@ -119,6 +119,8 @@ class AssetFiles():
         '''
         Main iteration processor bala bala
         '''
+        print(self.folders)
+        print('------------------')
         for sub_folder in self.folders:
             # If this is actually just a sql file, do it directly. Otherwise do loop next
             if self.file_postfix in sub_folder:

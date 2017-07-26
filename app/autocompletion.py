@@ -28,10 +28,6 @@ class SP(app.iterator.AssetFiles):
             self.what_to_handle = {'s':args.database}
         
         self.assets_path = config.assets_folder
-        
-        #TOBEDELETED100 if args.assets_path:
-        #    self.assets_path = args.assets_path
-
         self.folders = []
         self.args = args # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.file_postfix = '.sql'
@@ -116,7 +112,8 @@ class SP{
         self.doc_file.close()
         
         # Copy the file to the editors autocompletion plugin folder. If it has that path setup
-        if len(config.autocomplete[config.autocomplete['editor']]['plugin_dir']) > 1:
+        pass #TODO shuting down the copy into the eclipse, should use include project in build path
+        if False and len(config.autocomplete[config.autocomplete['editor']]['plugin_dir']) > 1:
             plugin_dir = config.autocomplete['editor_workspace'] + "/" + config.autocomplete[config.autocomplete['editor']]['plugin_dir']
             auto_complete_dir = plugin_dir + "/" + sorted(os.listdir(plugin_dir),reverse=True)[0]
             L.info("Copy [" + self.assets_path + "/autocompletion/php/SP.php] TO [" + auto_complete_dir + "/SP.php]")
@@ -212,7 +209,8 @@ class SpDataParser:
     def __str__(self):
         """run al the cleanups and formatting, returns the methid as PHP code"""
         self.prepareArgs()
-        return "\n\n" + self.comments() + "\t\tpublic function {}_{}{}".format(self.right_side_db,self.sp_name,self.getArgsAsPHP()) + "{\n\t\t\t/*\n" + self.body.replace('END','') + "\n\t\t\t*/\n\t\t}\n"
+        # db_name sp_name separator TODO should come from config file
+        return "\n\n" + self.comments() + "\t\tpublic function {}__{}{}".format(self.right_side_db,self.sp_name,self.getArgsAsPHP()) + "{\n\t\t\t/*\n" + self.body.replace('END','') + "\n\t\t\t*/\n\t\t}\n"
 
 
 
