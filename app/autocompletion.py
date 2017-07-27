@@ -48,14 +48,15 @@ class SP(app.iterator.AssetFiles):
  * Autocompletion stub
  * You call (dbname)_(stored_procedure_name)
  */
-class SP{FCUR}
+class SP{{
         /**
          * @return {}
          */
-        static function call(){FCUR}
+        static function call(){{
             return new self;
-        {BCUR}
-""".format(self._return_type,FCUR='{',BCUR='}')
+        }}
+""".format(self._return_type)
+        L.debug(header)
         self.doc_file.write(header)
 
     def changeDB(self,db,file_content):
