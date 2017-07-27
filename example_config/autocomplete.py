@@ -7,17 +7,12 @@ config for the autocompletion component
 Right now we support only PHP + Eclipse
 so all is implicitly for this combo.
 
-1. Return type from stored procedure (will translate in the PHPDoc commnets to @return [Return_Type]
-2. Location of the Eclipse installation (by which way it will know where to put the SP.php file created. If it can't write to this directory,
-   it will write it to the assests folder under the autocompletion folder / php /eclipse
+1. [return] Return type from stored procedure (will translate in the PHPDoc commnets to @return [Return_Type]
+2. [db_name_separator]  When the auto completer will created the stored procedure pseudo php code, it will name the methods db_name[db_name_separator]stored_procedue_name
 '''
 
-autocomplete = {   'language':         'php',      \
-                   'editor':           'eclipse',  \
-                   'editor_workspace': '/path/to/eclipse/workspace/you/want/autocomplete/for LEAVE EMPTY IF NO AUTO COPY IS DESIRED',    \
-                   'return':           'Return_Data_Type',    \
-                                                              \
-                   'eclipse':          {     \
-                       'plugin_dir':  '.metadata/.plugins/org.eclipse.php.core/__language__'    \
+
+autocomplete = {   'language':          'php',      \
+                   'return':            '\SP',      \
+                   'db_name_separator': '__'        \
                    }    \
-} 

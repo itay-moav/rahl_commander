@@ -6,7 +6,7 @@
  */
 class SP{
         /**
-         * @return SP
+         * @return \SP
          */
         static function call(){
             return new self;
@@ -20,9 +20,9 @@ class SP{
 		*
 		* @param integer $in_member_id  :IN in_member_id INT
 		*
-		* @return Return_Data_Type
+		* @return \SP
 		*/
-		public function dhara_clean_palace_from_dead_soldiers ($in_member_id){
+		public function dhara__clean_palace_from_dead_soldiers ($in_member_id){
 			/*
 	DELETE FROM first_file_members
 	WHERE member_id = in_member_id;

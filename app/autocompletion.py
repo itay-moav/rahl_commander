@@ -25,31 +25,38 @@ class SP(app.iterator.AssetFiles):
         if args.handle_all:
             self.what_to_handle = {'s':'All'}
         else:
-            self.what_to_handle = {'s':args.database}
+            L.fatal('You must use --all to run this command!')
         
         self.assets_path = config.assets_folder
         self.folders = []
         self.args = args # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.file_postfix = '.sql'
+        
+        
+        if len(config.autocomplete['return']) > 1:
+            self._return_type = config.autocomplete['return']
+        else:
+            self._return_type = "\SP"
+        
 
     def postCalcFolder(self):
         '''Open the output file'''
         self.doc_file = open(self.assets_path + "/autocompletion/php/SP.php","w")
-        self.doc_file.write("""
+        header = """
 <?php
 /**
  * Autocompletion stub
  * You call (dbname)_(stored_procedure_name)
  */
-class SP{
+class SP{FCUR}
         /**
-         * @return SP
+         * @return {}
          */
-        static function call(){
+        static function call(){FCUR}
             return new self;
-        }
-""")
-
+        {BCUR}
+""".format(self._return_type,FCUR='{',BCUR='}')
+        self.doc_file.write(header)
 
     def changeDB(self,db,file_content):
         '''
@@ -101,6 +108,7 @@ class SP{
 
         # Write parsed stuff into the output file
         self.doc_file.write(str(SP))
+        L.debug(str(SP))
 
 
 
@@ -113,11 +121,11 @@ class SP{
         
         # Copy the file to the editors autocompletion plugin folder. If it has that path setup
         pass #TODO shuting down the copy into the eclipse, should use include project in build path
-        if False and len(config.autocomplete[config.autocomplete['editor']]['plugin_dir']) > 1:
-            plugin_dir = config.autocomplete['editor_workspace'] + "/" + config.autocomplete[config.autocomplete['editor']]['plugin_dir']
-            auto_complete_dir = plugin_dir + "/" + sorted(os.listdir(plugin_dir),reverse=True)[0]
-            L.info("Copy [" + self.assets_path + "/autocompletion/php/SP.php] TO [" + auto_complete_dir + "/SP.php]")
-            shutil.copyfile(self.assets_path + "/autocompletion/php/SP.php",auto_complete_dir + "/SP.php")
+        # if False and len(config.autocomplete[config.autocomplete['editor']]['plugin_dir']) > 1:
+        #    plugin_dir = config.autocomplete['editor_workspace'] + "/" + config.autocomplete[config.autocomplete['editor']]['plugin_dir']
+        #    auto_complete_dir = plugin_dir + "/" + sorted(os.listdir(plugin_dir),reverse=True)[0]
+        #    L.info("Copy [" + self.assets_path + "/autocompletion/php/SP.php] TO [" + auto_complete_dir + "/SP.php]")
+        #    shutil.copyfile(self.assets_path + "/autocompletion/php/SP.php",auto_complete_dir + "/SP.php")
 
 
 
@@ -147,6 +155,10 @@ class SpDataParser:
         self.right_side_db    = ''
         self.sp_name    = ''
         self.raw_args   = ''
+        if len(config.autocomplete['db_name_separator']) > 1:
+            self._db_name_separator = config.autocomplete['db_name_separator']    
+        else:
+            self._db_name_separator = "__"
 
     def addSPName(self,sp_name,db_name):
         """Get the stored procedure name and performes all needed cleanup on the string to be a legal php func name"""
@@ -210,7 +222,10 @@ class SpDataParser:
         """run al the cleanups and formatting, returns the methid as PHP code"""
         self.prepareArgs()
         # db_name sp_name separator TODO should come from config file
-        return "\n\n" + self.comments() + "\t\tpublic function {}__{}{}".format(self.right_side_db,self.sp_name,self.getArgsAsPHP()) + "{\n\t\t\t/*\n" + self.body.replace('END','') + "\n\t\t\t*/\n\t\t}\n"
+        return "\n\n" + self.comments() + "\t\tpublic function {DB}{SEP}{SP_NAME}{ARGS}".format(DB = self.right_side_db,\
+                                                                                   SEP = self._db_name_separator,\
+                                                                                   SP_NAME = self.sp_name,\
+                                                                                   ARGS = self.getArgsAsPHP()) + "{\n\t\t\t/*\n" + self.body.replace('END','') + "\n\t\t\t*/\n\t\t}\n"
 
 
 

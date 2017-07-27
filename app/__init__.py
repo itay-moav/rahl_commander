@@ -1,7 +1,7 @@
 import sys
 import os
 
-__version__ = 1.0
+__version__ = 1.1
 __date__ = '2014-09-24'
 __updated__ = '2017-05-17'
 program_name = os.path.basename(sys.argv[0])
