@@ -156,7 +156,7 @@ class SpDataParser:
         self.right_side_db    = ''
         self.sp_name    = ''
         self.raw_args   = ''
-        if len(config.autocomplete['db_name_separator']) > 1:
+        if len(config.autocomplete['db_name_separator']) > 0:
             self._db_name_separator = config.autocomplete['db_name_separator']    
         else:
             self._db_name_separator = "__"
