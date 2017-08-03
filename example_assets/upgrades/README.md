@@ -37,7 +37,7 @@ There are two subfolders current and archive.
 --unblock [removes a failed entry from the DB, BE VERY CAREFULL WHAT U DO HERE, make sure u also undo any changes in the DB that where caused by the failed script]
 --test [runs the queries on a test database defined in the config, and return on the first error]
 
-You can run the following combinations:  
+You can run the following combinations too:  
 --limit=X --archive [will archive the X files]
 --all --archive     [will run and archive all]
 

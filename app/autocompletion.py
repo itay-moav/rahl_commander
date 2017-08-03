@@ -3,8 +3,8 @@ Created on Oct 23, 2014
 
 @author: Itay Moav
 '''
-import os
-import shutil
+#import os
+#import shutil
 import config
 import app.iterator
 from app import logging as L
