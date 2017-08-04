@@ -21,6 +21,27 @@ def run(args):
     L.debug(args)
     L.debug(upgrade_config.__repr__())
     
+    commands = []
+    
+    #--restore_all -> blocking action, will exit 
+    
+    
+    #--unblock     -> blocking action, will exit 
+    
+    
+    #--test
+    
+    
+    #--limit=X   ||   --all
+    
+    
+    #--archive
+    
+    
+    run_commands(commands)
+    
+    
+    
     # check for conflicts
     if args.handle_all and args.limit_files != None:
         L.fatal("Please use either --all or --limit")
@@ -50,7 +71,10 @@ def run(args):
             run_upgrade(limit_of_files_processed,conn_config)
             
         
-        
+
+def run_commands(commands):
+    pass
+
 def run_upgrade(limit_of_files_processed,conn_config):
     pass
 
