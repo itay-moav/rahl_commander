@@ -35,7 +35,8 @@ There are two subfolders current and archive.
 --all [upgrade all files previously not executed]
 --unblock [removes a none completed entry from the DB, BE VERY CAREFULL WHAT U DO HERE, make sure u also undo any changes in the DB that where caused by the script  
            if it was partially run. It takes the file name (no postfix) as an argument]
---test [runs the queries on a test database defined in the config, and return on the first error]
+--force_test [runs the queries on a test database defined in the config, and return on the first error,
+              NOTICE! To run just tests, do not use the --all or --limit args with this flag]
 
 You can run the following combinations too:  
 --limit=X --archive [will archive the X files]

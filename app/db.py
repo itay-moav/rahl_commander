@@ -8,6 +8,7 @@ Abstracting the DB connection piece
 import mysql.connector as My
 import config
 from app import logging as L
+from config.upgrade import upgrade as upgrade_config
 
 _connection = None
 
@@ -36,3 +37,8 @@ def change_db(new_db):
             else:
                 raise err
     return True
+
+
+
+def get_test_Server_connection():
+    return My.connect(user=upgrade_config['test_user'], password=upgrade_config['test_password'],host=upgrade_config['test_host'],buffered=True)
