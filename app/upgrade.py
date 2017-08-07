@@ -7,8 +7,9 @@ Created on Aug 03, 2017
 #import shutil
 import config
 from app import logging as L
+import app.db
 from config.upgrade import upgrade as upgrade_config
-from email.message import Message
+from collections import deque
 
 
 def run(args):
@@ -21,27 +22,58 @@ def run(args):
     L.debug(args)
     L.debug(upgrade_config.__repr__())
     
-    commands = []
-    
-    #--restore_all -> blocking action, will exit 
-    
+    commands = deque([])
     
     #--unblock     -> blocking action, will exit 
-    
+    commands.appendleft(UnblockCommand(args.file_name_to_unblock))
     
     #--test
-    
+    commands.appendleft(TestCommand(args.test_upgrade,args.handle_all,args.limit_files))
     
     #--limit=X   ||   --all
-    
+    commands.appendleft(UpgradeCommand(args.handle_all,args.limit_files))
     
     #--archive
-    
+    commands.appendleft(ArchiveCommand(args.archive_files))
     
     run_commands(commands)
     
+
+class UnblockCommand:
+    '''
+    Removes a stuck/failed/not ran yet entry of a file from the tracking table
+    '''
     
+    def __init__(self, file_name_to_unblock):
+        self.file_name_to_unblock = file_name_to_unblock
+        
+    def action(self,should_i_stop):
+        '''
+        @var should_i_stop is boolean, the result of the previous action. If it is true
+             execution should stop, but I will alert the user this ar was activated, he/she might have done a mistake
+        return True will break the command string from fully executing.
+        This type of command is a blocking command i.e. nothing happens later if
+        this flag was supplied
+        '''
+        
+        if self.file_name_to_unblock != None:
+            if should_i_stop:
+                L.error("Check your arguments --unblock was ignored. --unblock can not be used with other flags!")
+                return True
+            
+            sql = "DELETE FROM {}.sql_upgrades WHERE file_name='{}' AND execution_status<>'completed'".format(upgrade_config['upgrade_tracking_database'], \
+                                                                                                       self.file_name_to_unblock)
+            cnx = app.db.get_connection()
+            cursor = cnx.cursor()
+            cursor.execute(sql)
+            return True
+        return False
+            
+        
+        
+        
     
+def something(args):    
     # check for conflicts
     if args.handle_all and args.limit_files != None:
         L.fatal("Please use either --all or --limit")
@@ -79,11 +111,3 @@ def run_upgrade(limit_of_files_processed,conn_config):
     pass
 
 
-
-TODO WRITE FIRST THE ACTUAL FILE ITTERATR WITH A BLANK ACTION TO DO ON EACH FILE
-     ACTION SHOULD GET A CHAIN OF COMMAND OBJECT TO RUN ON EACH FILE.
-     ONE OF THOSE WOULD BE THE LIVE SQL CONNECTION, SO NO NEED TO RECONNECT EACH TIME
-     HE MAIN COMMAND (run) WILL CREATE THE CHAIN OF COMMANDS FROM THE INPUT 
-
-     EACH COMMAND WILL BE ENCAPS IN A CLASS FACTORY WICH WILL READ PARAMS AND EITHER RETURN NOTHIN,ACTIUAL OBJECT OR ERROR Message
-     

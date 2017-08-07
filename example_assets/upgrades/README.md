@@ -32,9 +32,9 @@ There are two subfolders current and archive.
 
 --limit=X [x is the number of files to run in one go]
 --archive [will remove to the archive folder ALL files in [current] folder that where successfully ran].
---restore_all [move all files from archive to [current] and remove them from the tracking table]
 --all [upgrade all files previously not executed]
---unblock [removes a failed entry from the DB, BE VERY CAREFULL WHAT U DO HERE, make sure u also undo any changes in the DB that where caused by the failed script]
+--unblock [removes a none completed entry from the DB, BE VERY CAREFULL WHAT U DO HERE, make sure u also undo any changes in the DB that where caused by the script  
+           if it was partially run. It takes the file name (no postfix) as an argument]
 --test [runs the queries on a test database defined in the config, and return on the first error]
 
 You can run the following combinations too:  

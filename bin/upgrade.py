@@ -26,6 +26,9 @@ def main(parser):
         parser.add_argument("--limit",      dest="limit_files",   action="store",nargs='?', help="Number of files to process")
         parser.add_argument("--archive",    dest="archive_files", action="store_true",      help="Archive all successfully processed files")
         parser.add_argument("--force_test", dest="test_upgrade",  action="store_true",      help="Test the upgrade on a test DB before actual run")
+        parser.add_argument("--unblock",    dest="file_name_to_unblock",  \
+                                                                  action="store",nargs='?', help="DANGEROUS! Takes an upgrade file name as arg (no postfix). " + \
+                                                                                                 "If it is not completed, it will remove it from the tracking DB")
         
         args = app.init(parser)
         app.upgrade.run(args)

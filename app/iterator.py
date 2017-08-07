@@ -165,22 +165,7 @@ class AssetFiles():
             DO NOTHING HERE
         '''
         pass
-
-
-    def extractDbTOBEDELETED100(self,sub_folder):
-        '''
-        get the database name from the folder input
-        '''
-        try:
-            return self.extractFromFolder(sub_folder,2)
-        except IndexError:
-            return ''
     
-    def extractFromFolderTOBEDELETED100(self,sub_folder,index):
-        '''
-        get the folder part the folder input
-        '''
-        return sub_folder.split(self.assets_path)[1].replace('\\','/').split('/')[index]
 
     def process(self,db,file_content,current_subdir):
         '''
@@ -216,7 +201,7 @@ class AssetFilesDBConn(AssetFiles):
         '''
             overwrite this, if no DB connection is needed
         '''
-        self.cnx = app.db.get_connection() #TOBEDELETED100 self.args.server_connection)
+        self.cnx = app.db.get_connection()
         self.cursor = self.cnx.cursor()
 
 
