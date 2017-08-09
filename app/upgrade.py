@@ -37,13 +37,13 @@ def run(args):
     commands.appendleft(TestCommand(args.test_upgrade,args.handle_all,args.limit_files))
     
     #--with_schema
-    commands.appendleft(TestServerSchema(args.with_schema_checker,args.test_upgrade,args))
+    commands.appendleft(TestServerSchemaCommand(args.with_schema_checker,args.test_upgrade,args))
     
     #--limit=X   ||   --all
-    #commands.appendleft(UpgradeCommand(args.handle_all,args.limit_files))
+    commands.appendleft(UpgradeCommand(args.handle_all,args.limit_files))
     
     #--archive
-    #commands.appendleft(ArchiveCommand(args.archive_files))
+    commands.appendleft(ArchiveCommand(args.archive_files))
     
     run_commands(commands)
     
@@ -163,7 +163,7 @@ class TestCommand:
 
 
 
-class TestServerSchema:
+class TestServerSchemaCommand:
     '''
     Runs the full schema checker with full bailout 
     on the test server
@@ -203,14 +203,83 @@ class TestServerSchema:
      
      
      
-     
 
+
+class UpgradeCommand():
+    '''
+    Runs the actual upgrades and marks the files in the tracking DB
+    '''
+    def __init__(self,handle_all,limit_files):
+        self.handle_all_files = handle_all
+        self.handle_x_files   = limit_files
+        
+    def validate_input(self):
+        
+        # check for conflicts
+        if self.handle_all_files and self.handle_x_files != None:
+            L.fatal("Please use either --all or --limit")
+            exit(-1) 
+        
+        if self.handle_x_files != None and int(self.handle_x_files) <1:
+            L.fatal("--limit must be at least 1")
+            exit(-1)
+            
+        return True
+    
+    
+    def  action(self,should_i_stop):
+        '''
+        @var should_i_stop is boolean, the result of the previous action. If it is true
+             execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+        '''
+        if should_i_stop:
+            L.error("Check your arguments running upgrades has stopped as it was used with another stand alone flag (probably --unblock)")
+            return True
+        
+        if self.validate_input():
+            if self.handle_x_files != None and int(self.handle_x_files) >0:
+                limit_of_files_processed = -1 * int(self.handle_x_files)
+                limit_info = self.handle_x_files
+            else: #if I do not provide the --all flag, I still run JUST the tests on all the files.
+                limit_of_files_processed = 0 #Invers loop, 0 means all, negative numbers I use to represent how many files more to run
+                limit_info = 'all'
+                L.info("Will TEST upgrade with {} files".format(limit_info))
+                L.info('Running test upgrade on actual server')
+                run_upgrade(limit_of_files_processed,app.db.get_connection())    
+    
+        return should_i_stop
             
         
 
+
+
+
+
+
+class ArchiveCommand():
+    '''
+    MV files from current to archive folder
+    Moves all the files that already ran, no if/buts
+    '''
+    def __init__(self,archive_files):
+        self.archive_files = archive_files
+        
+    def action(self,should_i_stop):
+        if should_i_stop:
+            L.error("Check your arguments running --archive_files has stopped as it was used with a stand alone flag (probably --unblock)")
+            return True 
+        
+        #Loop on upgrade tracking DB until all files are accounted for and moved
+        cnx = app.db.get_connection()
+        cursor = cnx.cursor()
+        sql = "SELECT file_name FROM {}.sql_upgrades WHERE execution_status = 'completed' ORDER BY time_runned DESC, file_name DESC".format(upgrade_config['upgrade_tracking_database'])
+        cursor.execute(sql)
+        for file_name in cursor:
+            print(file_name) #TODO in=mplement archive
+    
     
 
-def run_upgrade(limit_of_files_processed,sql_conn):
+def run_upgrade(limit_of_files_processed,sql_conn): #TODO implement run upgrades
     pass
 
 
