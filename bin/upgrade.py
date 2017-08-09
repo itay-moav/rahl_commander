@@ -27,9 +27,15 @@ def main(parser):
         parser.add_argument("--archive",    dest="archive_files", action="store_true",      help="Archive all successfully processed files")
         parser.add_argument("--force_test", dest="test_upgrade",  action="store_true",      help="Test the upgrade on a test DB before actual run. " + \
                                                                                                  "NOTICE! To run just tests, do not use the --all or --limit args")
+        parser.add_argument("--with_schema",dest="with_schema_checker",  \
+                                                                  action="store_true",      help="Runs the full schema checker. If u have a test server, " + \
+                                                                                                 "will do it there first, right after running the tests. " + \
+                                                                                                 "Otherwise, will run only on real server.")
         parser.add_argument("--unblock",    dest="file_name_to_unblock",  \
                                                                   action="store",nargs='?', help="DANGEROUS! Takes an upgrade file name as arg (no postfix). " + \
                                                                                                  "If it is not completed, it will remove it from the tracking DB")
+        
+        
         
         args = app.init(parser)
         app.upgrade.run(args)

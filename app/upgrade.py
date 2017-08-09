@@ -10,7 +10,13 @@ from app import logging as L
 import app.db
 from config.upgrade import upgrade as upgrade_config
 from collections import deque
+import app.schemachk
 
+class TheBabaClass:
+    '''
+    on the fly object data structure
+    '''
+    pass
 
 def run(args):
     '''
@@ -30,6 +36,9 @@ def run(args):
     #--test
     commands.appendleft(TestCommand(args.test_upgrade,args.handle_all,args.limit_files))
     
+    #--with_schema
+    commands.appendleft(TestServerSchema(args.with_schema_checker,args.test_upgrade,args))
+    
     #--limit=X   ||   --all
     #commands.appendleft(UpgradeCommand(args.handle_all,args.limit_files))
     
@@ -38,6 +47,21 @@ def run(args):
     
     run_commands(commands)
     
+
+
+
+
+
+# TODO IMPLEMENT THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+def run_commands(commands):
+    should_i_stop = False
+    while commands:
+        command = commands.pop()
+        should_i_stop = command.action(should_i_stop)
+        
+        
+
+
 
 
 
@@ -73,6 +97,10 @@ class UnblockCommand:
             return True
         return False
             
+        
+    
+    
+        
         
         
         
@@ -126,12 +154,47 @@ class TestCommand:
                     run_upgrade(limit_of_files_processed,app.db.get_test_Server_connection())    
     
         return should_i_stop
-            
-        
-
     
+        
+            
+        
+
+
+
+
+
+class TestServerSchema:
+    '''
+    Runs the full schema checker with full bailout 
+    on the test server
+    '''
+    def __init__(self,with_schema_checker,test_upgrade,all_args):
+        self.do_on_test_server  = test_upgrade  or upgrade_config['force_test']
+        self.do_schema_test     = with_schema_checker or upgrade_config['force_schema_test']
+        self.all_args           = all_args
+        
+    def action(self,should_i_stop):
+        '''
+        Runs the schma checker on the test server
+        '''
+        if self.do_on_test_server and self.do_schema_test:
+            if should_i_stop:
+                L.error("Check your arguments --with_schema was ignored. --with_schema was used with another stand alone flag (probably --unblock)")
+                return True
+            L.info("Running schema checker on test server {}@{}".format(upgrade_config['test_user'],upgrade_config['test_host']))
+            app.schemachk.run(self.initilize_the_schemachecker())
+        return should_i_stop
      
-     
+    def initilize_the_schemachecker(self):
+        '''
+        inits the schema checker object from the all_args object and config
+        '''
+        args= TheBabaClass()
+        args.handle_all = True
+        args.assets_path = self.all_args.assets_path or config.assets_folder
+        args.server_connection = "{}:{}@{}".format(upgrade_config['test_user'],upgrade_config['test_password'],upgrade_config['test_host'])
+        L.debug(args)
+        return args
      
      
      
@@ -145,11 +208,6 @@ class TestCommand:
             
         
 
-def run_commands(commands):
-    should_i_stop = False
-    while commands:
-        command = commands.pop()
-        should_i_stop = command.action(should_i_stop)
     
 
 def run_upgrade(limit_of_files_processed,sql_conn):
