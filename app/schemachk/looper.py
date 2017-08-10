@@ -38,9 +38,6 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
 
 
         self.assets_path = config.assets_folder
-        if args.assets_path:
-            self.assets_path = args.assets_path
-
         self.folders = []
         self.args = args # for later use
         self.validateSelf()
