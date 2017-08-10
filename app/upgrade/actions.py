@@ -44,7 +44,7 @@ def test_with_schema():
     '''
     args= TheBabaClass()
     args.handle_all = True
-    args.server_connection = "{}:{}@{}".format(upgrade_config['test_user'],upgrade_config['test_password'],upgrade_config['test_host'])
+    args.cnx = app.db.get_test_Server_connection()
     L.debug(args)
     
     
