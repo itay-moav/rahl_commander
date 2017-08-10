@@ -201,8 +201,13 @@ class AssetFilesDBConn(AssetFiles):
         '''
             overwrite this, if no DB connection is needed
         '''
-        self.cnx = app.db.get_connection()
-        self.cursor = self.cnx.cursor()
+        #Allow for dependency injection of the connection
+        # This will allow the use of test server in conjunction with the actual server
+        if self.args.cnx: 
+            self.cnx = self.args.cnx
+        else: 
+            self.cnx = app.db.get_connection()
+            self.cursor = self.cnx.cursor()
 
 
     def changeDB(self,db,file_content):
