@@ -33,7 +33,7 @@ def unblock(file_name_to_unblock):
 
 
 
-def test(limit_of_files_processed):
+def test(limit_of_files_processed): tODO: Need to read the files sorted (or sort in memory) and then only go by limit.
     '''
     runs the upgrade SQLs in the test server
     '''
