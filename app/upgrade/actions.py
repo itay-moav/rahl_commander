@@ -44,6 +44,15 @@ def test(limit_of_files_processed):
     test_cursor   = test_cnx.cursor()
     actual_cursor = actual_db_cnx.cursor()
     
+    # Checking for failed files in the upgrade DB, Failed files will immediatly fail -> fix those before upgrades can continue
+    failed_files_sql = "SELECT COUNT(*) FROM {}.sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(upgrade_config['upgrade_tracking_database'])
+    actual_cursor.execute(failed_files_sql)
+    res = actual_cursor.fetchall()
+    if res[0][0] > 0:
+        L.fatal('There are failed files in [{}.sql_upgrades] Execution stops until you fix it!'.format(upgrade_config['upgrade_tracking_database']))
+        exit(1)
+                
+    
     upgrade_folder = config.assets_folder + "/upgrades/current"
     L.info('Reading files from {}'.format(upgrade_folder))
     
@@ -58,13 +67,27 @@ def test(limit_of_files_processed):
         
         for filename in fnmatch.filter(filenames, '*sql'):
             
-            TODO: CHECK IF FILE WAS ALREADY RAN IN ACTUAL DB!
+            #Check file was not previously handled 
+            find_file_sql = "SELECT file_name,execution_status FROM {}.sql_upgrades WHERE file_name= %s".format(upgrade_config['upgrade_tracking_database'])
+            actual_cursor.execute(find_file_sql,(filename,))
+            res = actual_cursor.fetchall()
+            try:
+                #This file was marked ready to be run, but a previous failure got it stuck
+                if res[0][1] != 'pending_completion':
+                    continue
+            except IndexError: # I found no entry -> new or unblocked file
+                pass
             
             
-            L.debug(filename)
+            # Create the pending completion entry for the file
+            L.info("\n----------------------------------------\nDoing file {}\n----------------------------------------".format(filename))
+            insert = "INSERT IGNORE INTO {}.sql_upgrades VALUES(%s,NOW(),'pending_completion','')".format(upgrade_config['upgrade_tracking_database'])
+            params = (filename,)
+            actual_cursor.execute(insert,params)
+            actual_db_cnx.commit()
+
+                        
             no_files_found = False
-            
-            L.info("\n----------------------------------------\nDOing file {}\n----------------------------------------".format(filename))
             f = open(root + '/' + filename,'r')
             file_content = f.read()
             f.close()
@@ -76,12 +99,21 @@ def test(limit_of_files_processed):
             except Exception as err:
                 err_msg = str(err)
                 L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
-                insert = "INSERT INTO {}.sql_upgrades VALUES(%s,NOW(),'failed',%s) ON DUPLICATE KEY UPDATE execution_status='failed',time_runned=NOW(),error_message=%s".format(\
+                insert = "INSERT INTO {}.sql_upgrades VALUES(%s,NOW(),'failed',%s) ON DUPLICATE KEY UPDATE execution_status='failed_in_test',time_runned=NOW(),error_message=%s".format(\
                                                                                       upgrade_config['upgrade_tracking_database'])
                 params = (filename,err_msg,err_msg)
                 actual_cursor.execute(insert,params)
                 actual_db_cnx.commit()
                 exit(1)
+                
+            else:
+                L.debug('marking file as completed_in_test')
+                update_sql = "UPDATE {}.sql_upgrades SET execution_Status='completed_in_test' WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
+                params = (filename,)
+                actual_cursor.execute(update_sql,params)
+                actual_db_cnx.commit()
+            
+                
                 
     if no_files_found:
         L.error('There are no files to upgrade with! upgrades/current folder is empty')

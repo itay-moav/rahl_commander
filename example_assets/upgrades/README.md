@@ -86,7 +86,7 @@ CREATE TABLE ???????.`sql_upgrades` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
   time_runned timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   file_name varchar(255) CHARACTER SET utf8 NOT NULL,
-  execution_status enum('pending_completion','failed','completed') CHARACTER SET utf8 NOT NULL DEFAULT 'pending_completion',
+  execution_status enum('pending_completion','failed','failed_in_test','completed','completed_in_test') CHARACTER SET utf8 NOT NULL DEFAULT 'pending_completion',
   error_message varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (time_runned,file_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

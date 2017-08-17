@@ -42,6 +42,7 @@ def main(parser):
         
     except Exception as e:
         print(e)
+        raise e
         return 1
 
 
