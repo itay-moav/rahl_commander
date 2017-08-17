@@ -77,7 +77,13 @@ force_schema_test  True|False true will force schema testing on test/real server
 
 DATABASE TABLE STRUCTURE
 ========================
-CREATE TABLE IF NOT EXISTS sql_upgrades (
+CREATE TABLE ???????.`sql_upgrades` (
+  `file_name` varchar(255) NOT NULL,
+  `time_runned` timestamp NOT NULL,
+  `execution_status` enum('pending_completion','failed','completed') NOT NULL DEFAULT 'pending_completion',
+  `error_message` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`file_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
   time_runned timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   file_name varchar(255) CHARACTER SET utf8 NOT NULL,
   execution_status enum('pending_completion','failed','completed') CHARACTER SET utf8 NOT NULL DEFAULT 'pending_completion',

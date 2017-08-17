@@ -8,7 +8,7 @@ __version__ = '1.0'
 from app import logging as L
 from collections import deque
 from config.upgrade import upgrade as upgrade_config
-import app.upgrade.commands as Command
+import app.upgrade.commands
 
 def run(args):
     '''
@@ -23,19 +23,19 @@ def run(args):
     commands = deque([])
     
     #--unblock     -> blocking action, will exit 
-    commands.appendleft(Command.Unblock(args.file_name_to_unblock))
+    commands.appendleft(app.upgrade.commands.Unblock(args.file_name_to_unblock))
     
     #--test
-    commands.appendleft(Command.Test(args.test_upgrade,args.handle_all,args.limit_files))
+    commands.appendleft(app.upgrade.commands.Test(args.test_upgrade,args.handle_all,args.limit_files))
     
     #--with_schema
-    commands.appendleft(Command.TestServerSchema(args.with_schema_checker,args.test_upgrade,args))
+    commands.appendleft(app.upgrade.commands.TestServerSchema(args.with_schema_checker,args.test_upgrade,args))
     
     #--limit=X   ||   --all
-    commands.appendleft(Command.Upgrade(args.handle_all,args.limit_files))
+    commands.appendleft(app.upgrade.commands.Upgrade(args.handle_all,args.limit_files))
     
     #--archive
-    commands.appendleft(Command.Archive(args.archive_files))
+    commands.appendleft(app.upgrade.commands.Archive(args.archive_files))
     
     run_commands(commands)
     

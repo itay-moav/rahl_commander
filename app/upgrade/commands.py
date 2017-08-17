@@ -5,7 +5,7 @@ Created on Aug 10, 2017
 '''
 from app import logging as L
 from config.upgrade import upgrade as upgrade_config
-import app.upgrade.actions as action
+import app.upgrade.actions
 
 class Unblock:
     '''
@@ -28,7 +28,7 @@ class Unblock:
             if should_i_stop:
                 L.error("Check your arguments --unblock was ignored. --unblock can not be used with other flags!")
                 return True
-            action.unblock(self.file_name_to_unblock)
+            app.upgrade.actions.unblock(self.file_name_to_unblock)
             L.info("Removed {}.sql from the upgrade tracking table {}.sql_upgrades".format(self.file_name_to_unblock,upgrade_config['upgrade_tracking_database']))
             return True
         return False
@@ -87,7 +87,7 @@ class Test:
                     limit_info = 'all'
                     
                 L.info("Will TEST upgrade with {} files".format(limit_info))
-                action.test(limit_of_files_processed)   
+                app.upgrade.actions.test(limit_of_files_processed)   
     
         return should_i_stop
     
@@ -118,7 +118,7 @@ class TestServerSchema:
                 L.error("Check your arguments --with_schema was ignored. --with_schema was used with another stand alone flag (probably --unblock)")
                 return True
             L.info("Running schema checker on test server {}@{}".format(upgrade_config['test_user'],upgrade_config['test_host']))
-            action.test_with_schema()
+            app.upgrade.actions.test_with_schema()
         return should_i_stop
      
      
@@ -168,7 +168,7 @@ class Upgrade():
                 limit_info = 'all'
             L.info("Will TEST upgrade with {} files".format(limit_info))
             L.info('Running test upgrade on actual server')
-            action.upgrade(limit_of_files_processed)    
+            app.upgrade.actions.upgrade(limit_of_files_processed)    
     
         return should_i_stop
             
@@ -191,5 +191,5 @@ class Archive():
         if should_i_stop:
             L.error("Check your arguments running --archive_files has stopped as it was used with a stand alone flag (probably --unblock)")
             return True 
-        action.arcive_all_processed_files()
+        app.upgrade.actions.archive_all_processed_files()
         

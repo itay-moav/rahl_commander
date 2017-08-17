@@ -5,11 +5,14 @@ Created on Aug 10, 2017
 
 The actual actions to be performed by the commands
 '''
-#import os
-#import shutil
+import os
+# import shutil
 from app import logging as L
 from config.upgrade import upgrade as upgrade_config
 import app.db
+import app.schemachk
+import config
+import fnmatch
 
 class TheBabaClass:
     '''
@@ -35,6 +38,55 @@ def test(limit_of_files_processed):
     runs the upgrade SQLs in the test server
     '''
     L.info('Running test upgrade on {}:{}@{}'.format(upgrade_config['test_user'],upgrade_config['test_password'],upgrade_config['test_host']))
+    test_cnx      = app.db.get_test_Server_connection()
+    actual_db_cnx = app.db.get_connection()
+    actual_db_cnx.database = upgrade_config['upgrade_tracking_database']
+    test_cursor   = test_cnx.cursor()
+    actual_cursor = actual_db_cnx.cursor()
+    
+    upgrade_folder = config.assets_folder + "/upgrades/current"
+    L.info('Reading files from {}'.format(upgrade_folder))
+    
+    # loop on each file under the current folder, dictionary sorted asc, 
+    # and checking each file in ACTUAL db upgrades and run the file on test server
+    
+    no_files_found = True
+    for root, dirnames, filenames in os.walk(upgrade_folder):
+        # This is where I apply the filter of the ignored file list.
+        if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
+            continue
+        
+        for filename in fnmatch.filter(filenames, '*sql'):
+            
+            TODO: CHECK IF FILE WAS ALREADY RAN IN ACTUAL DB!
+            
+            
+            L.debug(filename)
+            no_files_found = False
+            
+            L.info("\n----------------------------------------\nDOing file {}\n----------------------------------------".format(filename))
+            f = open(root + '/' + filename,'r')
+            file_content = f.read()
+            f.close()
+            try:
+                for one_sql in file_content.split(';'):
+                    if len(one_sql)>6:
+                        L.info("\n----------\nabout to run SQL:\n{}\n".format(one_sql))
+                        test_cursor.execute(one_sql)
+            except Exception as err:
+                err_msg = str(err)
+                L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
+                insert = "INSERT INTO {}.sql_upgrades VALUES(%s,NOW(),'failed',%s) ON DUPLICATE KEY UPDATE execution_status='failed',time_runned=NOW(),error_message=%s".format(\
+                                                                                      upgrade_config['upgrade_tracking_database'])
+                params = (filename,err_msg,err_msg)
+                actual_cursor.execute(insert,params)
+                actual_db_cnx.commit()
+                exit(1)
+                
+    if no_files_found:
+        L.error('There are no files to upgrade with! upgrades/current folder is empty')
+    exit(1)
+    
     
     
 def test_with_schema():
@@ -46,6 +98,7 @@ def test_with_schema():
     args.handle_all = True
     args.cnx = app.db.get_test_Server_connection()
     L.debug(args)
+    app.schemachk.run(args)
     
     
 def upgrade(limit_of_files_processed):
@@ -55,7 +108,7 @@ def upgrade(limit_of_files_processed):
     pass
 
 
-def arcive_all_processed_files():
+def archive_all_processed_files():
     '''
     runs on all files in the CURRENT folder and moves any previously processed files (status=completed in db)
     to the ARCHIVE folder

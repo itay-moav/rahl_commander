@@ -41,4 +41,6 @@ def change_db(new_db):
 
 
 def get_test_Server_connection():
-    return My.connect(user=upgrade_config['test_user'], password=upgrade_config['test_password'],host=upgrade_config['test_host'],buffered=True)
+    cnx = My.connect(user=upgrade_config['test_user'], password=upgrade_config['test_password'],host=upgrade_config['test_host'],buffered=True)
+    cnx.database = upgrade_config['upgrade_tracking_database']
+    return cnx
