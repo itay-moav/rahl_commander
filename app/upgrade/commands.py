@@ -45,7 +45,7 @@ class Test:
     '''
     Runs the files on the test db supplied, Will crash in case of failure, but will not 
     mark the file as failed.
-    It will break the files into sql segmets by ';' to provide a better error message
+    It will break the files into sql segmets by ';' to provide a better error message (in the actual command)
     '''
     def __init__(self,test_upgrade,handle_all,limit_files):
         self.do_test          = test_upgrade  or upgrade_config['force_test']
@@ -80,10 +80,10 @@ class Test:
             
             if self.validate_input():
                 if self.handle_x_files != None and int(self.handle_x_files) >0:
-                    limit_of_files_processed = -1 * int(self.handle_x_files)
+                    limit_of_files_processed = int(self.handle_x_files)
                     limit_info = self.handle_x_files
                 else: #if I do not provide the --all flag, I still run JUST the tests on all the files.
-                    limit_of_files_processed = 0 #Inverse loop, 0 means all, negative numbers I use to represent how many files more to run
+                    limit_of_files_processed = 0 #Inverse loop, 0 means all
                     limit_info = 'all'
                     
                 L.info("Will TEST upgrade with {} files".format(limit_info))

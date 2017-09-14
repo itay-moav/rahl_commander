@@ -33,13 +33,21 @@ def unblock(file_name_to_unblock):
 
 
 
-def test(limit_of_files_processed): tODO: Need to read the files sorted (or sort in memory) and then only go by limit.
+def test(limit_of_files_processed):
     '''
-    runs the upgrade SQLs in the test server
+    runs the upgrade SQLs on the test server
+    limit_of_files_process can be 0 -> all un processed files
+    or a number.
+    If a number, Will run that number on the files, dictionary sorted ASC
+    Reads and sorts all the files in the [current] folder
+    loops on the sorted list bottom to top
+     if file was not processed, and I did not pass the limit of files to process
+        process file
+        if fail, mark with [failed_in_test]  && crash! 
     '''
     L.info('Running test upgrade on {}:{}@{}'.format(upgrade_config['test_user'],upgrade_config['test_password'],upgrade_config['test_host']))
     test_cnx      = app.db.get_test_Server_connection()
-    actual_db_cnx = app.db.get_connection()
+    actual_db_cnx = app.db.get_connection() # need this to know which files I already processed
     actual_db_cnx.database = upgrade_config['upgrade_tracking_database']
     test_cursor   = test_cnx.cursor()
     actual_cursor = actual_db_cnx.cursor()
