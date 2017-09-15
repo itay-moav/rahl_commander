@@ -79,6 +79,7 @@ DATABASE TABLE STRUCTURE
 ========================
 CREATE TABLE [db name comes from config].rcom_sql_upgrades (
   file_name varchar(255) CHARACTER SET utf8 NOT NULL,
+  execute_order INT(11) UNSIGNED NOT NULL DEFAULT 1 COMMENT 'if file is prefixed with a number it goes here and determines execution order of sqls',
   time_runned timestamp NULL DEFAULT NULL,
   execution_status enum('pending_completion','failed','failed_in_test','completed','completed_in_test') CHARACTER SET utf8 NOT NULL DEFAULT 'pending_completion',
   error_message varchar(255) CHARACTER SET utf8 DEFAULT NULL,

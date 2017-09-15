@@ -43,7 +43,7 @@ def run(args):
     sync_files_to_db()
     
     # go go go
-    #run_commands(commands)
+    run_commands(commands)
     
 
 
@@ -104,17 +104,28 @@ def sync_files_to_db():
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Check file system for any file not yet in db, create an entry with [pending_completion] STATUS
     # -------------------------------------------------------------------------------------------------------------------------------------------------
-    values =["('"+file_name+"',NULL,'pending_completion',NULL)" for file_name in files_in_file_system  \
+    values =["('"+file_name+"'," + get_file_execution_order(file_name) + ",NULL,'pending_completion',NULL)" for file_name in files_in_file_system  \
              if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
              
     values = ','.join(values)
     sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['upgrade_tracking_database'],values)
     L.debug(sql)
     cursor.execute(sql)
+    
+    # SAVING ALL CHANGES TO DB
     cnx.commit()
-    
-    #THERN I NEED TO REWRITE THE ACTION FILE, I STOPPED AT TEST, I CAN REMOVE A LOT OF CHECKS NOW ON THE FILE SYSTEM AND I CAN SORT LIST IN
-    #THE DATABASE AND FETCH IT LIMITED AND SORTED
         
-        
-    
+     
+def get_file_execution_order(file_name):
+    '''
+    Checks that xxx in  xxx_fff_ggg.sql file name is a number.
+    If it is, will use that as the expected running order of the file,
+    otherwise, return "1"
+    '''
+    parts = file_name.split('_')
+    try: 
+        int(parts[0])
+        return parts[0]
+    except ValueError:
+        return 1
+

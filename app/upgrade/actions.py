@@ -30,6 +30,7 @@ def unblock(file_name_to_unblock):
     cnx = app.db.get_connection()
     cursor = cnx.cursor()
     cursor.execute(sql)
+    cnx.commit()
 
 
 
@@ -38,10 +39,7 @@ def test(limit_of_files_processed):
     runs the upgrade SQLs on the test server
     limit_of_files_process can be 0 -> all un processed files
     or a number.
-    If a number, Will run that number on the files, dictionary sorted ASC
-    Reads and sorts all the files in the [current] folder
-    loops on the sorted list bottom to top
-     if file was not processed, and I did not pass the limit of files to process
+    If a number, Will run that number on the files, sorted by execution order ASC
         process file
         if fail, mark with [failed_in_test]  && crash! 
     '''
@@ -64,68 +62,44 @@ def test(limit_of_files_processed):
     upgrade_folder = config.assets_folder + "/upgrades/current"
     L.info('Reading files from {}'.format(upgrade_folder))
     
-    # loop on each file under the current folder, dictionary sorted asc, 
-    # and checking each file in ACTUAL db upgrades and run the file on test server
-    
-    no_files_found = True
-    for root, dirnames, filenames in os.walk(upgrade_folder):
-        # This is where I apply the filter of the ignored file list.
-        if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
-            continue
+    # Get all files ready for running from the DB
+    limit = ''
+    if limit_of_files_processed > 0:
+        limit = "LIMIT " + limit_of_files_processed
         
-        for filename in fnmatch.filter(filenames, '*sql'):
-            
-            #Check file was not previously handled 
-            find_file_sql = "SELECT file_name,execution_status FROM {}.rcom_sql_upgrades WHERE file_name= %s".format(upgrade_config['upgrade_tracking_database'])
-            actual_cursor.execute(find_file_sql,(filename,))
-            res = actual_cursor.fetchall()
-            try:
-                #This file was marked ready to be run, but a previous failure got it stuck
-                if res[0][1] != 'pending_completion':
-                    continue
-            except IndexError: # I found no entry -> new or unblocked file
-                pass
-            
-            
-            # Create the pending completion entry for the file
-            L.info("\n----------------------------------------\nDoing file {}\n----------------------------------------".format(filename))
-            insert = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES(%s,NOW(),'pending_completion','')".format(upgrade_config['upgrade_tracking_database'])
-            params = (filename,)
-            actual_cursor.execute(insert,params)
+    sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status ='pending_completion' ORDER BY execute_order ASC {}".format(upgrade_config['upgrade_tracking_database'],limit)
+    actual_cursor.execute(sql)
+    res = actual_cursor.fetchall()
+    for file_to_run, in res:
+        L.info("About to execute [{}]".format(upgrade_folder + '/' + file_to_run))
+        f = open(upgrade_folder + '/' + file_to_run,'r')
+        file_content = f.read()
+        f.close()
+        try:
+            for one_sql in file_content.split(';'):
+                if len(one_sql)>6:
+                    L.info("\n----------\nabout to run test SQL:\n{}\n".format(one_sql))
+                    test_cursor.execute(one_sql)
+                    test_cnx.commit()
+                    
+        except Exception as err:
+            err_msg = str(err)
+            L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
+            update_failed_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='failed_in_test',error_message=%s WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
+            params = (err_msg,file_to_run)
+            actual_cursor.execute(update_failed_sql,params)
             actual_db_cnx.commit()
-
-                        
-            no_files_found = False
-            f = open(root + '/' + filename,'r')
-            file_content = f.read()
-            f.close()
-            try:
-                for one_sql in file_content.split(';'):
-                    if len(one_sql)>6:
-                        L.info("\n----------\nabout to run SQL:\n{}\n".format(one_sql))
-                        test_cursor.execute(one_sql)
-            except Exception as err:
-                err_msg = str(err)
-                L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
-                insert = "INSERT INTO {}.rcom_sql_upgrades VALUES(%s,NOW(),'failed',%s) ON DUPLICATE KEY UPDATE execution_status='failed_in_test',time_runned=NOW(),error_message=%s".format(\
-                                                                                      upgrade_config['upgrade_tracking_database'])
-                params = (filename,err_msg,err_msg)
-                actual_cursor.execute(insert,params)
-                actual_db_cnx.commit()
-                exit(1)
-                
-            else:
-                L.debug('marking file as completed_in_test')
-                update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed_in_test' WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
-                params = (filename,)
-                actual_cursor.execute(update_sql,params)
-                actual_db_cnx.commit()
+            exit(1)
             
+        else:
+            L.debug('marking file as completed_in_test')
+            update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed_in_test' WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
+            params = (file_to_run,)
+            actual_cursor.execute(update_sql,params)
+            actual_db_cnx.commit()
+        
                 
                 
-    if no_files_found:
-        L.error('There are no files to upgrade with! upgrades/current folder is empty')
-    exit(1)
     
     
     
@@ -160,3 +134,22 @@ def archive_all_processed_files():
     cursor.execute(sql)
     for file_name in cursor:
         print(file_name) #TODO in=mplement archive
+        
+        
+        
+        
+        
+        
+        
+        
+#demo
+#find_file_sql = "SELECT file_name,execution_status FROM {}.rcom_sql_upgrades WHERE file_name= %s".format(upgrade_config['upgrade_tracking_database'])
+#actual_cursor.execute(find_file_sql,(filename,))
+#    res = actual_cursor.fetchall()
+#    try:
+#This file was marked ready to be run, but a previous failure got it stuck
+#         if res[0][1] != 'pending_completion':
+#            continue
+#         except IndexError: # I found no entry -> new or unblocked file
+#            pass
+            

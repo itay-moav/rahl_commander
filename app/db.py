@@ -25,10 +25,10 @@ def get_connection():
 
 
 def change_db(new_db):
-    cnx = get_connection()
-    if cnx.database != new_db and new_db:
+    cnx_r = get_connection()
+    if cnx_r.database != new_db and new_db:
         try:
-            cnx.database = new_db
+            cnx_r.database = new_db
             
         except My.Error as err:
             if err.errno == My.errorcode.ER_BAD_DB_ERROR:
@@ -41,6 +41,6 @@ def change_db(new_db):
 
 
 def get_test_Server_connection():
-    cnx = My.connect(user=upgrade_config['test_user'], password=upgrade_config['test_password'],host=upgrade_config['test_host'],buffered=True)
-    cnx.database = upgrade_config['upgrade_tracking_database']
-    return cnx
+    cnx_t = My.connect(user=upgrade_config['test_user'], password=upgrade_config['test_password'],host=upgrade_config['test_host'],buffered=True)
+    cnx_t.database = upgrade_config['upgrade_tracking_database']
+    return cnx_t
