@@ -25,7 +25,7 @@ def unblock(file_name_to_unblock):
     Deleted from the upgrade db an upgrade file that failed.
     this will cause the file to be re-run if he is in the CURRENT folder
     '''
-    sql = "DELETE FROM {}.sql_upgrades WHERE file_name='{}' AND execution_status<>'completed'".format(upgrade_config['upgrade_tracking_database'], \
+    sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name='{}' AND execution_status<>'completed'".format(upgrade_config['upgrade_tracking_database'], \
                                                                                                       file_name_to_unblock)
     cnx = app.db.get_connection()
     cursor = cnx.cursor()
@@ -53,11 +53,11 @@ def test(limit_of_files_processed):
     actual_cursor = actual_db_cnx.cursor()
     
     # Checking for failed files in the upgrade DB, Failed files will immediatly fail -> fix those before upgrades can continue
-    failed_files_sql = "SELECT COUNT(*) FROM {}.sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(upgrade_config['upgrade_tracking_database'])
+    failed_files_sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(upgrade_config['upgrade_tracking_database'])
     actual_cursor.execute(failed_files_sql)
     res = actual_cursor.fetchall()
     if res[0][0] > 0:
-        L.fatal('There are failed files in [{}.sql_upgrades] Execution stops until you fix it!'.format(upgrade_config['upgrade_tracking_database']))
+        L.fatal('There are failed files in [{}.rcom_sql_upgrades] Execution stops until you fix it!'.format(upgrade_config['upgrade_tracking_database']))
         exit(1)
                 
     
@@ -76,7 +76,7 @@ def test(limit_of_files_processed):
         for filename in fnmatch.filter(filenames, '*sql'):
             
             #Check file was not previously handled 
-            find_file_sql = "SELECT file_name,execution_status FROM {}.sql_upgrades WHERE file_name= %s".format(upgrade_config['upgrade_tracking_database'])
+            find_file_sql = "SELECT file_name,execution_status FROM {}.rcom_sql_upgrades WHERE file_name= %s".format(upgrade_config['upgrade_tracking_database'])
             actual_cursor.execute(find_file_sql,(filename,))
             res = actual_cursor.fetchall()
             try:
@@ -89,7 +89,7 @@ def test(limit_of_files_processed):
             
             # Create the pending completion entry for the file
             L.info("\n----------------------------------------\nDoing file {}\n----------------------------------------".format(filename))
-            insert = "INSERT IGNORE INTO {}.sql_upgrades VALUES(%s,NOW(),'pending_completion','')".format(upgrade_config['upgrade_tracking_database'])
+            insert = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES(%s,NOW(),'pending_completion','')".format(upgrade_config['upgrade_tracking_database'])
             params = (filename,)
             actual_cursor.execute(insert,params)
             actual_db_cnx.commit()
@@ -107,7 +107,7 @@ def test(limit_of_files_processed):
             except Exception as err:
                 err_msg = str(err)
                 L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
-                insert = "INSERT INTO {}.sql_upgrades VALUES(%s,NOW(),'failed',%s) ON DUPLICATE KEY UPDATE execution_status='failed_in_test',time_runned=NOW(),error_message=%s".format(\
+                insert = "INSERT INTO {}.rcom_sql_upgrades VALUES(%s,NOW(),'failed',%s) ON DUPLICATE KEY UPDATE execution_status='failed_in_test',time_runned=NOW(),error_message=%s".format(\
                                                                                       upgrade_config['upgrade_tracking_database'])
                 params = (filename,err_msg,err_msg)
                 actual_cursor.execute(insert,params)
@@ -116,7 +116,7 @@ def test(limit_of_files_processed):
                 
             else:
                 L.debug('marking file as completed_in_test')
-                update_sql = "UPDATE {}.sql_upgrades SET execution_Status='completed_in_test' WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
+                update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed_in_test' WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
                 params = (filename,)
                 actual_cursor.execute(update_sql,params)
                 actual_db_cnx.commit()
@@ -156,7 +156,7 @@ def archive_all_processed_files():
     #Loop on upgrade tracking DB until all files are accounted for and moved
     cnx = app.db.get_connection()
     cursor = cnx.cursor()
-    sql = "SELECT file_name FROM {}.sql_upgrades WHERE execution_status = 'completed' ORDER BY time_runned DESC, file_name DESC".format(upgrade_config['upgrade_tracking_database'])
+    sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status = 'completed' ORDER BY time_runned DESC, file_name DESC".format(upgrade_config['upgrade_tracking_database'])
     cursor.execute(sql)
     for file_name in cursor:
         print(file_name) #TODO in=mplement archive

@@ -39,7 +39,7 @@ def run(args):
     #--archive
     commands.appendleft(app.upgrade.commands.Archive(args.archive_files))
     
-    # Sync sql_upgrades table with the file system
+    # Sync rcom_sql_upgrades table with the file system
     sync_files_to_db()
     
     # go go go
@@ -80,7 +80,7 @@ def sync_files_to_db():
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Check all NONE completed files in the db, if no longer exist in file system -> delete Entry
     # -------------------------------------------------------------------------------------------------------------------------------------------------
-    find_files_sql = "SELECT file_name FROM {}.sql_upgrades WHERE execution_status <> 'completed'".format(upgrade_config['upgrade_tracking_database'])
+    find_files_sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status <> 'completed'".format(upgrade_config['upgrade_tracking_database'])
     cursor.execute(find_files_sql)
     res = cursor.fetchall()
     
@@ -90,12 +90,13 @@ def sync_files_to_db():
             # ALL GOOD, DO NOTHING
             continue; # to next file
         else:
+            L.warning('No longer in file system, deleting from rcom_sql_upgrades [{}]'.format(db_file))
             files_to_delete_from_db.append(db_file)
     
     if len(files_to_delete_from_db) > 0:
         sql_in = "('" + "','" .join(files_to_delete_from_db) + "')"
         cursor = cnx.cursor()
-        sql = "DELETE FROM {}.sql_upgrades WHERE file_name IN {}".format(upgrade_config['upgrade_tracking_database'],sql_in)
+        sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name IN {}".format(upgrade_config['upgrade_tracking_database'],sql_in)
         L.debug(sql)
         cursor.execute(sql)
     
@@ -103,17 +104,17 @@ def sync_files_to_db():
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Check file system for any file not yet in db, create an entry with [pending_completion] STATUS
     # -------------------------------------------------------------------------------------------------------------------------------------------------
-    values =["('"+file_name+"','','pending_completion',NULL)" for file_name in files_in_file_system  \
-             if not (any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with))] # ignored files list filter
+    values =["('"+file_name+"',NULL,'pending_completion',NULL)" for file_name in files_in_file_system  \
+             if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
              
     values = ','.join(values)
-    print(values)
+    sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['upgrade_tracking_database'],values)
+    L.debug(sql)
+    cursor.execute(sql)
+    cnx.commit()
+    
+    #THERN I NEED TO REWRITE THE ACTION FILE, I STOPPED AT TEST, I CAN REMOVE A LOT OF CHECKS NOW ON THE FILE SYSTEM AND I CAN SORT LIST IN
+    #THE DATABASE AND FETCH IT LIMITED AND SORTED
         
-    THIS IS WHERE I STOPPED -> I NEED TO RUN THE DELETE COMMAND ON THE DABASE OF THE FILES NO LONGER IN FILE SYSTEM AND NOT COMPLETED
-    AND I THEN NEED TO INSERT NEW FILES INTO THE UPGRADE_TABLE
-    THERN I NEED TO REWRITE THE ACTION FILE, I STOPPED AT TEST, I CAN REMOVE A LOT OF CHECKS NOW ON THE FILE SYSTEM AND I CAN SORT LIST IN
-    THE DATABASE AND FETCH IT LIMITED AND SORTED
-        
-    #find_file_sql = "SELECT file_name FROM {}.sql_upgrades WHERE file_name '{}'".format(upgrade_config['upgrade_tracking_database'],file_name)
         
     

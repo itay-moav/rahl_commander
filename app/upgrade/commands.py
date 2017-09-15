@@ -29,7 +29,7 @@ class Unblock:
                 L.error("Check your arguments --unblock was ignored. --unblock can not be used with other flags!")
                 return True
             app.upgrade.actions.unblock(self.file_name_to_unblock)
-            L.info("Removed {}.sql from the upgrade tracking table {}.sql_upgrades".format(self.file_name_to_unblock,upgrade_config['upgrade_tracking_database']))
+            L.info("Removed {}.sql from the upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_unblock,upgrade_config['upgrade_tracking_database']))
             return True
         return False
             

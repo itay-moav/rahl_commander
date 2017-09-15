@@ -66,7 +66,7 @@ file: config/upgrade.py
   
 values:  
 database:          'data base u will build this table in YOU MUST MODIFY THIS'
-table:             'table name u wish to give it, default will be sql_upgrades'
+table:             'table name u wish to give it, default will be rcom_sql_upgrades'
 test_host:         'host/db server to run tests on before running on actual db'
 test_user:         'username for the test server'
 test_password:     'password for test server'
@@ -77,16 +77,10 @@ force_schema_test  True|False true will force schema testing on test/real server
 
 DATABASE TABLE STRUCTURE
 ========================
-CREATE TABLE ???????.`sql_upgrades` (
-  `file_name` varchar(255) NOT NULL,
-  `time_runned` timestamp NOT NULL,
-  `execution_status` enum('pending_completion','failed','completed') NOT NULL DEFAULT 'pending_completion',
-  `error_message` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`file_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  time_runned timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE [db name comes from config].rcom_sql_upgrades (
   file_name varchar(255) CHARACTER SET utf8 NOT NULL,
+  time_runned timestamp NULL DEFAULT NULL,
   execution_status enum('pending_completion','failed','failed_in_test','completed','completed_in_test') CHARACTER SET utf8 NOT NULL DEFAULT 'pending_completion',
   error_message varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  PRIMARY KEY (time_runned,file_name)
+  PRIMARY KEY (file_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
