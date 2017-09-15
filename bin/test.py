@@ -21,6 +21,7 @@ for verbosity 2 Will give a list of objects not in sync
 
 import sys
 import os
+import traceback
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
 from app import parser as parser
 #import app.commands
@@ -44,8 +45,8 @@ def main(parser):
         Tester.run()
 
 
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         return 1
 
 

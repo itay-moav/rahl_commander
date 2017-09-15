@@ -22,6 +22,7 @@ U can use dry run to see what will be dropped.
 
 import sys
 import os
+import traceback
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
 from app import parser as parser
 import app.cleaner
@@ -53,8 +54,8 @@ def main(parser):
         Builder = app.cleaner.AllDBObj(args)
         Builder.run()
 
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         return 1
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++

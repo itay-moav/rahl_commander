@@ -86,7 +86,8 @@ class Test:
                     limit_of_files_processed = 0 #Inverse loop, 0 means all
                     limit_info = 'all'
                     
-                L.info("Will TEST upgrade with {} files".format(limit_info))
+                L.info('RUNNING TEST upgrade on {}:{}@{}'.format(upgrade_config['test_user'],upgrade_config['test_password'],upgrade_config['test_host']))
+                L.info("WILL TEST upgrade with {} files".format(limit_info))
                 app.upgrade.actions.test(limit_of_files_processed)   
     
         return should_i_stop
@@ -166,8 +167,9 @@ class Upgrade():
             else: #if I do not provide the --all flag, I still run JUST the tests on all the files.
                 limit_of_files_processed = 0 #Invers loop, 0 means all, negative numbers I use to represent how many files more to run
                 limit_info = 'all'
-            L.info("Will TEST upgrade with {} files".format(limit_info))
-            L.info('Running test upgrade on actual server')
+
+            L.info('RUNNING UPGRADE ON ACTUAL SERVER')
+            L.info("WILL UPGRADE with {} files".format(limit_info))
             app.upgrade.actions.upgrade(limit_of_files_processed)    
     
         return should_i_stop

@@ -13,9 +13,8 @@
 
 import sys
 import os
-
+import traceback
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
-
 from app import parser as parser
 import app.upgrade
 
@@ -40,9 +39,8 @@ def main(parser):
         args = app.init(parser)
         app.upgrade.run(args)
         
-    except Exception as e:
-        print(e)
-        raise e
+    except Exception:
+        traceback.print_exc()
         return 1
 
 

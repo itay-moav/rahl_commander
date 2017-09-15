@@ -19,9 +19,8 @@ It defines classes_and_methods
 
 import sys
 import os
-
+import traceback
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
-
 from app import parser as parser
 import app.commands
 
@@ -49,8 +48,8 @@ def main(parser):
         Builder = app.commands.DropDBObj(args)
         Builder.run()
 
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         return 1
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++

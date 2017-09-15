@@ -13,6 +13,7 @@
 
 import sys
 import os
+import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
 
@@ -27,8 +28,8 @@ def main(parser):
         Builder = app.autocompletion.SP(args)
         Builder.run()
 
-    except Exception as e:
-        print(e)
+    except Exception:
+        traceback.print_exc()
         return 1
 
 

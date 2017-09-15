@@ -21,6 +21,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
 from app import parser as parser
 import app.commands
+import traceback
 
 def main(parser):
     '''Command line options.'''
@@ -49,8 +50,9 @@ def main(parser):
         Builder.run()
 
 
-    except Exception as e:
-        print(e)
+    # TODO if not run from another tool, I should let the exception be thrown so I can see proper error logs
+    except Exception:
+        traceback.print_exc()
         return 1
 
 
