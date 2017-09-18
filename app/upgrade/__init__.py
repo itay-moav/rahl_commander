@@ -18,14 +18,28 @@ def run(args):
     and decide what to run
     This one seems to be procedural in nature hmmmmm 
     '''
-    L.debug('INPUT')
-    L.debug(args)
-    L.debug(upgrade_config.__repr__())
+    
+    # Start
+    #L.debug('INPUT')
+    #L.debug(args)
+    #L.debug(upgrade_config.__repr__())
+    L.debug("\n\n--------------------------------------------------- START UPGRADING --------------------------------------------------------\n\n")
+
+    # Sync rcom_sql_upgrades table with the file system
+    sync_files_to_db()
     
     commands = deque([])
-    
+
+    #--mark_completed     -> will mark file as completed (sometimes you will run files manually and want the system to know it 
+    commands.appendleft(app.upgrade.commands.MarkCompleted(args.file_name_to_mark_complete))
+        
     #--unblock     -> blocking action, will exit 
     commands.appendleft(app.upgrade.commands.Unblock(args.file_name_to_unblock))
+    
+    # Validate System -> no command = this always happens, unless blocking/unblocking happens (then we dont get here)
+    #-- After unlblock, which might remove problematic files, I am doing validations on the system, no point continuing 
+    #if issues found
+    commands.appendleft(app.upgrade.commands.ValidateSystem())
     
     #--test
     commands.appendleft(app.upgrade.commands.Test(args.test_upgrade,args.handle_all,args.limit_files))
@@ -39,9 +53,6 @@ def run(args):
     #--archive
     commands.appendleft(app.upgrade.commands.Archive(args.archive_files))
     
-    # Sync rcom_sql_upgrades table with the file system
-    sync_files_to_db()
-    
     # go go go
     run_commands(commands)
     
@@ -53,11 +64,21 @@ def run(args):
 def run_commands(commands):
     '''
     actually running the commands
+
+        @var should_i_stop is boolean, the result of the previous action. If it is true
+         execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+        return True will break the command string from fully executing.
+        This type of command is a blocking command i.e. nothing happens later if
+        this flag was supplied
+
     '''
     should_i_stop = False
     while commands:
+        if should_i_stop:
+            L.info('Either no files to work with where found, OR You have used a solo command like --unblock or --mark_complete. No further actions will take place. Bye Bye!')
+            return
         command = commands.pop()
-        should_i_stop = command.action(should_i_stop)
+        should_i_stop = command.action()
         
         
         
@@ -66,6 +87,8 @@ def sync_files_to_db():
     Check all NONE completed files in the db, if no longer exist in file system -> delete Entry
     
     Check file system for any file not yet in db, create an entry with [pending_completion] STATUS
+    
+    Reset status of all [completed in test] files to be [pending completion]
     '''
     
     
@@ -97,7 +120,7 @@ def sync_files_to_db():
         sql_in = "('" + "','" .join(files_to_delete_from_db) + "')"
         cursor = cnx.cursor()
         sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name IN {}".format(upgrade_config['upgrade_tracking_database'],sql_in)
-        L.debug(sql)
+        #L.debug(sql)
         cursor.execute(sql)
     
     
@@ -109,11 +132,21 @@ def sync_files_to_db():
              
     values = ','.join(values)
     sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['upgrade_tracking_database'],values)
-    L.debug(sql)
+    #L.debug(sql)
     cursor.execute(sql)
+    
+    # -------------------------------------------------------------------------------------------------------------------------------------------------
+    # Reset status of all [completed in test] files to be [pending completion]
+    # -------------------------------------------------------------------------------------------------------------------------------------------------
+    L.debug('reset completed in test to be pending completion')
+    update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='pending_completion' WHERE execution_Status='completed_in_test'".format(upgrade_config['upgrade_tracking_database'])
+    cursor.execute(update_sql)
     
     # SAVING ALL CHANGES TO DB
     cnx.commit()
+    
+    
+    
         
      
 def get_file_execution_order(file_name):

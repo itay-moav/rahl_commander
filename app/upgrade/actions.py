@@ -20,6 +20,21 @@ class TheBabaClass:
     '''
     pass
 
+
+
+def mark_complete(file_name_to_mark_complete):
+    '''
+    Marking a single file as complete and stopping
+    '''
+    sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed' WHERE file_name = %s LIMIT 1".format(upgrade_config['upgrade_tracking_database'])
+    cnx = app.db.get_connection()
+    cursor = cnx.cursor()
+    cursor.execute(sql,(file_name_to_mark_complete,))
+    cnx.commit()
+
+    
+    
+    
 def unblock(file_name_to_unblock):
     '''
     Deleted from the upgrade db an upgrade file that failed.
@@ -34,6 +49,26 @@ def unblock(file_name_to_unblock):
 
 
 
+
+
+def validate_system():
+    '''
+    Checking for failed files in the upgrade DB, Failed files will immediatly fail -> fix those before upgrades can continue
+    '''
+    actual_db_cnx = app.db.get_connection() # need this to know which files I already processed
+    actual_db_cnx.database = upgrade_config['upgrade_tracking_database']
+    actual_cursor = actual_db_cnx.cursor()
+    failed_files_sql = "SELECT COUNT(*) FROM rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')"
+    actual_cursor.execute(failed_files_sql)
+    res = actual_cursor.fetchall()
+    if res[0][0] > 0:
+        L.fatal('There are failed files in [{}.rcom_sql_upgrades] Execution stops until you fix it!'.format(upgrade_config['upgrade_tracking_database']))
+        raise Exception('We have failed sql upgrade files, fix them!')    
+
+
+
+
+
 def test(limit_of_files_processed):
     '''
     runs the upgrade SQLs on the test server
@@ -42,22 +77,14 @@ def test(limit_of_files_processed):
     If a number, Will run that number on the files, sorted by execution order ASC
         process file
         if fail, mark with [failed_in_test]  && crash! 
+        
+    @return boolean True for files where processed, false for none
     '''
     test_cnx      = app.db.get_test_Server_connection()
     actual_db_cnx = app.db.get_connection() # need this to know which files I already processed
     actual_db_cnx.database = upgrade_config['upgrade_tracking_database']
     test_cursor   = test_cnx.cursor()
     actual_cursor = actual_db_cnx.cursor()
-    
-    # Checking for failed files in the upgrade DB, Failed files will immediatly fail -> fix those before upgrades can continue
-    failed_files_sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(upgrade_config['upgrade_tracking_database'])
-    actual_cursor.execute(failed_files_sql)
-    res = actual_cursor.fetchall()
-    if res[0][0] > 0:
-        L.fatal('There are failed files in [{}.rcom_sql_upgrades] Execution stops until you fix it!'.format(upgrade_config['upgrade_tracking_database']))
-        exit(1)
-                
-    
     upgrade_folder = config.assets_folder + "/upgrades/current"
     L.info('Reading files from {}'.format(upgrade_folder))
     
@@ -69,14 +96,24 @@ def test(limit_of_files_processed):
     sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status ='pending_completion' ORDER BY execute_order ASC {}".format(upgrade_config['upgrade_tracking_database'],limit)
     actual_cursor.execute(sql)
     res = actual_cursor.fetchall()
+    
+    # check there actually are files to work with
+    if len(res) == 0:
+        L.info("No files to test upon where found")
+        return False
+    
     for file_to_run, in res:
-        L.info("About to execute [{}]".format(upgrade_folder + '/' + file_to_run))
-        f = open(upgrade_folder + '/' + file_to_run,'r')
+        real_file_path_name = upgrade_folder + '/' + file_to_run
+        L.info("About to execute [{}]".format(real_file_path_name))
+        f = open(real_file_path_name,'r')
         file_content = f.read()
         f.close()
+        
+        sql_string_for_debug = ''
         try:
             for one_sql in file_content.split(';'):
                 if len(one_sql)>6:
+                    sql_string_for_debug = one_sql
                     L.info("\n----------\nabout to run test SQL:\n{}\n".format(one_sql))
                     test_cursor.execute(one_sql)
                     test_cnx.commit()
@@ -84,11 +121,14 @@ def test(limit_of_files_processed):
         except Exception as err:
             err_msg = str(err)
             L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
+            L.fatal('File: [{}]'.format(real_file_path_name))
+            L.fatal("SQL: \n{}\n".format(sql_string_for_debug))
+            
             update_failed_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='failed_in_test',error_message=%s WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
             params = (err_msg,file_to_run)
             actual_cursor.execute(update_failed_sql,params)
             actual_db_cnx.commit()
-            exit(1)
+            raise err
             
         else:
             L.debug('marking file as completed_in_test')
@@ -96,6 +136,8 @@ def test(limit_of_files_processed):
             params = (file_to_run,)
             actual_cursor.execute(update_sql,params)
             actual_db_cnx.commit()
+            
+    return True
         
                 
                 
@@ -107,7 +149,7 @@ def test_with_schema():
     runs the entire schema checker on the test server
     no params needed
     '''
-    args= TheBabaClass()
+    args = TheBabaClass()
     args.handle_all = True
     args.cnx = app.db.get_test_Server_connection()
     L.debug(args)
@@ -126,16 +168,6 @@ def upgrade(limit_of_files_processed):
     actual_db_cnx = app.db.get_connection() # need this to know which files I already processed
     actual_db_cnx.database = upgrade_config['upgrade_tracking_database']
     actual_cursor = actual_db_cnx.cursor()
-    
-    # Checking for failed files in the upgrade DB, Failed files will immediatly fail -> fix those before upgrades can continue
-    failed_files_sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(upgrade_config['upgrade_tracking_database'])
-    actual_cursor.execute(failed_files_sql)
-    res = actual_cursor.fetchall()
-    if res[0][0] > 0:
-        L.fatal('There are failed files in [{}.rcom_sql_upgrades] Execution stops until you fix it!'.format(upgrade_config['upgrade_tracking_database']))
-        exit(1)
-                
-    
     upgrade_folder = config.assets_folder + "/upgrades/current"
     L.info('Reading files from {}'.format(upgrade_folder))
     
@@ -147,33 +179,47 @@ def upgrade(limit_of_files_processed):
     sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status IN ('pending_completion','completed_in_test') ORDER BY execute_order ASC {}".format(upgrade_config['upgrade_tracking_database'],limit)
     actual_cursor.execute(sql)
     res = actual_cursor.fetchall()
+    
+    # check there actually are files to work with
+    if len(res) == 0:
+        L.info("No files to UPGRADE DB with where found")
+        return False
+
+    
     for file_to_run, in res:
-        L.info("About to execute [{}]".format(upgrade_folder + '/' + file_to_run))
-        f = open(upgrade_folder + '/' + file_to_run,'r')
+        real_file_path_name = upgrade_folder + '/' + file_to_run
+        L.info("About to execute [{}]".format(real_file_path_name))
+        f = open(real_file_path_name,'r')
         file_content = f.read()
         f.close()
+        sql_string_for_debug = ''
         try:
             for one_sql in file_content.split(';'):
                 if len(one_sql)>6:
-                    L.info("\n----------\nabout to run test SQL:\n{}\n".format(one_sql))
+                    sql_string_for_debug = one_sql
+                    L.info("\n----------\nabout to run SQL:\n{}\n".format(one_sql))
                     actual_cursor.execute(one_sql)
                     actual_db_cnx.commit()
                     
         except Exception as err:
             err_msg = str(err)
-            L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
+            L.fatal('The last upgrade SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
+            L.fatal('File: [{}]'.format(real_file_path_name))
+            L.fatal("SQL: \n{}\n".format(sql_string_for_debug))
             update_failed_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='failed',error_message=%s WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
             params = (err_msg,file_to_run)
             actual_cursor.execute(update_failed_sql,params)
             actual_db_cnx.commit()
-            exit(1)
+            raise err
             
         else:
             L.debug('marking file as completed')
-            update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed_in_test' WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
+            update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed' WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
             params = (file_to_run,)
             actual_cursor.execute(update_sql,params)
             actual_db_cnx.commit()
+    
+    return True
 
 
 def archive_all_processed_files():

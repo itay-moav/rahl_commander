@@ -31,10 +31,14 @@ def main(parser):
                                                                                                  "will do it there first, right after running the tests. " + \
                                                                                                  "Otherwise, will run only on real server.")
         parser.add_argument("--unblock",    dest="file_name_to_unblock",  \
-                                                                  action="store",nargs='?', help="DANGEROUS! Takes an upgrade file name as arg (no postfix). " + \
+                                                                  action="store",nargs='?', help="DANGEROUS! Takes an upgrade file name as arg. " + \
                                                                                                  "If it is not completed, it will remove it from the tracking DB")
-        
-        
+        parser.add_argument("--mark_completed", dest="file_name_to_mark_complete",  \
+                                                                  action="store",nargs='?', help="DANGEROUS! Takes an upgrade file name as arg. " + \
+                                                                                                 "If it is in the file system, it will mark it completed in the tracking DB")
+        parser.add_argument("--mark_complete",  dest="file_name_to_mark_complete",  \
+                                                                  action="store",nargs='?', help="DANGEROUS! Takes an upgrade file name as arg. " + \
+                                                                                                 "If it is in the file system, it will mark it completed in the tracking DB")
         
         args = app.init(parser)
         app.upgrade.run(args)

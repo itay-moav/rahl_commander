@@ -6,6 +6,34 @@ Created on Aug 10, 2017
 from app import logging as L
 from config.upgrade import upgrade as upgrade_config
 import app.upgrade.actions
+from argparse import ArgumentError
+
+class MarkCompleted:
+    '''
+    will mark file as completed (sometimes you will run files manually and want the system to know it
+    '''
+    
+    def __init__(self, file_name_to_mark_complete):
+        self.file_name_to_mark_complete = file_name_to_mark_complete
+        
+    def action(self):
+        '''
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
+        '''
+        if self.file_name_to_mark_complete != None:
+            L.info("Marking {} as COMPLETE in upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_mark_complete,upgrade_config['upgrade_tracking_database']))
+            app.upgrade.actions.mark_complete(self.file_name_to_mark_complete)
+            return True
+        return False
+
+
+
+
 
 class Unblock:
     '''
@@ -15,30 +43,51 @@ class Unblock:
     def __init__(self, file_name_to_unblock):
         self.file_name_to_unblock = file_name_to_unblock
         
-    def action(self,should_i_stop):
+    def action(self):
         '''
-        @var should_i_stop is boolean, the result of the previous action. If it is true
-             execution should stop, but I will alert the user this ar was activated, he/she might have done a mistake
-        return True will break the command string from fully executing.
-        This type of command is a blocking command i.e. nothing happens later if
-        this flag was supplied
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
         '''
         
         if self.file_name_to_unblock != None:
-            if should_i_stop:
-                L.error("Check your arguments --unblock was ignored. --unblock can not be used with other flags!")
-                return True
             app.upgrade.actions.unblock(self.file_name_to_unblock)
             L.info("Removed {}.sql from the upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_unblock,upgrade_config['upgrade_tracking_database']))
             return True
         return False
             
+
+
+
+
+
+
+class ValidateSystem:
+    '''
+    Validate the status of the system (no unhandled failed files, no ...
+    '''
+
         
+    def action(self):
+        '''
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
+        '''
+        L.info("Validating system files and db entries")
+        app.upgrade.actions.validate_system()
+        return False
+        
+
+
+
     
-    
-        
-        
-        
         
 
 class Test:
@@ -58,26 +107,24 @@ class Test:
         
         # check for conflicts
         if self.handle_all_files and self.handle_x_files != None:
-            L.fatal("Please use either --all or --limit")
-            exit(-1) 
+            raise ArgumentError('--all',"Please use either --all or --limit")
         
         if self.handle_x_files != None and int(self.handle_x_files) <1:
-            L.fatal("--limit must be at least 1")
-            exit(-1)
+            raise ArgumentError('--limit',"--limit must be at least 1")
             
         return True
     
     
-    def  action(self,should_i_stop):
+    def  action(self):
         '''
-        @var should_i_stop is boolean, the result of the previous action. If it is true
-             execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
         '''
         if self.do_test:
-            if should_i_stop:
-                L.error("Check your arguments --force_test was ignored. --force_test was used with another stand alone flag (probably --unblock)")
-                return True
-            
             if self.validate_input():
                 if self.handle_x_files != None and int(self.handle_x_files) >0:
                     limit_of_files_processed = int(self.handle_x_files)
@@ -88,9 +135,11 @@ class Test:
                     
                 L.info('RUNNING TEST upgrade on {}:{}@{}'.format(upgrade_config['test_user'],upgrade_config['test_password'],upgrade_config['test_host']))
                 L.info("WILL TEST upgrade with {} files".format(limit_info))
-                app.upgrade.actions.test(limit_of_files_processed)   
+                files_where_processed = app.upgrade.actions.test(limit_of_files_processed)
+                if not files_where_processed:
+                    return True
     
-        return should_i_stop
+        return False
     
         
             
@@ -110,17 +159,21 @@ class TestServerSchema:
         self.do_schema_test     = with_schema_checker or upgrade_config['force_schema_test']
         self.all_args           = all_args
         
-    def action(self,should_i_stop):
+    def action(self):
         '''
         Runs the schma checker on the test server
+
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
         '''
         if self.do_on_test_server and self.do_schema_test:
-            if should_i_stop:
-                L.error("Check your arguments --with_schema was ignored. --with_schema was used with another stand alone flag (probably --unblock)")
-                return True
             L.info("Running schema checker on test server {}@{}".format(upgrade_config['test_user'],upgrade_config['test_host']))
             app.upgrade.actions.test_with_schema()
-        return should_i_stop
+        return False
      
      
      
@@ -141,25 +194,23 @@ class Upgrade():
         
         # check for conflicts
         if self.handle_all_files and self.handle_x_files != None:
-            L.fatal("Please use either --all or --limit")
-            exit(-1) 
+            raise ArgumentError('--all',"Please use either --all or --limit") 
         
         if self.handle_x_files != None and int(self.handle_x_files) <1:
-            L.fatal("--limit must be at least 1")
-            exit(-1)
+            raise ArgumentError('--limit',"--limit must be at least 1")
             
         return True
     
     
-    def  action(self,should_i_stop):
+    def  action(self):
         '''
-        @var should_i_stop is boolean, the result of the previous action. If it is true
-             execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
         '''
-        if should_i_stop:
-            L.error("Check your arguments running upgrades has stopped as it was used with another stand alone flag (probably --unblock)")
-            return True
-        
         if self.validate_input():
             if self.handle_x_files != None and int(self.handle_x_files) >0:
                 limit_of_files_processed = -1 * int(self.handle_x_files)
@@ -170,9 +221,11 @@ class Upgrade():
 
             L.info('RUNNING UPGRADE ON ACTUAL SERVER')
             L.info("WILL UPGRADE with {} files".format(limit_info))
-            app.upgrade.actions.upgrade(limit_of_files_processed)    
-    
-        return should_i_stop
+            files_where_processed = app.upgrade.actions.upgrade(limit_of_files_processed)
+            if not files_where_processed:
+                return True
+
+        return False
             
         
 
@@ -189,9 +242,15 @@ class Archive():
     def __init__(self,archive_files):
         self.archive_files = archive_files
         
-    def action(self,should_i_stop):
-        if should_i_stop:
-            L.error("Check your arguments running --archive_files has stopped as it was used with a stand alone flag (probably --unblock)")
-            return True 
-        app.upgrade.actions.archive_all_processed_files()
+    def action(self):
+        '''
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
+        '''
+        if self.archive_files:
+            app.upgrade.actions.archive_all_processed_files()
         
