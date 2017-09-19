@@ -7,6 +7,7 @@ import app.iterator
 import os
 import config
 import app.meta as meta
+import config.upgrade as config_upgrade
 
 class Install(app.iterator.AssetFilesDBConn):
 
@@ -14,36 +15,22 @@ class Install(app.iterator.AssetFilesDBConn):
         '''
         Main iteration processor bala bala
         '''
-        print("******************************************************************************************************")
+        print("\n\n\n\n******************************************************************************************************")
         print("                                               START ")
         print("******************************************************************************************************")
         # NOTICE! assets folder is not tested for as there is an intrinsic test for it in the core system, it will throw an EnvironmentException
 
-        # USING THE CONFIG
-        print("\nUsing values from config folder!\n")
+        self.folders.append(self.assets_path + '/schema')
         
-        # First check the auto completion folder exists
-        if not os.path.isdir(config.assets_folder + '/autocompletion'):
-            print("WARNING: OH MY GOD!  XX You are missing autocompletion folder [{}]. Please create it and run tests again".format(config.assets_folder + '/autocompletion'))
-        else: 
-            print(" GOOD! autocompletion folder found [{}]".format(config.assets_folder + '/autocompletion'))
-
-        if not os.path.isdir(config.assets_folder + '/autocompletion/php'):
-            print("WARNING: OH MY GOD!  XX You are missing autocompletion folder for PHP [{}] folder FOR PHP. Create it if you plan to use it".format(config.assets_folder + '/autocompletion/php'))
-        else:
-            print(" GOOD! autocompletion folder found for PHP [{}].".format(config.assets_folder + '/autocompletion/php'))
-
-        if not os.path.isdir(config.assets_folder + '/scripts'):
-            print("WARNING: OH MY GOD!  XX You are missing scripts folder [{}]. Please create it if u need it, and run tests again".format(config.assets_folder + '/scripts'))
-        else: 
-            print(" GOOD! scripts folder found [{}]".format(config.assets_folder + '/scripts'))
-            self.folders.append(self.assets_path + '/scripts')
+        other_folder_to_check =[ \
+                    self.assets_path + '/upgrades',              \
+                    self.assets_path + '/upgrades/current',      \
+                    self.assets_path + '/upgrades/archive',      \
+                    self.assets_path + '/autocompletion',        \
+                    self.assets_path + '/autocompletion/php'     \
+        ]
         
-        if not os.path.isdir(config.assets_folder + '/schema'):
-            print("WARNING: OH MY GOD!  XX You are missing Schema Checker folder [{}]. Please create it if u need it, and run tests again".format(config.assets_folder + '/schema'))
-        else: 
-            print(" GOOD! Schema Checker folder found [{}]".format(config.assets_folder + '/schema'))
-            self.folders.append(self.assets_path + '/schema')
+
 
         # Check the db objects folder exist
         for sub_folder in self.folders:
@@ -53,8 +40,20 @@ class Install(app.iterator.AssetFilesDBConn):
             else:
                 print(" GOOD! folder [{}] was found".format(sub_folder))
 
+        # Check the db objects folder exist - I do a second checj on a seprate array, as the group above also have dbs it needs to check which i
+        # a subfolder in those folders
+        for sub_folder in other_folder_to_check:
+            #check subfolder exists or fail
+            if not os.path.isdir(sub_folder):
+                print("ERROR: You are missing [{}] folder. Please create it and run tests again".format(sub_folder))
+            else:
+                print(" GOOD! folder [{}] was found".format(sub_folder))
+
+        
         # CHECK DBs existance
-        print("\n\nNOW! I will test all dbs, you try to work with, exists\n\n")
+        print("\n\n******************************************************************************************************")
+        print("NOW! I will test all dbs, you try to work with, exists")
+        print("******************************************************************************************************\n\n")
         
         # I am not using the meta here to hard code the assets I check
         # This is to catch errors in the folder structure.
@@ -84,3 +83,30 @@ class Install(app.iterator.AssetFilesDBConn):
                 
         for db_name in databases_tracked:
             print(" Tracking db {} for the following asset types {}".format(db_name,databases_tracked[db_name]))
+
+        print("\n\n******************************************************************************************************")
+        print("Checking SQL UPGRADES config values")
+        print("******************************************************************************************************")
+        # check ignore list includes *.md files
+        if '.md' not in config.ignore_files_dirs_with:
+            print("ERROR: You must add '.md' to your file ignore list config/ignore_list.py")
+        else:
+            print(" GOOD! ['.md'] found in file ignore list under config/ignore_list.py")
+            
+        # check theupgrades config and tracking table is properly defined
+        try:
+            self.changeDB(config_upgrade.upgrade['upgrade_tracking_database'],'')
+            
+        except app.db.My.errors.ProgrammingError:
+            print("FATAL: HOLY CRAP! I am missing DB [{}] which your SQL UPGRRADES is configued to use.".format(config_upgrade.upgrade['upgrade_tracking_database']))
+            
+        else:
+            #db exists, check table rcom_sql_upgrades exists
+            sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades".format(config_upgrade.upgrade['upgrade_tracking_database'])
+            try:
+                self.cursor.execute(sql)
+            except app.db.My.errors.ProgrammingError:
+                print("FATAL: Problems with table rcom_sql_upgrades, I am unable to run [{}]".format(sql))
+            else:
+                print(" GOOD: table rcom_sql_upgrades was found")
+                  
