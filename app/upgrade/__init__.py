@@ -36,6 +36,9 @@ def run(args):
     #--unblock     -> blocking action, will exit 
     commands.appendleft(app.upgrade.commands.Unblock(args.file_name_to_unblock))
     
+    #--archive
+    commands.appendleft(app.upgrade.commands.Archive(args.archive_files))
+    
     # Validate System -> no command = this always happens, unless blocking/unblocking happens (then we dont get here)
     #-- After unlblock, which might remove problematic files, I am doing validations on the system, no point continuing 
     #if issues found
@@ -49,9 +52,6 @@ def run(args):
     
     #--limit=X   ||   --all
     commands.appendleft(app.upgrade.commands.Upgrade(args.handle_all,args.limit_files))
-    
-    #--archive
-    commands.appendleft(app.upgrade.commands.Archive(args.archive_files))
     
     # go go go
     run_commands(commands)
@@ -75,7 +75,7 @@ def run_commands(commands):
     should_i_stop = False
     while commands:
         if should_i_stop:
-            L.info('Either no files to work with where found, OR You have used a solo command like --unblock or --mark_complete. No further actions will take place. Bye Bye!')
+            L.info("Either no files to work with where found, OR You have used a solo command like --unblock, --mark_complete or --archive.\nNo further actions will take place.\nBye Bye!")
             return
         command = commands.pop()
         should_i_stop = command.action()
@@ -129,11 +129,12 @@ def sync_files_to_db():
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     values =["('"+file_name+"'," + get_file_execution_order(file_name) + ",NULL,'pending_completion',NULL)" for file_name in files_in_file_system  \
              if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
-             
-    values = ','.join(values)
-    sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['upgrade_tracking_database'],values)
-    #L.debug(sql)
-    cursor.execute(sql)
+    
+    if len(values) > 0:         
+        values = ','.join(values)
+        sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['upgrade_tracking_database'],values)
+        #L.debug(sql)
+        cursor.execute(sql)
     
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Reset status of all [completed in test] files to be [pending completion]

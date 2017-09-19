@@ -13,6 +13,7 @@ import app.db
 import app.schemachk
 import config
 import fnmatch
+import subprocess
 
 class TheBabaClass:
     '''
@@ -245,6 +246,7 @@ def _move_file_if_completed(file_name):
     res = cursor.fetchall()
     if res[0][0] == 1:
         L.info("About to ARCHIVE [{}]".format(file_name))
+        subprocess.check_call(['mv',config.assets_folder + "/upgrades/current/" + file_name,config.assets_folder + "/upgrades/archive/."])
         
         
         
