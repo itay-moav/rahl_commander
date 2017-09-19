@@ -45,8 +45,12 @@ def unblock(file_name_to_unblock):
                                                                                                       file_name_to_unblock)
     cnx = app.db.get_connection()
     cursor = cnx.cursor()
-    cursor.execute(sql)
+    res = cursor.execute(sql)
     cnx.commit()
+    if cursor.rowcount == 0:
+        raise Exception('File [{}] does not exists or is marked [completed]. I do not touch those!'.format(file_name_to_unblock))
+        
+        
 
 
 
