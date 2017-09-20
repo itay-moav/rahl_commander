@@ -6,11 +6,7 @@ from config.common_language import help_common_language
 from config.autocomplete import autocomplete
 
 
-#TOBEDELETED100 __all__ = []
-
 DEBUG = True
-
-
 
 
 # Mysql config
