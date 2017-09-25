@@ -23,5 +23,5 @@ upgrade = {   'upgrade_tracking_database': 'dhara',                 \
               'test_host':                 'localhost',             \
               'test_user':                 'root',                  \
               'test_password':             '',                      \
-              'force_test':                True,                    \
-              'force_schema_test':         True}
+              'force_test':                False,                    \
+              'force_schema_test':         False}
