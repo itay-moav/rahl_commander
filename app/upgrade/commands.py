@@ -65,6 +65,32 @@ class Unblock:
 
 
 
+class Archive():
+    '''
+    MV files from current to archive folder
+    Moves all the files that already ran, no if/buts
+    '''
+    def __init__(self,archive_files):
+        self.archive_files = archive_files
+        
+    def action(self):
+        '''
+        @return should_i_stop boolean
+                the result of the previous action. If it is true
+                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
+                return True will break the command string from fully executing.
+                This type of command is a blocking command i.e. nothing happens later if
+                this flag was supplied
+        '''
+        if self.archive_files:
+            app.upgrade.actions.archive_all_processed_files()
+            return True
+        return False
+
+
+
+
+
 class ValidateSystem:
     '''
     Validate the status of the system (no unhandled failed files, no ...
@@ -232,25 +258,4 @@ class Upgrade():
 
 
 
-
-
-class Archive():
-    '''
-    MV files from current to archive folder
-    Moves all the files that already ran, no if/buts
-    '''
-    def __init__(self,archive_files):
-        self.archive_files = archive_files
-        
-    def action(self):
-        '''
-        @return should_i_stop boolean
-                the result of the previous action. If it is true
-                execution should stop, but I will alert the user this arg was activated, he/she might have done a mistake
-                return True will break the command string from fully executing.
-                This type of command is a blocking command i.e. nothing happens later if
-                this flag was supplied
-        '''
-        if self.archive_files:
-            app.upgrade.actions.archive_all_processed_files()
         

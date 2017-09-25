@@ -56,6 +56,24 @@ def unblock(file_name_to_unblock):
 
 
 
+
+
+def archive_all_processed_files():
+    '''
+    runs on all files in the CURRENT folder and moves any previously processed files (status=completed in db)
+    to the ARCHIVE folder
+    
+    Load all file names into memeory, fetch all of those with stat completed
+    '''
+    #Loop on upgrade tracking DB until all files are accounted for and moved
+    files_in_file_system = os.listdir(config.assets_folder + "/upgrades/current")
+    [_move_file_if_completed(file_name) for file_name in files_in_file_system if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
+    
+    
+    
+
+
+
 def validate_system():
     '''
     Checking for failed files in the upgrade DB, Failed files will immediatly fail -> fix those before upgrades can continue
@@ -227,17 +245,7 @@ def upgrade(limit_of_files_processed):
     return True
 
 
-def archive_all_processed_files():
-    '''
-    runs on all files in the CURRENT folder and moves any previously processed files (status=completed in db)
-    to the ARCHIVE folder
-    
-    Load all file names into memeory, fetch all of those with stat completed
-    '''
-    #Loop on upgrade tracking DB until all files are accounted for and moved
-    files_in_file_system = os.listdir(config.assets_folder + "/upgrades/current")
-    [_move_file_if_completed(file_name) for file_name in files_in_file_system if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
-    
+
     
 def _move_file_if_completed(file_name):
     '''
