@@ -222,7 +222,7 @@ def upgrade(limit_of_files_processed):
                     sql_string_for_debug = one_sql
                     L.info("\n----------\nabout to run SQL:\n{}\n".format(one_sql))
                     actual_cursor.execute(one_sql)
-                    actual_db_cnx.commit()
+            actual_db_cnx.commit()
                     
         except Exception as err:
             err_msg = str(err)
@@ -230,6 +230,7 @@ def upgrade(limit_of_files_processed):
             L.fatal('File: [{}]'.format(real_file_path_name))
             L.fatal("SQL: \n{}\n".format(sql_string_for_debug))
             update_failed_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='failed',error_message=%s WHERE file_name = %s".format(upgrade_config['upgrade_tracking_database'])
+            actual_db_cnx.rollback()
             params = (err_msg,file_to_run)
             actual_cursor.execute(update_failed_sql,params)
             actual_db_cnx.commit()
