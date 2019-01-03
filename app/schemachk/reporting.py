@@ -42,7 +42,7 @@ def generate_report(many_error_containers):
             print(MyErrorContainer.right_side_table_name)
             for error_msg in MyErrorContainer.errors():
                 print(error_msg)
-                
+                print('------------------')
                    
    
    

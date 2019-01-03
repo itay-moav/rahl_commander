@@ -280,11 +280,14 @@ class Same(TestRule):
         try:
             cursor.execute(sql[1])
         except MyExcp as err:
+            self.has_errors = True
             if err.errno == MyErrCode.ER_NO_SUCH_TABLE:
-                print("The following query failed for missing table:\n {}\n\n folder [{}] file [{}]\nFIx Schema file before running again!".format(sql[1],self.left_side_db,self.right_side_db))
-                exit(1)
+                self.dynamic_error_str += "The following query failed for missing table:\n {}\n\n folder [{}] file [{}] FIx Schema file!".format(sql[1],self.left_side_db,self.right_side_db)
+                
             else:
-                raise err
+                self.dynamic_error_str += err.get_error_msg
+
+            return
         
         right_side_table = {all_fields[0]:all_fields for all_fields in cursor if all_fields[0] not in self.ignore_params}
         del cursor
