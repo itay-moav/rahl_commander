@@ -7,7 +7,7 @@ Basic iteration functionality on the right folders.
 '''
 import fnmatch
 import os
-import config
+import properties
 import app.db
 from app import logging as L
 import app.meta as meta
@@ -45,7 +45,7 @@ class AssetFiles():
         else:
             self.what_to_handle['c'] = args.scripts
 
-        self.assets_path = config.assets_folder
+        self.assets_path = properties.assets_folder
         
         #TOBEDELETED100 if args.assets_path:
         #    self.assets_path = args.assets_path
@@ -140,7 +140,7 @@ class AssetFiles():
                 # Loop on files and run sql
                 for root, dirnames, filenames in os.walk(sub_folder):
                     # This is where I apply the filter of the ignored file list.
-                    if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
+                    if any(ignored_partial_string in root for ignored_partial_string in properties.ignore_files_dirs_with):
                         continue
 
                     for filename in fnmatch.filter(filenames, '*'+self.file_postfix):

@@ -4,7 +4,7 @@ Created on Aug 10, 2017
 @author: Itay
 '''
 from app import logging as L
-from config.upgrade import upgrade as upgrade_config
+from properties.upgrade import upgrade as upgrade_config
 import app.upgrade.actions
 from argparse import ArgumentError
 

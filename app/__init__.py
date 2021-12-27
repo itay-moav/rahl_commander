@@ -23,26 +23,20 @@ program_license = '''%s
 USAGE
 ''' % (program_shortdesc, str(__date__))
 
-
-
-
-
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 import logging
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
-import config
+from app import config as config
 
 if len(sys.argv) == 1: # no params given, do --help
     sys.argv.append("-h")
     
 parser = ArgumentParser(description=program_license, formatter_class=RawDescriptionHelpFormatter)
-parser.add_argument("-v", dest="verbosity", action="store",nargs='?', default=False, \
-                                 help="By default, not specifying this will echo only the fatal errors. Specifying it -v to -vvvv will Show more.")
+parser.add_argument("-v", dest="verbosity", action="store",nargs='?', default=False, help=config.language['help']['verbosity'])
 parser.add_argument("--version",action="version",version=program_version_message)
-parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will apply command to the entire project")
-parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',help="optional way to specify the assets full path (starting from /)")
-parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help=config.help_common_language['server_connection'])
+parser.add_argument("--all", dest="handle_all", action="store_true", help=config.language['help']['handle_all'])
+parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',help=config.language['help']['assets_path'])
+parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help=config.language['help']['server_connection'])
 
 def init(parser):
     '''

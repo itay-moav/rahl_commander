@@ -1,5 +1,3 @@
-#!/usr/local/bin/python3.4
-# encoding: utf-8
 '''
 Check if the current code base is in sync with the checked database.
 for verbosity 1 (default) Will return in sync | not in sync

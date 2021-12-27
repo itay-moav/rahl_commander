@@ -5,7 +5,7 @@ Created on Oct 23, 2014
 '''
 #import os
 #import shutil
-import config
+import properties
 import app.iterator
 from app import logging as L
 
@@ -27,14 +27,14 @@ class SP(app.iterator.AssetFiles):
         else:
             L.fatal('You must use --all to run this command!')
         
-        self.assets_path = config.assets_folder
+        self.assets_path = properties.assets_folder
         self.folders = []
         self.args = args # Store it in case we need to instantiate other iterators from within an iterator (like the drop it`)
         self.file_postfix = '.sql'
         
         
-        if len(config.autocomplete['return']) > 1:
-            self._return_type = config.autocomplete['return']
+        if len(properties.autocomplete['return']) > 1:
+            self._return_type = properties.autocomplete['return']
         else:
             self._return_type = "\SP"
         
@@ -156,8 +156,8 @@ class SpDataParser:
         self.right_side_db    = ''
         self.sp_name    = ''
         self.raw_args   = ''
-        if len(config.autocomplete['db_name_separator']) > 0:
-            self._db_name_separator = config.autocomplete['db_name_separator']    
+        if len(properties.autocomplete['db_name_separator']) > 0:
+            self._db_name_separator = properties.autocomplete['db_name_separator']    
         else:
             self._db_name_separator = "__"
 
@@ -189,7 +189,7 @@ class SpDataParser:
         for Arg in self.ArgList:
             comments += "\t\t* @param " + Arg.php_data_type + " $" + Arg.name + "  :" + ' '.join([Arg.type,Arg.name,Arg.data_type]) + "\n"
 
-        comments += "\t\t*\n\t\t* @return " + config.autocomplete['return'] + "\n\t\t*/\n"
+        comments += "\t\t*\n\t\t* @return " + properties.autocomplete['return'] + "\n\t\t*/\n"
         return comments
 
     def prepareArgs(self):
