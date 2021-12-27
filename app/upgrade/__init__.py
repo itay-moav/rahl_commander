@@ -7,8 +7,8 @@ __version__ = '1.0'
 
 from app import logging as L
 from collections import deque
-from properties.upgrade import upgrade as upgrade_config
-import properties
+from config.upgrade import upgrade as upgrade_config
+import config
 import app.upgrade.commands
 import os
 
@@ -98,7 +98,7 @@ def sync_files_to_db():
     cursor = cnx.cursor()
     
     # read all files
-    files_in_file_system = os.listdir(properties.assets_folder + "/upgrades/current")
+    files_in_file_system = os.listdir(config.assets_folder + "/upgrades/current")
     
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Check all NONE completed files in the db, if no longer exist in file system -> delete Entry
@@ -128,7 +128,7 @@ def sync_files_to_db():
     # Check file system for any file not yet in db, create an entry with [pending_completion] STATUS
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     values =["('"+file_name+"'," + get_file_execution_order(file_name) + ",NULL,'pending_completion',NULL)" for file_name in files_in_file_system  \
-             if not any(ignored_partial_string in file_name for ignored_partial_string in properties.ignore_files_dirs_with)] # ignored files list filter
+             if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
     
     if len(values) > 0:         
         values = ','.join(values)

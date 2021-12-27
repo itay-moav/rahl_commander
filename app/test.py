@@ -5,9 +5,9 @@ Created on Oct 23, 2014
 '''
 import app.iterator
 import os
-import properties
+import app.config as config
 import app.meta as meta
-import properties.upgrade as config_upgrade
+from app.config import upgrade as config_upgrade
 
 class Install(app.iterator.AssetFilesDBConn):
 
@@ -64,7 +64,7 @@ class Install(app.iterator.AssetFilesDBConn):
             # Loop on files and run sql
             for root, dirnames, filenames in os.walk(sub_folder):
                 # This is where I apply the filter of the ignored file list.
-                if any(ignored_partial_string in root for ignored_partial_string in properties.ignore_files_dirs_with):
+                if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
                     continue
                 
                 db_name = meta.extract_db_name(root)
@@ -88,7 +88,7 @@ class Install(app.iterator.AssetFilesDBConn):
         print("Checking SQL UPGRADES config values")
         print("******************************************************************************************************")
         # check ignore list includes *.md files
-        if '.md' not in properties.ignore_files_dirs_with:
+        if '.md' not in config.ignore_files_dirs_with:
             print("ERROR: You must add '.md' to your file ignore list config/ignore_list.py")
         else:
             print(" GOOD! ['.md'] found in file ignore list under config/ignore_list.py")

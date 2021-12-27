@@ -37,14 +37,26 @@ parser.add_argument("--version",action="version",version=program_version_message
 parser.add_argument("--all", dest="handle_all", action="store_true", help=config.language['help']['handle_all'])
 parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',help=config.language['help']['assets_path'])
 parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help=config.language['help']['server_connection'])
+parser.add_argument("--profile", dest="system_profile", action="store", nargs='?', default=False,help=config.language['help']['system_profile'])
 
 def init(parser):
     '''
-        Take out config override.
         populate the config object with proper value
+        Order of precedence is 
+        - user input
+        - profile 
     '''
     args = parser.parse_args()
-    
+
+    #loggin
+    set_logging(args.verbosity)
+
+    # go by profile first
+    if args.system_profile:
+        config.read_profile(args.system_profile)
+    else:
+        config.read_profile('DEFAULT')
+
     # assets path
     if args.assets_path:
         config.assets_folder = args.assets_path
@@ -55,9 +67,6 @@ def init(parser):
         config.mysql['username'] = creds[0]
         config.mysql['password'] = creds[1]
         config.mysql['host']     = creds[2]
-
-    #loggin
-    set_logging(args.verbosity)
     
     # FIN
     return args

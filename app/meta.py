@@ -8,7 +8,7 @@ For example:
     Which databases each section (SP/Triggers/Functions/Views) tracks.
 '''
 import os
-import properties
+import app.config as config
 from app import logging as L
 
 TRIGGERS          = 'triggers'
@@ -27,7 +27,7 @@ def tracked_dbs(object_type,assets_path=False):
     if assets_path:
         object_path = assets_path + '/' + object_type
     else:
-        object_path = properties.assets_folder + '/' + object_type
+        object_path = config.assets_folder + '/' + object_type
 
     L.debug("Meta for folder [{}]".format(object_path))
     return [right_side_db for right_side_db in os.listdir(object_path) if '.' not in right_side_db] #TODO see if I need to add here the ignore list
@@ -37,7 +37,7 @@ def extract_from_folder(sub_folder,index):
     '''
     get the folder part the folder input
     '''
-    return sub_folder.split(properties.assets_folder)[1].replace('\\','/').split('/')[index]
+    return sub_folder.split(config.assets_folder)[1].replace('\\','/').split('/')[index]
 
 
 def extract_db_name(sub_folder):

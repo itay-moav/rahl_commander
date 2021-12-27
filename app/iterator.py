@@ -7,7 +7,7 @@ Basic iteration functionality on the right folders.
 '''
 import fnmatch
 import os
-import properties
+from .config import assets_folder
 import app.db
 from app import logging as L
 import app.meta as meta
@@ -45,7 +45,7 @@ class AssetFiles():
         else:
             self.what_to_handle['c'] = args.scripts
 
-        self.assets_path = properties.assets_folder
+        self.assets_path = config.assets_folder
         
         #TOBEDELETED100 if args.assets_path:
         #    self.assets_path = args.assets_path

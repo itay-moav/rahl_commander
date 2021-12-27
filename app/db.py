@@ -6,19 +6,19 @@ Created on Jul 28, 2016
 Abstracting the DB connection piece
 '''
 import mysql.connector as My
-import properties
+import app.config as config
 from app import logging as L
-from properties.upgrade import upgrade as upgrade_config
+from app.config import upgrade as upgrade_config
 
 _connection = None
 
 def get_connection():
     global _connection
     if not _connection:
-        user     = properties.mysql['username']
-        password = properties.mysql['password']
-        host     = properties.mysql['host']
-        L.info("Trying to connect to {}:{}@{}".format(properties.mysql['username'],properties.mysql['password'],properties.mysql['host']))
+        user     = config.mysql['username']
+        password = config.mysql['password']
+        host     = config.mysql['host']
+        L.info("Trying to connect to {}:{}@{}".format(config.mysql['username'],config.mysql['password'],config.mysql['host']))
         _connection = My.connect(user=user, password=password,host=host,buffered=True)
         
     return _connection

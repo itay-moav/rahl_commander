@@ -8,10 +8,10 @@ The actual actions to be performed by the commands
 import os
 # import shutil
 from app import logging as L
-from properties.upgrade import upgrade as upgrade_config
+from config.upgrade import upgrade as upgrade_config
 import app.db
 import app.schemachk
-import properties
+import config
 import fnmatch
 import subprocess
 
@@ -66,8 +66,8 @@ def archive_all_processed_files():
     Load all file names into memeory, fetch all of those with stat completed
     '''
     #Loop on upgrade tracking DB until all files are accounted for and moved
-    files_in_file_system = os.listdir(properties.assets_folder + "/upgrades/current")
-    [_move_file_if_completed(file_name) for file_name in files_in_file_system if not any(ignored_partial_string in file_name for ignored_partial_string in properties.ignore_files_dirs_with)] # ignored files list filter
+    files_in_file_system = os.listdir(config.assets_folder + "/upgrades/current")
+    [_move_file_if_completed(file_name) for file_name in files_in_file_system if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
     
     
     
@@ -108,7 +108,7 @@ def test(limit_of_files_processed):
     actual_db_cnx.database = upgrade_config['upgrade_tracking_database']
     test_cursor   = test_cnx.cursor()
     actual_cursor = actual_db_cnx.cursor()
-    upgrade_folder = properties.assets_folder + "/upgrades/current"
+    upgrade_folder = config.assets_folder + "/upgrades/current"
     L.info('Reading files from {}'.format(upgrade_folder))
     
     # Get all files ready for running from the DB
@@ -191,7 +191,7 @@ def upgrade(limit_of_files_processed):
     actual_db_cnx = app.db.get_connection() # need this to know which files I already processed
     actual_db_cnx.database = upgrade_config['upgrade_tracking_database']
     actual_cursor = actual_db_cnx.cursor()
-    upgrade_folder = properties.assets_folder + "/upgrades/current"
+    upgrade_folder = config.assets_folder + "/upgrades/current"
     L.info('Reading files from {}'.format(upgrade_folder))
     
     # Get all files ready for running from the DB
@@ -258,7 +258,7 @@ def _move_file_if_completed(file_name):
     res = cursor.fetchall()
     if res[0][0] == 1:
         L.info("About to ARCHIVE [{}]".format(file_name))
-        subprocess.check_call(['mv',properties.assets_folder + "/upgrades/current/" + file_name,properties.assets_folder + "/upgrades/archive/."])
+        subprocess.check_call(['mv',config.assets_folder + "/upgrades/current/" + file_name,config.assets_folder + "/upgrades/archive/."])
         
         
         
