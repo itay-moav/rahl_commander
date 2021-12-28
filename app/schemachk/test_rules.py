@@ -3,7 +3,7 @@ Created on Jul 21, 2016
 
 @author: itaymoav
 '''
-import app.db
+import app.config
 from app import logging as L
 from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
@@ -146,7 +146,7 @@ class TestRule():
         return self.bail_out
     
     def _get_cursor(self):
-        cnx = app.db.get_connection()
+        cnx = app.config.cnMysql.get_connection()
         return cnx.cursor()
 
 

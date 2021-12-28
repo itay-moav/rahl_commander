@@ -6,7 +6,7 @@ Created on Oct 9, 2014
 Specialized DB class to clean all user db objects
 functions | stored procedures | views | triggers
 '''
-import app.db
+import app.config
 import app.meta as meta
 from app import logging as L
 
@@ -54,7 +54,7 @@ class AllDBObj():
     def connect(self):
         '''
         '''
-        self.cnx = app.db.get_connection() #TOBEDELETED100 self.args.server_connection)
+        self.cnx = app.config.db_connection()
         self.cursor = self.cnx.cursor()
 
 
@@ -136,7 +136,7 @@ class AllDBObj():
         '''
         # iterate on each db to get the list of triggers
         for database_name in self.what_to_handle['t']:
-            self.cnx.database = database_name
+            self.cnx.change_db(database_name)
             self.cursor.execute("SHOW TRIGGERS")
             for trigger_name in [trigger for (trigger,*_) in self.cursor]:
                 sql = "DROP TRIGGER {db}.{name}".format(db=database_name,name=trigger_name)
@@ -153,7 +153,7 @@ class AllDBObj():
         '''
         # iterate on each db to get the list of triggers
         for database_name in self.what_to_handle['w']:
-            self.cnx.database = database_name
+            self.cnx.change_db(database_name)
             self.cursor.execute("SHOW FULL TABLES IN {} WHERE TABLE_TYPE LIKE 'VIEW'".format(database_name))
             for view_name in [view for (view,*_) in self.cursor]:
                 sql = "DROP VIEW {db}.{name}".format(db=database_name,name=view_name)

@@ -91,3 +91,4 @@ def set_logging(verbosity):
             pass #do nothing, use the default fatal level
         
     logging.basicConfig(level=log_verbosity)
+    

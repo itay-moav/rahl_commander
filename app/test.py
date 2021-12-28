@@ -8,6 +8,7 @@ import os
 import app.config as config
 import app.meta as meta
 from app.config import upgrade as config_upgrade
+from app import exceptions as exceptions
 
 class Install(app.iterator.AssetFilesDBConn):
 
@@ -93,16 +94,16 @@ class Install(app.iterator.AssetFilesDBConn):
         else:
             print(" GOOD! ['.md'] found in file ignore list under config/ignore_list.py")
             
-        # check theupgrades config and tracking table is properly defined
+        # check the upgrades config and tracking table is properly defined
         try:
-            self.changeDB(config_upgrade.upgrade['upgrade_tracking_database'],'')
+            self.changeDB(config_upgrade['database'],'')
             
-        except app.db.My.errors.ProgrammingError:
-            print("FATAL: HOLY CRAP! I am missing DB [{}] which your SQL UPGRRADES is configued to use.".format(config_upgrade.upgrade['upgrade_tracking_database']))
+        except exceptions.SQLError:
+            print("FATAL: HOLY CRAP! I am missing DB [{}] which your SQL UPGRRADES is configued to use.".format(config_upgrade['database']))
             
         else:
             #db exists, check table rcom_sql_upgrades exists
-            sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades".format(config_upgrade.upgrade['upgrade_tracking_database'])
+            sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades".format(config_upgrade['database'])
             try:
                 self.cursor.execute(sql)
             except app.db.My.errors.ProgrammingError:
