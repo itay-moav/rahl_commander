@@ -28,10 +28,10 @@ class AssetFiles():
         '''
         # Process arguments
         if args.handle_all:
-            self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
+            self.what_to_handle = {'f':'All','s':'All','w':'All', 't':'All'}
 
         else:
-            self.what_to_handle = {'s':args.stored_proc,'w':args.views, 't':args.triggers, 'f':args.functions}
+            self.what_to_handle = {'f':args.functions, 's':args.stored_proc,'w':args.views, 't':args.triggers}
 
         # the scripts (c) option exist only in some commands.
         # since c (scripts) is not a db object, and can be dangerous to run, I enforce this to always be called explicitly 
