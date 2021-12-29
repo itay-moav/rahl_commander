@@ -4,7 +4,7 @@ Created on Oct 23, 2014
 @author: Itay Moav
 '''
 
-import properties
+import app.config as config
 import app.iterator
 from app.schemachk.tables      import TableList
 from app.schemachk.file_parser import ChkFileParser
@@ -37,7 +37,7 @@ class ParseLooper(app.iterator.AssetFilesDBConn):
             self.what_to_handle = {'d':args.database}
 
 
-        self.assets_path = properties.assets_folder
+        self.assets_path = config.assets_folder
         self.folders = []
         self.args = args # for later use
         self.validateSelf()

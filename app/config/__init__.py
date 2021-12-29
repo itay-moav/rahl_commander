@@ -53,7 +53,8 @@ def read_profile(profile_name):
 
     if config[profile_name]['UPGRADE.TRACKING_DATABASE']:
         upgrade['database'] = config[profile_name]['UPGRADE.TRACKING_DATABASE']
-        upgrade['force_test'] = config[profile_name]['UPGRADE.FORCE_TEST']
+        upgrade['force_test'] = config[profile_name]['UPGRADE.FORCE_TEST'] == 1
+        upgrade['force_schema_test'] = config[profile_name]['UPGRADE.FORCE_SCHEMA_TEST'] == 1
 
     #DATASTORE
     try:
@@ -79,9 +80,3 @@ def read_profile(profile_name):
         L.critical('You are missing [{}] key-value in profiles.ini for profile [{}]'.format(e,profile_name))
         L.critical('Good bye!')
         exit()
-
-
-def get_test_Server_connection():
-    cnx_t = My.connect(user=upgrade_config['test_user'], password=upgrade_config['test_password'],host=upgrade_config['test_host'],buffered=True)
-    cnx_t.database = upgrade_config['upgrade_tracking_database']
-    return cnx_t

@@ -7,8 +7,8 @@ __version__ = '1.0'
 
 from app import logging as L
 from collections import deque
-from config.upgrade import upgrade as upgrade_config
-import config
+from app.config import upgrade as upgrade_config
+import app.config as config
 import app.upgrade.commands
 import os
 
@@ -93,8 +93,8 @@ def sync_files_to_db():
     
     
     # db boilerplate
-    cnx = app.db.get_connection() # need this to know which files I already processed
-    cnx.database = upgrade_config['upgrade_tracking_database']
+    cnx = config.db_connection() # need this to know which files I already processed
+    cnx.change_db(upgrade_config['database'])
     cursor = cnx.cursor()
     
     # read all files
@@ -103,7 +103,7 @@ def sync_files_to_db():
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Check all NONE completed files in the db, if no longer exist in file system -> delete Entry
     # -------------------------------------------------------------------------------------------------------------------------------------------------
-    find_files_sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status <> 'completed'".format(upgrade_config['upgrade_tracking_database'])
+    find_files_sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status <> 'completed'".format(upgrade_config['database'])
     cursor.execute(find_files_sql)
     res = cursor.fetchall()
     
@@ -119,7 +119,7 @@ def sync_files_to_db():
     if len(files_to_delete_from_db) > 0:
         sql_in = "('" + "','" .join(files_to_delete_from_db) + "')"
         cursor = cnx.cursor()
-        sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name IN {}".format(upgrade_config['upgrade_tracking_database'],sql_in)
+        sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name IN {}".format(upgrade_config['database'],sql_in)
         #L.debug(sql)
         cursor.execute(sql)
     
@@ -132,7 +132,7 @@ def sync_files_to_db():
     
     if len(values) > 0:         
         values = ','.join(values)
-        sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['upgrade_tracking_database'],values)
+        sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['database'],values)
         #L.debug(sql)
         cursor.execute(sql)
     
@@ -140,7 +140,7 @@ def sync_files_to_db():
     # Reset status of all [completed in test] files to be [pending completion]
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     L.debug('reset completed in test to be pending completion')
-    update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='pending_completion' WHERE execution_Status='completed_in_test'".format(upgrade_config['upgrade_tracking_database'])
+    update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='pending_completion' WHERE execution_Status='completed_in_test'".format(upgrade_config['database'])
     cursor.execute(update_sql)
     
     # SAVING ALL CHANGES TO DB
