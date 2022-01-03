@@ -23,7 +23,7 @@ def mark_complete(file_name_to_mark_complete):
     '''
     Marking a single file as complete and stopping
     '''
-    sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed' WHERE file_name = %s LIMIT 1".format(app.config.upgrade_config['upgrade_tracking_database'])
+    sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed' WHERE file_name = %s LIMIT 1".format(app.config.upgrade['database'])
     cnx = app.config.db_connection()
     cursor = cnx.cursor()
     cursor.execute(sql,(file_name_to_mark_complete,))
@@ -37,7 +37,7 @@ def unblock(file_name_to_unblock):
     Deleted from the upgrade db an upgrade file that failed.
     this will cause the file to be re-run if he is in the CURRENT folder
     '''
-    sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name='{}' AND execution_status<>'completed'".format(app.config.upgrade_config['upgrade_tracking_database'], \
+    sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name='{}' AND execution_status<>'completed'".format(app.config.upgrade['database'], \
                                                                                                       file_name_to_unblock)
     cnx = app.config.db_connection()
     cursor = cnx.cursor()
@@ -253,7 +253,7 @@ def _move_file_if_completed(file_name):
     res = cursor.fetchall()
     if res[0][0] == 1:
         L.info("About to ARCHIVE [{}]".format(file_name))
-        subprocess.check_call(['mv',app.config.assets_folder + "/upgrades/current/" + file_name,app.config.config.assets_folder + "/upgrades/archive/."])
+        subprocess.check_call(['mv',app.config.assets_folder + "/upgrades/current/" + file_name,app.config.assets_folder + "/upgrades/archive/."])
         
         
         

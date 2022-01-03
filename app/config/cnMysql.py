@@ -14,11 +14,12 @@ class Connection():
     Abstracting the actions on a DB
     '''
     def __init__(self, connection_config):
-        L.info("Trying to connect to {}:{}@{}".format(connection_config['username'],connection_config['password'],connection_config['host']))
-        self.connection = My.connect(user=connection_config['username'], password=connection_config['password'],host=connection_config['host'],buffered=True)
+        self._debug_connection_info = "{}@{}".format(connection_config['username'],connection_config['host'])
+        L.info("Trying to connect to {}".format(self._debug_connection_info))
+        self._connection = My.connect(user=connection_config['username'], password=connection_config['password'],host=connection_config['host'],buffered=True)
 
     def get_connection(self):
-        return self.connection
+        return self._connection
 
     def change_db(self,new_db):
         connection = self.get_connection()
@@ -41,3 +42,6 @@ class Connection():
 
     def commit(self):
         return self.get_connection().commit()
+
+    def debug_connection(self):
+        return "server: [{}] database: [{}]".format(self.debug_connection_info,self.get_connection().database)
