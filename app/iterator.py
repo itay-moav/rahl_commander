@@ -31,7 +31,12 @@ class AssetFiles():
             self.what_to_handle = {'f':'All','s':'All','w':'All', 't':'All'}
 
         else:
-            self.what_to_handle = {'f':args.functions, 's':args.stored_proc,'w':args.views, 't':args.triggers}
+            try:
+                self.what_to_handle = {'f':args.functions, 's':args.stored_proc,'w':args.views, 't':args.triggers}
+            except AttributeError:
+                L.fatal('Either use --all or one of -f -s -w -t')
+                L.fatal('Stopping!')
+                exit()
 
         # the scripts (c) option exist only in some commands.
         # since c (scripts) is not a db object, and can be dangerous to run, I enforce this to always be called explicitly 
