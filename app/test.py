@@ -110,4 +110,3 @@ class Install(app.iterator.AssetFilesDBConn):
                 print("FATAL: Problems with table rcom_sql_upgrades, I am unable to run [{}]".format(sql))
             else:
                 print(" GOOD: table rcom_sql_upgrades was found")
-                  

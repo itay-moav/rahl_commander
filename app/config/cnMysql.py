@@ -45,3 +45,17 @@ class Connection():
 
     def debug_connection(self):
         return "server: [{}] database: [{}]".format(self.debug_connection_info,self.get_connection().database)
+
+    def execute(self,sql):
+        L.debug("Running sql [{}]".format(sql))
+        cursor = self.cursor()
+        cursor.execute(sql)
+        return cursor
+
+    def execute_fetchall(self,sql):
+        cursor = self.execute(sql)
+        return cursor.fetchall()
+
+    def insert_rcom_sql_upgrades(self,db,file_values):
+        sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(db,file_values)
+        self.execute(sql)

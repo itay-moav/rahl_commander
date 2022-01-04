@@ -96,9 +96,11 @@ CREATE TABLE `rcom_sql_upgrades` (
 ##RCOM upgrade table structure for mssql
 
 CREATE TABLE dbo.rcom_sql_upgrades (
- file_name varchar(255) NOT NULL  PRIMARY KEY,
+ file_name varchar(255) NOT NULL,
  execute_order INT NOT NULL DEFAULT  1,
- time_runned timestamp NULL,
+ time_runned DATETIME NULL,
  execution_status VARCHAR(20) NOT NULL CHECK (execution_status IN ('pending_completion','failed','failed_in_test','completed','completed_in_test')) DEFAULT 'pending_completion',
- error_message varchar(255) DEFAULT NULL
+ error_message varchar(255) DEFAULT NULL,
+ PRIMARY KEY (file_name) WITH (IGNORE_DUP_KEY = ON)
 )
+

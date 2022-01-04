@@ -33,3 +33,19 @@ class Connection():
 
     def debug_connection(self):
         return "dns: [{}]".format(self.debug_connection_info)
+
+    def execute(self,sql):
+        L.debug("Running sql [{}]".format(sql))
+        cursor = self.cursor()
+        cursor.execute(sql)
+        return cursor
+
+    def execute_fetchall(self,sql):
+        cursor = self.execute(sql)
+        return cursor.fetchall()
+
+    def insert_rcom_sql_upgrades(self,schema,file_values):
+        sql = "INSERT INTO {}.rcom_sql_upgrades VALUES {}".format(schema,file_values)
+        self.execute(sql)
+
+

@@ -95,7 +95,6 @@ def sync_files_to_db():
     # db boilerplate
     cnx = config.db_connection() # need this to know which files I already processed
     cnx.change_db(upgrade_config['database'])
-    cursor = cnx.cursor()
     
     # read all files
     files_in_file_system = os.listdir(config.assets_folder + "/upgrades/current")
@@ -103,9 +102,7 @@ def sync_files_to_db():
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Check all NONE completed files in the db, if no longer exist in file system -> delete Entry
     # -------------------------------------------------------------------------------------------------------------------------------------------------
-    find_files_sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status <> 'completed'".format(upgrade_config['database'])
-    cursor.execute(find_files_sql)
-    res = cursor.fetchall()
+    res = cnx.execute_fetchall("SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status <> 'completed'".format(upgrade_config['database']))
     
     files_to_delete_from_db = []
     for db_file, in res: # the extra , is to directly unpack the touple here, in this line
@@ -118,10 +115,7 @@ def sync_files_to_db():
     
     if len(files_to_delete_from_db) > 0:
         sql_in = "('" + "','" .join(files_to_delete_from_db) + "')"
-        cursor = cnx.cursor()
-        sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name IN {}".format(upgrade_config['database'],sql_in)
-        #L.debug(sql)
-        cursor.execute(sql)
+        cnx.execute("DELETE FROM {}.rcom_sql_upgrades WHERE file_name IN {}".format(upgrade_config['database'],sql_in))
     
     
     # -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -132,16 +126,16 @@ def sync_files_to_db():
     
     if len(values) > 0:         
         values = ','.join(values)
-        sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['database'],values)
-        #L.debug(sql)
-        cursor.execute(sql)
+        #cnx.execute("INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(upgrade_config['database'],values))
+        cnx.insert_rcom_sql_upgrades(upgrade_config['database'],values)
+        
     
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Reset status of all [completed in test] files to be [pending completion]
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     L.debug('reset completed in test to be pending completion')
     update_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='pending_completion' WHERE execution_Status='completed_in_test'".format(upgrade_config['database'])
-    cursor.execute(update_sql)
+    cnx.execute(update_sql)
     
     # SAVING ALL CHANGES TO DB
     cnx.commit()
