@@ -5,7 +5,9 @@ Created on Jul 21, 2016
 '''
 import app.config
 from app import logging as L
-from mysql.connector import errorcode as MyErrCode,Error as MyExcp
+#TODO a separate test_rules for each type of data store is in the books 
+if app.config.data_store() == 'mysql':
+    from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
 def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db):
