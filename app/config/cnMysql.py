@@ -46,10 +46,10 @@ class Connection():
     def debug_connection(self):
         return "server: [{}] database: [{}]".format(self.debug_connection_info,self.get_connection().database)
 
-    def execute(self,sql):
+    def execute(self,sql,query_params=()):
         L.debug("Running sql [{}]".format(sql))
         cursor = self.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql,query_params)
         return cursor
 
     def execute_fetchall(self,sql):
@@ -59,3 +59,7 @@ class Connection():
     def insert_rcom_sql_upgrades(self,db,file_values):
         sql = "INSERT IGNORE INTO {}.rcom_sql_upgrades VALUES {}".format(db,file_values)
         self.execute(sql)
+
+    def mark_complete_rcom_sql_upgrades(self,db,file_name):
+        sql = sql = "UPDATE {}.rcom_sql_upgrades SET execution_status='completed' WHERE file_name = %s LIMIT 1".format(db)
+        self.execute(sql,(file_name,))

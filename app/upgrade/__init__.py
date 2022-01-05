@@ -121,7 +121,7 @@ def sync_files_to_db():
     # -------------------------------------------------------------------------------------------------------------------------------------------------
     # Check file system for any file not yet in db, create an entry with [pending_completion] STATUS
     # -------------------------------------------------------------------------------------------------------------------------------------------------
-    values =["('"+file_name+"'," + get_file_execution_order(file_name) + ",NULL,'pending_completion',NULL)" for file_name in files_in_file_system  \
+    values =["('"+file_name+"'," + get_file_execution_order_as_str(file_name) + ",NULL,'pending_completion',NULL)" for file_name in files_in_file_system  \
              if not any(ignored_partial_string in file_name for ignored_partial_string in config.ignore_files_dirs_with)] # ignored files list filter
     
     if len(values) > 0:         
@@ -144,16 +144,19 @@ def sync_files_to_db():
     
         
      
-def get_file_execution_order(file_name):
+def get_file_execution_order_as_str(file_name):
     '''
     Checks that xxx in  xxx_fff_ggg.sql file name is a number.
     If it is, will use that as the expected running order of the file,
     otherwise, return "1"
     '''
     parts = file_name.split('_')
+    if len(parts) == 1:
+        L.fatal("Filename must be [order]_[some_explanation].sql\nBYE!")
+        exit()
     try: 
-        int(parts[0])
+        int(parts[0]) #making sure order is a number
         return parts[0]
     except ValueError:
-        return 1
+        return "1"
 

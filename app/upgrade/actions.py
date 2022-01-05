@@ -23,11 +23,12 @@ def mark_complete(file_name_to_mark_complete):
     '''
     Marking a single file as complete and stopping
     '''
-    sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed' WHERE file_name = %s LIMIT 1".format(app.config.upgrade['database'])
+    #tobedeleted sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='completed' WHERE file_name = %s LIMIT 1".format(app.config.upgrade['database'])
     cnx = app.config.db_connection()
-    cursor = cnx.cursor()
-    cursor.execute(sql,(file_name_to_mark_complete,))
-    cnx.commit()
+    cnx.mark_complete_rcom_sql_upgrades(app.config.upgrade['database'],file_name_to_mark_complete)
+    #tobedeleted cursor = cnx.cursor()
+    #tobedeleted cursor.execute(sql,(file_name_to_mark_complete,))
+    #check if needed cnx.commit()
 
     
     
@@ -42,10 +43,9 @@ def unblock(file_name_to_unblock):
     cnx = app.config.db_connection()
     cursor = cnx.cursor()
     res = cursor.execute(sql)
-    cnx.commit()
+    #check if needed cnx.commit()
     if cursor.rowcount == 0:
         raise Exception('File [{}] does not exists or is marked [completed]. I do not touch those!'.format(file_name_to_unblock))
-        
 
 
 
@@ -60,8 +60,6 @@ def archive_all_processed_files():
     #Loop on upgrade tracking DB until all files are accounted for and moved
     files_in_file_system = os.listdir(app.config.assets_folder + "/upgrades/current")
     [_move_file_if_completed(file_name) for file_name in files_in_file_system if not any(ignored_partial_string in file_name for ignored_partial_string in app.config.ignore_files_dirs_with)] # ignored files list filter
-    
-    
     
 
 

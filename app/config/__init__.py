@@ -66,7 +66,12 @@ def read_profile(profile_name):
     L.info("Running profile [{}]".format(profile_name))
     
     #START
-    _raw_profile = config[profile_name]
+    try:
+        _raw_profile = config[profile_name]
+    except KeyError:
+        L.fatal("Profile [{}] does not exists. Bye!".format(profile_name))
+        exit()
+        
     if log_level() == L.DEBUG:
         L.debug("******************************************************************************************************")
         L.debug("Profile values")

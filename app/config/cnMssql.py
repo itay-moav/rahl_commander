@@ -44,8 +44,12 @@ class Connection():
         cursor = self.execute(sql)
         return cursor.fetchall()
 
-    def insert_rcom_sql_upgrades(self,schema,file_values):
-        sql = "INSERT INTO {}.rcom_sql_upgrades VALUES {}".format(schema,file_values)
+    def insert_rcom_sql_upgrades(self,schemaname,file_values):
+        sql = "INSERT INTO {}.rcom_sql_upgrades VALUES {}".format(schemaname,file_values)
         self.execute(sql)
+        # ??? not sure here yet self.commit()
 
-
+    def mark_complete_rcom_sql_upgrades(self,schemaname,file_name):
+        sql = "UPDATE {}.rcom_sql_upgrades SET execution_status='completed' WHERE file_name = '{}'".format(schemaname,file_name)
+        self.execute(sql)
+        self.commit()
