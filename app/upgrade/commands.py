@@ -5,7 +5,6 @@ Created on Aug 10, 2017
 '''
 from app import logging as L
 from app.config import upgrade as upgrade_config
-import app.upgrade.actions
 from argparse import ArgumentError
 
 class MarkCompleted:
@@ -26,6 +25,7 @@ class MarkCompleted:
                 this flag was supplied
         '''
         if self.file_name_to_mark_complete != None:
+            import app.upgrade.actions #TODO I really need to figure out the order of stuff and remove all I can from __init__py files
             L.info("Marking {} as COMPLETE in upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_mark_complete,upgrade_config['database']))
             app.upgrade.actions.mark_complete(self.file_name_to_mark_complete)
             return True
@@ -54,6 +54,7 @@ class Unblock:
         '''
         
         if self.file_name_to_unblock != None:
+            import app.upgrade.actions
             app.upgrade.actions.unblock(self.file_name_to_unblock)
             L.info("Removed {}.sql from the upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_unblock,upgrade_config['database']))
             return True
@@ -83,6 +84,7 @@ class Archive():
                 this flag was supplied
         '''
         if self.archive_files:
+            import app.upgrade.actions
             app.upgrade.actions.archive_all_processed_files()
             return True
         return False
@@ -107,6 +109,7 @@ class ValidateSystem:
                 this flag was supplied
         '''
         L.info("Validating system files and db entries")
+        import app.upgrade.actions
         app.upgrade.actions.validate_system()
         return False
         
@@ -161,6 +164,7 @@ class Test:
                     
                 L.info('RUNNING TEST upgrade on {}:{}@{}'.format(upgrade_config['test_user'],upgrade_config['test_password'],upgrade_config['test_host']))
                 L.info("WILL TEST upgrade with {} files".format(limit_info))
+                import app.upgrade.actions
                 files_where_processed = app.upgrade.actions.test(limit_of_files_processed)
                 if not files_where_processed:
                     return True
@@ -198,6 +202,7 @@ class TestServerSchema:
         '''
         if self.do_on_test_server and self.do_schema_test:
             L.info("Running schema checker on test server {}@{}".format(upgrade_config['test_user'],upgrade_config['test_host']))
+            import app.upgrade.actions
             app.upgrade.actions.test_with_schema()
         return False
      
@@ -247,6 +252,7 @@ class Upgrade():
 
             L.info('RUNNING UPGRADE ON ACTUAL SERVER')
             L.info("WILL UPGRADE with {} files".format(limit_info))
+            import app.upgrade.actions
             files_where_processed = app.upgrade.actions.upgrade(limit_of_files_processed)
             if not files_where_processed:
                 return True

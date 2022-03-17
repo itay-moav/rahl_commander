@@ -4,7 +4,6 @@ Created on Aug 03, 2017
 @author: Itay Moav
 '''
 __version__ = '1.0'
-
 from app import logging as L
 from collections import deque
 from app.config import upgrade as upgrade_config
