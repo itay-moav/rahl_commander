@@ -21,13 +21,14 @@ class AllDBObj():
         '''
         # Process arguments
         self.args = args
+        self.assets_folder = app.config.assets_folder
         
         # Loads the database names rcom is tracking. This will be used in case of --all, this will also be used in case a specific db 
         # is targeted to make sure i is a tracked DB.
-        sp_dbs       = meta.tracked_dbs(meta.STORED_PROCEDURES,self.args.assets_path)
-        trigger_dbs  = meta.tracked_dbs(meta.TRIGGERS,self.args.assets_path)
-        function_dbs = meta.tracked_dbs(meta.FUNCTIONS,self.args.assets_path)
-        views_dbs    = meta.tracked_dbs(meta.VIEWS,self.args.assets_path)
+        sp_dbs       = meta.tracked_dbs(meta.STORED_PROCEDURES,self.assets_folder)
+        trigger_dbs  = meta.tracked_dbs(meta.TRIGGERS,self.assets_folder)
+        function_dbs = meta.tracked_dbs(meta.FUNCTIONS,self.assets_folder)
+        views_dbs    = meta.tracked_dbs(meta.VIEWS,self.assets_folder)
         
         # decide which DBs I am going to clean. --all means EVERYTHING,
         #  -s,-w,-t,-f means every thing for each of those types
@@ -70,7 +71,7 @@ class AllDBObj():
         Clean resources
         '''
         # Close connection
-        self.cnx.close()
+        self.cursor.close()
 
     def cleanMain(self):
         '''

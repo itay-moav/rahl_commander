@@ -42,9 +42,6 @@ def main(parser):
                                 help="drop all functions, or the folder/*.sql specified. Root folder is the database name.")
 
         args = app.init(parser)
-        #args = parser.parse_args()
-        #app.set_logging(args.verbosity)
-
         Builder = app.commands.DropDBObj(args)
         Builder.run()
 
