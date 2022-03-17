@@ -3,7 +3,7 @@ Created on May 19, 2016
 
 @author: Itay Moav
 '''
-import app.db
+import app.config
 from app import logging as L
 class TableList():
     '''
@@ -32,7 +32,7 @@ class TableList():
         than optimized code at this stage.
         '''
         sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='{}'".format(self.current_db)
-        cursor = app.db.get_connection().cursor()
+        cursor = app.config.get_connection().cursor()
         cursor.execute(sql)
         self.tables_list = {res:[] for res, in cursor}
         

@@ -4,7 +4,7 @@ Created on Aug 10, 2017
 @author: Itay
 '''
 from app import logging as L
-from config.upgrade import upgrade as upgrade_config
+from app.config import upgrade as upgrade_config
 import app.upgrade.actions
 from argparse import ArgumentError
 
@@ -26,7 +26,7 @@ class MarkCompleted:
                 this flag was supplied
         '''
         if self.file_name_to_mark_complete != None:
-            L.info("Marking {} as COMPLETE in upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_mark_complete,upgrade_config['upgrade_tracking_database']))
+            L.info("Marking {} as COMPLETE in upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_mark_complete,upgrade_config['database']))
             app.upgrade.actions.mark_complete(self.file_name_to_mark_complete)
             return True
         return False
@@ -55,7 +55,7 @@ class Unblock:
         
         if self.file_name_to_unblock != None:
             app.upgrade.actions.unblock(self.file_name_to_unblock)
-            L.info("Removed {}.sql from the upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_unblock,upgrade_config['upgrade_tracking_database']))
+            L.info("Removed {}.sql from the upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_unblock,upgrade_config['database']))
             return True
         return False
             

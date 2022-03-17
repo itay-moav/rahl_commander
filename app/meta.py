@@ -8,7 +8,7 @@ For example:
     Which databases each section (SP/Triggers/Functions/Views) tracks.
 '''
 import os
-import config
+import app.config as config
 from app import logging as L
 
 TRIGGERS          = 'triggers'

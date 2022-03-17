@@ -81,3 +81,26 @@ CD to bin
    python cleaner.py --all
    
 
+
+##RCOM upgrade table structure for mysql  
+```
+CREATE TABLE `rcom_sql_upgrades` (
+ `file_name` varchar(255) NOT NULL,
+ `execute_order` int(11) unsigned NOT NULL DEFAULT '1' COMMENT 'if file is prefixed with a number it goes here and determines execution order of sqls',
+ `time_runned` timestamp NULL DEFAULT NULL,
+ `execution_status` enum('pending_completion','failed','failed_in_test','completed','completed_in_test') NOT NULL DEFAULT 'pending_completion',
+ `error_message` varchar(2000) DEFAULT NULL,
+ PRIMARY KEY (`file_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+```
+##RCOM upgrade table structure for mssql  
+```
+CREATE TABLE dbo.rcom_sql_upgrades (
+ file_name varchar(255) NOT NULL,
+ execute_order INT NOT NULL DEFAULT  1,
+ time_runned DATETIME NULL,
+ execution_status VARCHAR(20) NOT NULL CHECK (execution_status IN ('pending_completion','failed','failed_in_test','completed','completed_in_test')) DEFAULT 'pending_completion',
+ error_message varchar(2000) DEFAULT NULL,
+ PRIMARY KEY (file_name) WITH (IGNORE_DUP_KEY = ON)
+)
+```

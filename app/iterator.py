@@ -7,8 +7,7 @@ Basic iteration functionality on the right folders.
 '''
 import fnmatch
 import os
-import config
-import app.db
+import app.config
 from app import logging as L
 import app.meta as meta
 
@@ -29,10 +28,15 @@ class AssetFiles():
         '''
         # Process arguments
         if args.handle_all:
-            self.what_to_handle = {'s':'All','w':'All', 't':'All', 'f':'All'}
+            self.what_to_handle = {'f':'All','s':'All','w':'All', 't':'All'}
 
         else:
-            self.what_to_handle = {'s':args.stored_proc,'w':args.views, 't':args.triggers, 'f':args.functions}
+            try:
+                self.what_to_handle = {'f':args.functions, 's':args.stored_proc,'w':args.views, 't':args.triggers}
+            except AttributeError:
+                L.fatal('Either use --all or one of -f -s -w -t')
+                L.fatal('Stopping!')
+                exit()
 
         # the scripts (c) option exist only in some commands.
         # since c (scripts) is not a db object, and can be dangerous to run, I enforce this to always be called explicitly 
@@ -45,15 +49,9 @@ class AssetFiles():
         else:
             self.what_to_handle['c'] = args.scripts
 
-        self.assets_path = config.assets_folder
-        
-        #TOBEDELETED100 if args.assets_path:
-        #    self.assets_path = args.assets_path
-        #    config.assets_folder = args.assets_path
-
+        self.assets_path = app.config.assets_folder
         self.folders = []
         self.args = args # for later use
-        
         self.validateSelf()
         self.file_postfix = '.sql'
         
@@ -125,7 +123,6 @@ class AssetFiles():
             # If this is actually just a sql file, do it directly. Otherwise do loop next
             if self.file_postfix in sub_folder:
                 db = meta.extract_db_name(sub_folder)
-                # TOBEDELETED once verified not used self._current_file = sub_folder
                 self._current_path = sub_folder # NOT SURE IT IS USED!
                 L.info("handler is [{}] doing root [{}] file [{}] in database [{}]\n".format(self.__class__.__name__,sub_folder,sub_folder,db))
                 f = open(sub_folder,'r')
@@ -140,7 +137,7 @@ class AssetFiles():
                 # Loop on files and run sql
                 for root, dirnames, filenames in os.walk(sub_folder):
                     # This is where I apply the filter of the ignored file list.
-                    if any(ignored_partial_string in root for ignored_partial_string in config.ignore_files_dirs_with):
+                    if any(ignored_partial_string in root for ignored_partial_string in app.config.ignore_files_dirs_with):
                         continue
 
                     for filename in fnmatch.filter(filenames, '*'+self.file_postfix):
@@ -206,7 +203,7 @@ class AssetFilesDBConn(AssetFiles):
         if hasattr(self.args,'cnx'):
             self.cnx = self.args.cnx
         else: 
-            self.cnx = app.db.get_connection()
+            self.cnx = app.config.db_connection()
             self.cursor = self.cnx.cursor()
 
 
@@ -218,9 +215,9 @@ class AssetFilesDBConn(AssetFiles):
         if "CREATE DATABASE" in file_content:
             return
         
-        if not app.db.change_db(db):
+        if not self.cnx.change_db(db):
             L.debug("CODE:\n{}".format(file_content))
-            raise app.db.My.errors.ProgrammingError("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
+            raise NameError("ERROR: Could not run command. db [{}] does not exists. use -v to get more info.".format(db))
 
 
     def postIterate(self):

@@ -23,68 +23,54 @@ program_license = '''%s
 USAGE
 ''' % (program_shortdesc, str(__date__))
 
-
-
-
-
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 import logging
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)) + '/..')
-import config
+from app import config as config
 
 if len(sys.argv) == 1: # no params given, do --help
     sys.argv.append("-h")
     
 parser = ArgumentParser(description=program_license, formatter_class=RawDescriptionHelpFormatter)
-parser.add_argument("-v", dest="verbosity", action="store",nargs='?', default=False, \
-                                 help="By default, not specifying this will echo only the fatal errors. Specifying it -v to -vvvv will Show more.")
+parser.add_argument("-v", dest="verbosity", action="store",nargs='?', default=False, help=config.language['help']['verbosity'])
 parser.add_argument("--version",action="version",version=program_version_message)
-parser.add_argument("--all", dest="handle_all", action="store_true", help="Specifying this flag will apply command to the entire project")
-parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',help="optional way to specify the assets full path (starting from /)")
-parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help=config.help_common_language['server_connection'])
+parser.add_argument("--all", dest="handle_all", action="store_true", help=config.language['help']['handle_all'])
+# deprecated - use profiles parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?',help=config.language['help']['assets_path'])
+# deprecated - use profiles parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help=config.language['help']['server_connection'])
+parser.add_argument("--profile", dest="system_profile", action="store", nargs='?', default=False,help=config.language['help']['system_profile'])
 
 def init(parser):
     '''
-        Take out config override.
         populate the config object with proper value
+        Order of precedence is 
+        - user input
+        - profile 
     '''
     args = parser.parse_args()
-    
-    # assets path
-    if args.assets_path:
-        config.assets_folder = args.assets_path
-        
-    # server connection
-    if args.server_connection:
-        creds = args.server_connection.replace(':','@').split('@')
-        config.mysql['username'] = creds[0]
-        config.mysql['password'] = creds[1]
-        config.mysql['host']     = creds[2]
 
     #loggin
-    set_logging(args.verbosity)
+    config.set_logging(args.verbosity)
+
+    # go by profile first
+    if args.system_profile:
+        config.read_profile(args.system_profile)
+    else:
+        config.read_profile('DEFAULT')
+    #config.database()
+
+    
+
+    # assets path
+    #tobedeltedif args.assets_path:
+    #tobedelted    config.assets_folder = args.assets_path
+        
+    # server connection
+    #tobedeltedif args.server_connection:
+    #tobedelted    creds = args.server_connection.replace(':','@').split('@')
+    #tobedelted    config.mysql['username'] = creds[0]
+    #tobedelted    config.mysql['password'] = creds[1]
+    #tobedelted    config.mysql['host']     = creds[2]
     
     # FIN
     return args
-    
-def set_logging(verbosity):
-    #setup the logger
-    log_verbosity_tmp = verbosity
-    log_verbosity     = logging.FATAL
-    if(log_verbosity_tmp is None):
-        log_verbosity = logging.ERROR
-    elif(log_verbosity_tmp == 'v'):
-        log_verbosity = logging.WARNING
-    elif(log_verbosity_tmp == 'vv'):
-        log_verbosity = logging.INFO
-    elif(log_verbosity_tmp == 'vvv'):
-        log_verbosity = logging.DEBUG
-    else:
-        try:
-            if(config.logman['default_log_level']):
-                log_verbosity = config.logman['default_log_level']
-        except Exception:
-            pass #do nothing, use the default fatal level
         
-    logging.basicConfig(level=log_verbosity)

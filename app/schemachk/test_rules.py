@@ -3,9 +3,11 @@ Created on Jul 21, 2016
 
 @author: itaymoav
 '''
-import app.db
+import app.config
 from app import logging as L
-from mysql.connector import errorcode as MyErrCode,Error as MyExcp
+#TODO a separate test_rules for each type of data store is in the books 
+if app.config.data_store() == 'mysql':
+    from mysql.connector import errorcode as MyErrCode,Error as MyExcp
 
 
 def parse_to_TestRule_factory(single_rule,left_side_db,right_side_db):
@@ -146,7 +148,7 @@ class TestRule():
         return self.bail_out
     
     def _get_cursor(self):
-        cnx = app.db.get_connection()
+        cnx = app.config.cnMysql.get_connection()
         return cnx.cursor()
 
 

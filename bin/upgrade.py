@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.4
+#!/usr/local/bin/python3.8
 # encoding: utf-8
 '''
 @author:     Itay Moav

@@ -4,7 +4,7 @@ Created on Oct 23, 2014
 @author: Itay Moav
 '''
 
-import config
+import app.config as config
 import app.iterator
 from app.schemachk.tables      import TableList
 from app.schemachk.file_parser import ChkFileParser

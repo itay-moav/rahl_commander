@@ -13,3 +13,13 @@ class CLIError(Exception):
         return self.msg
     def __unicode__(self):
         return self.msg
+
+class SQLError(Exception):
+    '''SQL related error'''
+    def __init__(self, msg):
+        super(SQLError).__init__(type(self))
+        self.msg = "E: %s" % msg
+    def __str__(self):
+        return self.msg
+    def __unicode__(self):
+        return self.msg

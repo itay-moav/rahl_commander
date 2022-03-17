@@ -1,5 +1,3 @@
-#!/usr/local/bin/python3.4
-# encoding: utf-8
 '''
 Check if the current code base is in sync with the checked database.
 for verbosity 1 (default) Will return in sync | not in sync
@@ -35,12 +33,7 @@ def main(parser):
     '''Command line options.'''
     print("start\n")
     try:
-        #parser = argparse.ArgumentParser(description="testing ...", formatter_class=argparse.RawDescriptionHelpFormatter)
-        #parser.add_argument("--all", dest="handle_all", action="store_true",help=argparse.SUPPRESS)
-        #parser.add_argument("-a", "--assets", dest="assets_path", action="store", nargs='?', default=False,help="optional way to specify the assets full path (starting from /)")
-        #parser.add_argument("--server", dest="server_connection", action="store", nargs='?', default=False,help="server_connection")
         args = app.init(parser)
-        #args = parser.parse_args()
         Tester = app.test.Install(args)
         Tester.run()
 
