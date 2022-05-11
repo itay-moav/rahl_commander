@@ -210,9 +210,10 @@ def upgrade(limit_of_files_processed):
         sql_string_for_debug = ''
         try:
             for one_sql in file_content.split(';'):
+                one_sql= one_sql.strip()
                 if len(one_sql)>6:
                     sql_string_for_debug = one_sql
-                    L.info("\n----------\nabout to run SQL:\n{}\n".format(one_sql))
+                    L.info("\n----------\nabout to run SQL:\n[{}]\n".format(one_sql))
                     actual_cursor.execute(one_sql)
                     actual_db_cnx.commit()
                     
