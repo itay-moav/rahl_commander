@@ -71,7 +71,7 @@ def validate_system():
     actual_db_cnx = app.config.db_connection() # need this to know which files I already processed
     actual_db_cnx.change_db(app.config.upgrade['database'])
     actual_cursor = actual_db_cnx.cursor()
-    failed_files_sql = "SELECT COUNT(*) FROM rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')"
+    failed_files_sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(app.config.upgrade['database'])
     actual_cursor.execute(failed_files_sql)
     res = actual_cursor.fetchall()
     if res[0][0] > 0:
