@@ -38,12 +38,15 @@ def unblock(file_name_to_unblock):
     Deleted from the upgrade db an upgrade file that failed.
     this will cause the file to be re-run if he is in the CURRENT folder
     '''
+    L.info("About to unblock [{}]".format(file_name_to_unblock))
     sql = "DELETE FROM {}.rcom_sql_upgrades WHERE file_name='{}' AND execution_status<>'completed'".format(app.config.upgrade['database'], \
                                                                                                       file_name_to_unblock)
+    L.info(sql)
     cnx = app.config.db_connection()
+    cnx.change_db(app.config.upgrade['database'])
     cursor = cnx.cursor()
-    res = cursor.execute(sql)
-    #check if needed cnx.commit()
+    cursor.execute(sql)
+    cnx.commit()
     if cursor.rowcount == 0:
         raise Exception('File [{}] does not exists or is marked [completed]. I do not touch those!'.format(file_name_to_unblock))
 
@@ -71,11 +74,16 @@ def validate_system():
     actual_db_cnx = app.config.db_connection() # need this to know which files I already processed
     actual_db_cnx.change_db(app.config.upgrade['database'])
     actual_cursor = actual_db_cnx.cursor()
-    failed_files_sql = "SELECT COUNT(*) FROM {}.rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(app.config.upgrade['database'])
+    failed_files_sql = "SELECT file_name FROM {}.rcom_sql_upgrades WHERE execution_status IN ('failed','failed_in_test')".format(app.config.upgrade['database'])
     actual_cursor.execute(failed_files_sql)
     res = actual_cursor.fetchall()
-    if res[0][0] > 0:
+    if len(res) > 0:
         L.fatal('There are failed files in [{}.rcom_sql_upgrades] Execution stops until you fix it!'.format(app.config.upgrade['database']))
+        L.info('--------------------------------- FAILED FILES------------------------------------------------------')
+        L.info(' remove by ..... --unblock [filename]')
+        for file_to_run, in res:
+            L.info("{}".format(file_to_run))
+        L.info('----------------------------------------------------------------------------------------------------')
         raise Exception('We have failed sql upgrade files, fix them!')    
 
 

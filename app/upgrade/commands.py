@@ -56,7 +56,7 @@ class Unblock:
         if self.file_name_to_unblock != None:
             import app.upgrade.actions
             app.upgrade.actions.unblock(self.file_name_to_unblock)
-            L.info("Removed {}.sql from the upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_unblock,upgrade_config['database']))
+            L.info("Removed [{}] from the upgrade tracking table {}.rcom_sql_upgrades".format(self.file_name_to_unblock,upgrade_config['database']))
             return True
         return False
             
