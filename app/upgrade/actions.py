@@ -78,12 +78,16 @@ def validate_system():
     actual_cursor.execute(failed_files_sql)
     res = actual_cursor.fetchall()
     if len(res) > 0:
+        L.info('')
+        L.info('')
         L.fatal('There are failed files in [{}.rcom_sql_upgrades] Execution stops until you fix it!'.format(app.config.upgrade['database']))
-        L.info('--------------------------------- FAILED FILES------------------------------------------------------')
+        L.info('------------------------------------------------ FAILED FILES------------------------------------------------------')
         L.info(' remove by ..... --unblock [filename]')
         for file_to_run, in res:
             L.info("{}".format(file_to_run))
-        L.info('----------------------------------------------------------------------------------------------------')
+        L.info('-------------------------------------------------------------------------------------------------------------------')
+        L.info('')
+        L.info('')
         raise Exception('We have failed sql upgrade files, fix them!')    
 
 
@@ -142,9 +146,14 @@ def test(limit_of_files_processed):
                     
         except Exception as err:
             err_msg = str(err)
+            L.fatal('')
+            L.fatal('')
+            L.fatal('------------------------------------------------ FAILED SQL ------------------------------------------------------')
             L.fatal('The last SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
             L.fatal('File: [{}]'.format(real_file_path_name))
             L.fatal("SQL: \n{}\n".format(sql_string_for_debug))
+            L.fatal('')
+            L.fatal('')
             
             update_failed_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='failed_in_test',error_message=%s WHERE file_name = %s".format(upgrade_db_name)
             params = (err_msg,file_to_run)
@@ -227,9 +236,15 @@ def upgrade(limit_of_files_processed):
                     
         except Exception as err:
             err_msg = str(err)
+            L.fatal('')
+            L.fatal('')
+            L.fatal('------------------------------------------------ FAILED SQL ------------------------------------------------------')
             L.fatal('The last upgrade SQL has caused an error. Aborting, and marking file as failed with Error:\n{}'.format(err))
             L.fatal('File: [{}]'.format(real_file_path_name))
             L.fatal("SQL: \n{}\n".format(sql_string_for_debug))
+            L.fatal('')
+            L.fatal('')
+            
             update_failed_sql = "UPDATE {}.rcom_sql_upgrades SET execution_Status='failed',error_message=%s WHERE file_name = %s".format(upgrade_db_name)
             params = (err_msg,file_to_run)
             actual_cursor.execute(update_failed_sql,params)

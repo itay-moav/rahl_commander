@@ -42,11 +42,17 @@ def main(parser):
         
         args = app.init(parser)
         app.upgrade.run(args)
+        return 0;
         
     except Exception:
+        print("----------------------------------------------- LAST ERROR CAUGHT -----------------------------------------------")
         traceback.print_exc()
-        return 1
+        print("----------------------------------------------- ----------------- -----------------------------------------------")
+        return -1
 
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
-sys.exit(main(parser))
+exit_code = main(parser)
+print("Finished UPGRADES with code {}".format(exit_code))
+print("GOODBYE!!!1111")
+exit(exit_code)

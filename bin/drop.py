@@ -44,10 +44,13 @@ def main(parser):
         args = app.init(parser)
         Builder = app.commands.DropDBObj(args)
         Builder.run()
+        return 0
 
     except Exception:
+        print("----------------------------------------------- LAST ERROR CAUGHT -----------------------------------------------")
         traceback.print_exc()
-        return 1
+        print("----------------------------------------------- ----------------- -----------------------------------------------")
+        return -1
 
 #++++++++++++++++++++++++++++++++++++ MAIN ENTRY POINT ++++++++++++++++++++++++++++++++++
 sys.exit(main(parser))

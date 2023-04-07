@@ -45,12 +45,15 @@ def main(parser):
         args = app.init(parser)
         Builder = app.commands.BuildDBObj(args)
         Builder.run()
+        return 0
 
 
     # TODO if not run from another tool, I should let the exception be thrown so I can see proper error logs
     except Exception:
+        print("----------------------------------------------- LAST ERROR CAUGHT -----------------------------------------------")
         traceback.print_exc()
-        return 1
+        print("----------------------------------------------- ----------------- -----------------------------------------------")
+        return -1
 
 
 

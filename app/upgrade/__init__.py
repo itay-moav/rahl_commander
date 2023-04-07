@@ -149,10 +149,11 @@ def get_file_execution_order_as_str(file_name):
     If it is, will use that as the expected running order of the file,
     otherwise, return "1"
     '''
+    file_name = file_name.replace("-","_")
     parts = file_name.split('_')
     if len(parts) == 1:
         L.fatal("Filename must be [order]_[some_explanation].sql\nBYE!")
-        exit()
+        raise Exception("Filename must be [order]_[some_explanation].sql")
     try: 
         int(parts[0]) #making sure order is a number
         return parts[0]
