@@ -11,6 +11,7 @@ ignore_files_dirs_with = environment.ignore_files_dirs_with
 assets_folder = ''
 upgrade = {}
 schema_cheker = {}
+autocomplete = environment.autocomplete
 
 _log_level   = L.DEBUG
 _raw_profile = None
